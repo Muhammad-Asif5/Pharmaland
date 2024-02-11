@@ -1,0 +1,1354 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+<style>
+    .mr_t_10 {
+        margin-top: 10px;
+    }
+
+    #uTable {
+        width: 100%;
+    }
+
+        #uTable td {
+            width: 100px;
+            text-align: center;
+        }
+
+    .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+        background: red;
+    }
+
+    .ui-datepicker table {
+        background: #236;
+        color: #fff;
+    }
+
+    .table > caption + thead > tr:first-child > td, .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table > thead:first-child > tr:first-child > th {
+        font-size: 8pt;
+    }
+
+    .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > td, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+        font-size: 8pt;
+    }
+</style>
+
+<div id="loading"></div>
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="PO_No" class="">PO No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input readonly="readonly" onkeyup="GetAllPODetails()" tabindex="1" type="text" name="PO_No" id="PO_No" class="form-control" placeholder="PO_No">
+                        @*<input readonly="readonly" onkeyup="GetAllPODetails()" tabindex="1" type="number" name="PO_No" id="PO_No" class="form-control" placeholder="PO_No">*@
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Vendor_code" class="control-label">Vendor</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Vendor_code", (List<SelectListItem>)ViewBag.DDLVendor,
+                                                                                                  "--Select Vendor--", new { @class = "chosen-select", @tabindex = "2", @onchange = "GetAddressofCust(this.value)" })
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Comments" class="">Comments</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <textarea placeholder="Comments" tabindex="9" name="Comments" id="Comments" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Customer_Code" class="">Customer</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Customer_Code", (List<SelectListItem>)ViewBag.DDLCustomer,
+                                                                                                  "--Select Customer--", new { @class = "chosen-select", @tabindex = "3", @onchange="refreshVendor()"})
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Ship_toCustAddr" class="">Ship To</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="4" type="text" name="Ship_toCustAddr" id="Ship_toCustAddr" class="form-control" placeholder="Ship_toCustAddr">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Currency" class="">Currency</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="5" id="Currency" name="Currency" class="form-control">
+                            <option selected value="PKRS">PKRS</option>
+                            <option value="EURO">EURO</option>
+                            <option value="PKRS">$ US</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="PO_Date" class="">PO Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input onchange="ChangeDateInPO(this.value)" tabindex="6" type="text" name="PO_Date" id="PO_Date" class="form-control" placeholder="dd-MM-yyyy">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Delivery_status" class="">Received Status</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="7" name="Delivery_status" id="Delivery_status" class="form-control">
+
+                            <option value="Y">Y</option>
+                            <option selected value="N">N</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Delivery_date" class="">Delivery Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+
+                        <input tabindex="8" type="text" name="Delivery_date" id="Delivery_date" class="form-control" placeholder="Delivery_date">
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="form-group">
+                        <button tabindex="9" type="button" id="SavePBtn" onclick="SavePOData()" class="btn btn-success">Save</button>
+                      
+                            @if (UserType == "Admin")
+                            {
+                                <button type="button" id="ApprovedBtn" onclick="ApprovedPO()" class="btn btn-info">Approved</button>
+                            }                      
+                        <button type="button" onclick="resetPO()" class="btn btn-primary">Cancel</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form id="LoadData1" class="form-inline" style="position:relative">
+        <table id="uTable">
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <input hidden type="text" name="PO_No" id="PONo" />
+                        <label for="Vendor_code" class="control-label">Stock_no</label>
+                        <select name="Stock_no" id="Stock_no" class="chosen-select" tabindex="11" onchange="GetStockQtyPrice(this.value)"></select>
+                        @*Html.DropDownList("Stock_no", (List<SelectListItem>)ViewBag.DDLItemStock,
+                                                               "--Select Stock--", new { @class = "chosen-select", @tabindex = "11", @onchange = "GetStockQtyPrice(this.value)" })*@
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Qty_Pack" class="">Qty/Pack</label>
+                    </div>
+                    <div class="form-group">
+                        <input oninput="this.value = Math.abs(this.value)" onkeyup="CalculateQty()" style="width:100px;" tabindex="12" type="number" name="Qty_Pack" id="Qty_Pack" class="form-control" placeholder="Pak">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="POQty_PerItem" class="">POQty_PerItem</label>
+                    </div>
+                    <div class="form-group">
+                        <input readonly="readonly" onkeyup="CalculatePOExtend_Price()" style="width:100px;" tabindex="12" type="number" name="POQty_PerItem" id="POQty_PerItem" class="form-control" placeholder="POQty_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="POPrice_PerItem" class="">POPrice_PerItem</label>
+                    </div>
+                    <div class="form-group">
+
+                        <input onkeypress="resptrictMinus(event)"  style="width:100px;" onkeyup="CalculatePOExtend_Price()" tabindex="13" type="text" class="form-control" name="POPrice_PerItem" id="POPrice_PerItem" placeholder="POPrice_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Currency" class="">Currency</label>
+                    </div>
+                    <div class="form-group">
+
+                        <select onchange="ChangeCurrency(this.value)" tabindex="13" id="Currency1" name="Currency" class="form-control">
+                            <option value="PKRS">PKRS</option>
+                            <option value="EURO">EURO</option>
+                            <option value="US $">US $</option>
+                        </select>
+
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="CurrExch_rate" class="">CurrExch_rate</label>
+                    </div>
+                    <div class="form-group">
+
+                        <input oninput="this.value = Math.abs(this.value)" style="width:100px;" onkeyup="CalculatePOExtend_Price()" tabindex="13" type="number" class="form-control" name="CurrExch_rate" id="CurrExch_rate" placeholder="CurrExch_rate" value="1">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="POMargin_Percentage" class="">Margin %</label>
+                        <input oninput="this.value = Math.abs(this.value)" style="width:100px;" value="0" onkeyup="CalculatePOExtend_Price()" tabindex="15" type="number" name="POMargin_Percentage" id="POMargin_Percentage" class="form-control" placeholder="POMargin_Percentage">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="POExtend_Price" class="">POExtend_Price</label>
+                        <input tabindex="16" type="text" name="POExtend_Price" id="POExtend_Price" class="form-control" placeholder="POExtend_Price">
+                    </div>
+                </td>
+
+            </tr>
+        </table>
+        <div class="form-group mr_t_20">
+            <button tabindex="19" type="button" id="SaveBtn" onclick="SavePODetailsData()" class="btn btn-success">Save</button>
+            <button type="button" id="UpdatePODetailsBtn" onclick="UpdatePODetailsData()" class="btn btn-success">Update</button>
+            <button type="button" id="DeletePODetailsBtn" onclick="DeletePODetailsData()" class="btn btn-danger">Remove</button>
+            <button type="button" onclick="resetPODetails()" class="btn btn-default">Cancel</button>
+            
+        </div>
+        <div style="position:absolute; right:10px; bottom:2px;">
+            <label>Mark As Received <input type="checkbox" name="name" id="mReceived" /></label>
+        </div>
+    </form>
+    
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="">PO No</th>
+                    <th style="">Stock No</th>
+                    <th style="">Brand Name</th>
+                    <th style="">Generic Name</th>
+                    <th style="">Qty</th>
+                    <th style="">Price/Item</th>
+                    <th style="">Currency</th>
+                    <th style="">CurrExch_rate</th>
+                    <th style="">Margin %</th>
+                    <th style="">Extend_Price</th>
+                    <th style="">Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+    <hr />
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div style="width:330px;">
+                <div>
+                    <label for="PO_CreatedBy" class="pull-left">Created By</label>
+                    <input style="width:200px;" readonly type="text" name="PO_CreatedBy" id="PO_CreatedBy" placeholder="PO_CreatedBy" class="form-control pull-right" />
+                </div>
+                <br>
+                <div style="margin-top:20px;">
+                    <label for="PO_Dept_code" class="pull-left">Dept Code</label>
+                    <input style="width:200px;" readonly type="text" name="PO_Dept_code" id="PO_Dept_code" placeholder="PO_Dept_code" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="PG_ApprovedBy" class="pull-left">PG Approved By</label>
+                    <input style="width:200px;" readonly type="text" name="PG_ApprovedBy" id="PG_ApprovedBy" placeholder="PG_ApprovedBy" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="HOD_ApprovedBy" class="pull-left">HOD Approved By</label>
+                    <input style="width:200px;" readonly type="text" name="HOD_ApprovedBy" id="HOD_ApprovedBy" placeholder="HOD_ApprovedBy" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="DIR_ApprovedBy" class="pull-left">DIR Approved By</label>
+                    <input style="width:200px;" readonly type="text" name="DIR_ApprovedBy" id="DIR_ApprovedBy" placeholder="DIR_ApprovedBy" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="Comments" class="pull-left">Comments</label>
+                    <input style="width:200px;" type="text" name="Comments" id="Comments" placeholder="Comments" class="form-control pull-right" />
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div style="width:330px; float:right;">
+                <div>
+                    <label for="Gross_Amount" class="">Gross Amount</label>
+                    <input style="width:200px;" readonly="readonly" type="text" name="Gross_Amount" id="Gross_Amount" placeholder="Gross_Amount" class="form-control pull-right" />
+                </div>
+                <br />
+                <div>
+                    <label for="Tax_Percentage" class="pull-left">Tax %</label>
+                    <input autocomplete="off" onkeyup="calDown()" style="width:200px;" type="text" name="Tax_Percentage" id="Tax_Percentage" placeholder="Tax_Percentage" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="Disc_Percentage" class="pull-left">Disc %</label>
+                    <input style="width:200px;" autocomplete="off" onkeyup="calDown()" type="text" name="Disc_Percentage" id="Disc_Percentage" placeholder="Disc_Percentage" value="0" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="DIR_ApprovedBy" class="pull-left">NET Amount</label>
+                    <input style="width:200px;" readonly="readonly" type="text" name="NET_Amount" id="NET_Amount" placeholder="NET_Amount" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="AmountBeforeMarg" class="pull-left">Before Marg</label>
+                    <input style="width:200px;" readonly="readonly" type="text" id="AmountBeforeMarg" placeholder="AmountBeforeMarg" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <button onclick="CalculateBottomDisc()" type="button" class="btn btn-default">Save</button>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-6">
+                <div style="float:right; padding-left:50%">
+                    <div class="col-sm-5">
+                        <label for="Gross_Amount" class="">Gross Amount</label>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <input readonly="readonly" type="text" name="Gross_Amount" id="Gross_Amount" placeholder="Gross_Amount" class="form-control" />
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="Tax_Percentage" class="">Tax %</label>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <input autocomplete="off" onkeyup="calDown()" type="text" name="Tax_Percentage" id="Tax_Percentage" placeholder="Tax_Percentage" value="0" class="form-control" />
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="Disc_Percentage" class="">Disc %</label>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <input value="0" autocomplete="off" onkeyup="calDown()" type="text" name="Disc_Percentage" id="Disc_Percentage" placeholder="Disc_Percentage" class="form-control" />
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="NET_Amount" class="">NET Amount</label>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <input readonly="readonly" type="text" name="NET_Amount" id="NET_Amount" placeholder="NET_Amount" class="form-control" />
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="AmountBeforeMarg" class="">Before Marg</label>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <label id="AmountBeforeMarg"></label>
+                    </div>
+                    <div class="col-sm-5">
+                        <label class=""></label>
+                    </div>
+                    <div class="form-group col-sm-7">
+                        <button onclick="CalculateBottomDisc()" type="button" class="btn btn-default">Save</button>
+                    </div>
+                </div>
+            </div>*@
+    </div>
+
+
+</div>
+
+
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="~/Scripts/Messages.js"></script>
+
+
+<script>
+
+    $("#mReceived").hide();
+    $("#mReceived").on('click',function(){
+        var PONo = $("#PONo").val();
+        var chked =$("input#mReceived:checkbox")
+        if(PONo!=""){
+            var len = chked.length;
+            if(chked[0].checked){
+                MarkedAsReceived(PONo, true);
+            }
+            else
+                MarkedAsReceived(PONo, false);
+        }
+        //var check = $('input:checkbox');
+        //$('input:checkbox').attr('checked',true);
+
+        //for(var i=0; i<len; ++i){
+        //alert(i + (chked[i].checked?' checked ':' unchecked ') + chked[i].value);
+
+
+    });
+
+    function MarkedAsReceived(PONo, check){
+        var chked =$("input#mReceived:checkbox")
+        if(chked[0].checked){
+            swal({
+                title: "Are you sure?",
+                text: "Do you want to mark this PO as received",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, Received!",
+                cancelButtonText: "No, cancel plx!",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Purchase/mAsReceived",
+                            data: {PONo:PONo, check:check},
+                            success: function (data) {
+                                if (data.success == true) {
+                                    $('input:checkbox').attr('checked',true);
+                                    swal("Status!", data.message, "success");
+                                }
+                            },
+                            error: function (er) {
+                                alert(er);
+                            }
+                        });
+                    } else {
+                        swal("Cancelled", "Your Data is safe :)", "error");
+                    }
+                });
+        }else{
+            swal({
+                title: "Are you sure?",
+                text: "Do you want to mark this PO as not received",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, Not Received!",
+                cancelButtonText: "No, cancel plx!",
+                closeOnConfirm: false,
+                closeOnCancel: true,
+            },
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Purchase/mAsReceived",
+                    data: {PONo:PONo, check:check},
+                    success: function (data) {
+                        if (data.success == true) {
+                            $('input:checkbox').attr('checked',true);
+                            swal("Status!", data.message, "success");
+                        }
+                    },
+                    error: function (er) {
+                        alert(er);
+                    }
+                });
+            } else {
+                swal("Cancelled", "Your Data is safe :)", "error");
+            }
+        });
+        }
+
+    }
+    function refreshVendor(){
+        $("#Stock_no").empty();
+        $("#Stock_no").append($("<option></option>").val("").html("--No Stock Found--")).trigger('chosen:updated');
+        //$("#Stock_no").val("").trigger('chosen:updated');
+        $("#Vendor_code").val("").trigger('chosen:updated');
+
+    }
+
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+    //$("#PO_No").val(Session["Branch_No"]);
+
+    /////////////////////////////////////// Read Function ////////////////////////////////////////
+    var qty = 0;
+    function GetAllPODetails() {
+
+        resetPODetails();
+        var PO_No = $("#PO_No").val();
+
+        FindPO(PO_No);
+        if (PO_No != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/GetAllPurchaseInTable",
+                data: {
+                    PO_No: PO_No
+                },
+                success: function (data) {
+
+                    if (data.r.length > 0) {
+                        $("#PONo").val(PO_No);
+
+                        $("#PO_CreatedBy").val(data.r[0].PO_CreatedBy);
+                        $("#PO_Dept_code").val(0);
+                        $("#PG_ApprovedBy").val(data.r[0].PG_ApprovedBy);
+                        $("#HOD_ApprovedBy").val(data.r[0].PO_CreatedBy);
+                        $("#DIR_ApprovedBy").val(data.r[0].DIR_ApprovedBy);
+
+                        $("#AmountBeforeMarg").val(data.GrossAmountBefMarg);
+                        $("#Gross_Amount").val(data.gAmount);
+                        $("#Tax_Percentage").val(data.r[0].Tax_Percentage);
+                        $("#Disc_Percentage").val(data.r[0].Disc_Percentage);
+                        $("#NET_Amount").val(data.r[0].NET_Amount);
+                    } else {
+                        // resetPO();
+                        $("#Gross_Amount").val("");
+                        $("#Tax_Percentage").val("");
+                        $("#Disc_Percentage").val("");
+                        $("#NET_Amount").val("");
+                    }
+
+
+                    $("#myDatatable body").html("");
+                    var table = $("#myDatatable").DataTable({
+                        data: data.r,
+
+                        //rowId: 'staffId',
+                        columns: [
+                            { "data": "PO_No", "searchable": false, "orderable": false },
+                            { "data": "Stock_no", "searchable": false, "orderable": false },
+                            { "data": "Brand_name", "searchable": false, "orderable": false },
+                            { "data": "Generic_name", "searchable": false, "orderable": false },
+                            //{
+                            //    "data": "PO_Date", "searchable": false, "orderable": false, "render": function (data) {
+                            //       return ConvertDate(data);
+                            //    }
+                            //},
+                            { "data": "Qty_Pack", "searchable": false, "orderable": false },
+                            { "data": "POPrice_PerItem", "searchable": false, "orderable": false },
+                            { "data": "Currency", "searchable": false, "orderable": false },
+                            { "data": "CurrExch_rate", "searchable": false, "orderable": false },
+                            { "data": "POMargin_Percentage", "searchable": false, "orderable": false },
+                            { "data": "POExtend_Price", "searchable": false, "orderable": false },
+                            { "data": "Status", "searchable": false, "orderable": false }
+                        ],
+                        "order": [[0, "asc"]],
+                        "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                            var r = aData.Stock_no + aData.PO_No;
+                            $(nRow).attr('id', r);
+                            $(nRow).attr('onclick', 'ClickTableRowToGetPOId(this.id)');
+                        },
+                        //"paging": false,
+                        searching: false,                   // for disable search box
+                        select: {
+                            info: false
+                        },
+                        //buttons: [
+                        //    {
+                        //        extend: 'print',
+                        //        className: 'btn btn-primary btn-sm'
+                        //    },
+                        //    {
+                        //        extend: 'excel',
+                        //        filename: 'Stock',
+                        //        sheetName: 'Stock',
+                        //        className: 'btn btn-primary btn-sm'
+                        //    }
+                        //],
+                        //dom: 'lBfrtip',
+                        language: {
+                            search: "", // for hide label of search
+                            searchPlaceholder: "Search Purchase", // place holder of search box
+                        },
+                        responsive: true,
+                        //select: 'single',
+                        select: true,                       // for Select Row
+                        bDestroy: true,                     // this will disable table when new load data
+                        "bLengthChange": false,           //  for Show more Entries
+                        //scrollY: '20vh',
+                        "sScrollX": "100%",
+                        "sScrollXInner": "100%",
+                        "bScrollCollapse": true,
+                        "processing": true,
+                        "bPaginate": false,
+                        //"sPaginationType": "full_numbers",
+                        "langauge": {
+                            "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                        },
+
+
+                    });
+                    $('input[type="search"]').addClass('form-control'); // <-- add this line
+
+                },
+                error: function (er) {
+                    alert(er);
+                }
+            });
+        } else {
+
+        }
+
+    }
+    function FindPO(id) {
+        //alert(id);
+
+        $.ajax({
+            type: "POST",
+            url: "/Purchase/ViewByParameter",
+            data: {
+                PO_No: id
+            },
+            success: function (data) {
+
+                if (data.length > 0) {
+
+                    $("#Customer_Code").val(data[0].Customer_Code).trigger('chosen:updated');
+                    $("#Vendor_code").val(data[0].Vendor_code).trigger('chosen:updated').change();
+
+                    $("#Currency").val(data[0].Currency);
+                    $("#Delivery_status").val(data[0].Delivery_status);
+                    $("#Ship_toCustAddr").val(data[0].Ship_toCustAddr);
+                    $("#Comments").val(data[0].Comments);
+
+                    var DeliveryDate = ConvertDate(data[0].Delivery_date);
+                    var PODate = ConvertDate(data[0].PO_Date);
+
+                    $("#Delivery_date").val(DeliveryDate);
+                    $("#PO_Date").val(PODate);
+
+                    $("#mReceived").show();
+                    if(data[0].Received_Status=="Y"){
+                        $('input:checkbox').attr('checked',true);
+                    }
+                    else{
+                        $('input:checkbox').attr('checked',false);
+                    }
+                } else {
+                    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    var date = new Date();
+                    var dat = date.getDate();
+                    var mon = monthNames[date.getMonth()];
+                    var year = date.getFullYear();
+                    var todayDate = dat + "/" + mon + "/" + year;
+                    $("#PO_Date").val(todayDate);
+
+
+                    date.setDate(date.getDate() + 15);
+                    var dat1 = date.getDate();
+                    var mon1 = monthNames[date.getMonth()];
+                    var year1 = date.getFullYear();
+                    var todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+                    $("#Delivery_date").val(todayDate1);
+                    resetPO();
+                }
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+    }
+    function GetAddressofCust(id) {
+        //alert(id);
+        var CCode = $("#Customer_Code").val();
+        $.ajax({
+            type: "POST",
+            url: "/Purchase/GetAddressofCust",
+            data: {
+                VCode: id,
+                CCode:CCode
+            },
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#Ship_toCustAddr").val(data[0].Address);
+                    $("#Stock_no").empty();
+
+                    $("#Stock_no").append($("<option></option>").val("").html("--Select Stock--")).trigger('chosen:updated');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#Stock_no").append($("<option></option>").val(data[i].Stock_no).html(data[i].Brand_name)).trigger('chosen:updated');
+                    }
+                } else {
+                    warrningMessage("Discount Aproval has expired OR Item not found","NOT AVAILABLE");
+                    $("#Stock_no").empty();
+                    $("#Stock_no").append($("<option></option>").val("").html("--No Stock Found--")).trigger('chosen:updated');
+                }
+
+            },
+            error: function (result) {
+                alert("Connection Error Please retry");
+            }
+        });
+    }
+    function ClickTableRowToGetPOId(id) {
+        var Stockno = id.substring(0, 8);
+        var PoNo = id.substring(8);
+
+        $.ajax({
+            type: "POST",
+            url: "/Purchase/GetPODetailsById",
+            data: {
+                PoNo: PoNo,
+                Stockno: Stockno
+            },
+            success: function (data) {
+
+                $("#UpdatePODetailsBtn").show();
+                $("#DeletePODetailsBtn").show();
+                $("#SaveBtn").hide();
+                // alert(data.Currency);
+                $("#PONo").val(data[0].PO_No);
+                $("#Stock_no").val(data[0].Stock_no).trigger('chosen:updated');
+                $("#Stock_no").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+
+                qty = data[0].Units_PerItem;
+                //alert(data[0].Qty_Pack);
+                $("#Qty_Pack").val(data[0].Qty_Pack);
+                $("#POQty_PerItem").val(data[0].POQty_PerItem);
+                $("#POPrice_PerItem").val(data[0].POPrice_PerItem);
+                $("#Currency1").val(data[0].Currency);
+                $("#CurrExch_rate").val(data[0].CurrExch_rate);
+                //$("#Currency1").val("EURO").prop("selected", true);
+                $("#POMargin_Percentage").val(data[0].POMargin_Percentage);
+                $("#POExtend_Price").val(data[0].POExtend_Price);
+            },
+            error: function (result) {
+                alert("Connection Error Please retry");
+            }
+        });
+    }
+    function GetStockQtyPrice(value) {
+        var CCode = $("#Customer_Code").val();
+        //alert(CCode);
+        $.ajax({
+            type: "POST",
+            url: "/Purchase/GetQuantityOfStock",
+            data: {
+                id: value,
+                CCode:CCode
+            },
+            success: function (data) {
+                qty = 0;
+                qty = data[0].Units_PerItem;
+                $("#POPrice_PerItem").val(data[0].Q_Rate);
+                $("#POQty_PerItem").val(data[0].Units_PerItem);
+                $("#POMargin_Percentage").val(data[0].D_Percentage);
+                //$("#POPrice_PerItem").val(data[0].Current_Price);
+                //$("#POQty_PerItem").val(data[0].Units_PerItem);
+                //$("#POMargin_Percentage").val(data[0].Discount);
+            },
+            error: function (result) {
+                alert("Connection Error Please retry");
+            }
+        });
+    }
+
+    var urlParams = new URLSearchParams(window.location.search);
+
+    //alert(urlParams.toString());
+    //alert(urlParams.get('PO'));
+
+    //ViewByParameter(Url.RequestContext.RouteData.Values["id"]);
+    var url = urlParams.get('PO');
+    //alert(url);
+    ViewByParameter(url);
+    function ViewByParameter(id) {
+
+        if (id != null) {
+            var PO_No = $("#PO_No").val(id).keyup();
+
+        } else { 
+            
+            var id= "0"+@Session["Branch_No"]+"-"+@ViewBag.PO;
+            $("#PO_No").val(id).keyup();
+
+        }
+
+    }
+
+    /////////////////////////////////////// Save Function ////////////////////////////////////////
+    function DeletePODetailsData() {
+
+        var Stock_no = $("#Stock_no").val();
+        var PONo = $("#PONo").val();
+        var code = Stock_no + PONo;
+        if (PONo != "" && Stock_no != "") {
+            var r = confirm("Are you sure you want to delete this record ?");
+            if (r) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Purchase/DeletePODetails",
+                    data: {
+                        PONo: PONo,
+                        Stock_no: Stock_no
+                    },
+                    success: function (data) {
+
+                        if (data.success == true) {
+                            $("#Gross_Amount").val(data.l[0]);
+                            $("#AmountBeforeMarg").val(data.l[1]);
+                            var NET_Amount = $("#NET_Amount").val("");
+                            var Disc = $("#Disc_Percentage").val("");
+                            var Tax = $("#Tax_Percentage").val("");
+
+                            resetPODetails();
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+
+                            DeleteMessage(data.message);
+                        }else{
+                            alert(data.message);
+                        }
+                    },
+                    error: function (er) {
+                        alert(er);
+                    }
+                });
+            }
+
+        } else {
+
+        }
+    }
+    function SavePOData() {
+
+        var Code = $("#Vendor_code").val();
+        var PO_No = $("#PO_No").val();
+        var Customer_Code = $("#Customer_Code").val();
+        var Ship_toCustAddr = $("#Ship_toCustAddr").val();
+        var Currency = $("#Currency").val();
+        var Delivery_date = $("#Delivery_date").val();
+        var Delivery_status = $("#Delivery_status").val();
+        var PO_Date = $("#PO_Date").val();
+        var Comments=$("#Comments").val();
+
+        //alert(PO_No);
+        var str = $("#LoadData").serialize();
+        if (Code != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/SavePO",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#mReceived").show();
+                        var PO_No = $("#PO_No").val();
+                        $("#PONo").val(PO_No);
+                        //GetAllPODetails();
+                        //var table = $("#myDatatable").DataTable();
+
+                        ////var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        //var rowIndex = table.row.add([Code, Name, Generic_name, UNITS_PERITEM, PRICE, Manufacturer_Code]).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+
+                        //var rowIndex = table.row.add({
+                        //    "Stock_no": Code, "Brand_name": Name, "Generic_name": Generic_name, "Units_PerItem": Units_PerItem,
+                        //    "Current_Price": Current_Price, "Manufacturer_Code": Manufacturer_Code
+                        //}).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+                        SaveMessage(data.message);
+                        //resetPO();
+                    } else {
+                        warrningMessage(data.message, "WARNING");
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Some Fields left blank", "INFO");
+
+        }
+
+
+    }
+    function SavePODetailsData() {
+        //alert("save");
+
+        var PONo = $("#PONo").val();
+        var Stock_no = $("#Stock_no").val();
+
+        $("#Stock_no").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+
+        var POQty_PerItem = $("#POQty_PerItem").val();
+        var POPrice_PerItem = $("#POPrice_PerItem").val();
+        var Currency = $("#Currency").val();
+        var CurrExch_rate = $("#CurrExch_rate").val();
+        var POMargin_Percentage = $("#POMargin_Percentage").val();
+        var POExtend_Price = $("#POExtend_Price").val();
+        var Qty_Pack =$("#Qty_Pack").val();
+
+        var str = $("#LoadData1").serialize();
+        if (Stock_no != "" && PONo != "" && POQty_PerItem != "" && POPrice_PerItem != "" && POMargin_Percentage != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/SavePOItemDetails",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#myDatatable body").html("");
+                        var table = $("#myDatatable").DataTable();
+                        $("#AmountBeforeMarg").val(data.l[3]);
+                        $("#Gross_Amount").val(data.l[0]);
+                        $("#Disc_Percentage").val(0);
+                        $("#NET_Amount").val(data.l[0]);
+
+                        $("#PO_CreatedBy").val(data.PoInfo[0]);
+                        $("#PO_Dept_code").val(data.PoInfo[1]);
+                        $("#HOD_ApprovedBy").val(data.PoInfo[2]);
+
+
+                        var rowIndex = table.row.add({
+                            "PO_No": data.data[0].PO_No, "Stock_no": data.data[0].Stock_no, "Brand_name": data.data[0].Brand_name,
+                            "Generic_name": data.data[0].Generic_name, "Qty_Pack": data.data[0].Qty_Pack,
+                            "POPrice_PerItem": data.data[0].POPrice_PerItem, "Currency": data.data[0].Currency,
+                            "CurrExch_rate": data.data[0].CurrExch_rate, "POMargin_Percentage": data.data[0].POMargin_Percentage,
+                            "POExtend_Price": data.data[0].POExtend_Price, "Status": 'N'
+                        }).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Stock_no+PONo);
+                        //$(row).attr('onclick', 'ClickTableRowToGetPOId(this.id)');
+                        resetPODetails();
+                        UpdateMessage(data.message);
+
+                    } else {
+
+                        warrningMessage(data.message, "WARNING");
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            //alert(0);
+            infoMessage("Fill above all fields and then Save", "INFO");
+        }
+
+
+    }
+    function UpdatePODetailsData() {
+        //alert("save");
+        var PONo = $("#PONo").val();
+
+        var Stock_no = $("#Stock_no").val();
+        var POQty_PerItem = $("#POQty_PerItem").val();
+        var POPrice_PerItem = $("#POPrice_PerItem").val();
+        var Currency1 = $("#Currency1").val();
+        var CurrExch_rate = $("#CurrExch_rate").val();
+        var POMargin_Percentage = $("#POMargin_Percentage").val();
+        var POExtend_Price = $("#POExtend_Price").val();
+        var Qty_Pack =$("#Qty_Pack").val();
+
+        var str = $("#LoadData1").serialize();
+        if (Stock_no != "" && PONo != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/UpdatePODetailsData",
+                data: str,
+                success: function (data) {
+
+                    if (data.success == true) {
+                        $("#myDatatable body").html("");
+                        var table = $("#myDatatable").DataTable();
+
+                        $("#Gross_Amount").val(data.l[0]);
+                        $("#AmountBeforeMarg").val(data.l[1]);
+                        $("#Disc_Percentage").val(data.l[2]);
+                        $("#NET_Amount").val(data.l[3]);
+
+
+                        index = table.row('#' + Stock_no + PONo); //1234126
+                        var temp = table.row(index[0]).data();
+                        //alert(CurrExch_rate);
+                        temp.Qty_Pack = Qty_Pack;
+                        temp.POPrice_PerItem = POPrice_PerItem;
+                        temp.Currency = Currency1;
+                        temp.CurrExch_rate = CurrExch_rate;
+                        temp.POMargin_Percentage = POMargin_Percentage;
+                        temp.POExtend_Price = POExtend_Price;
+                        table.row(index[0]).data(temp).draw();
+                        //$(row).attr('id', Stock_no + PONo);
+                        //$(row).attr('onclick', 'ClickTableRowToGetPOId(this.id)');
+                        resetPODetails();
+                        UpdateMessage(data.message);
+
+                        //var Stock_no = $("#Stock_no").val("");
+                        //var POPrice_PerItem = $("#POPrice_PerItem").val("");
+                        //var POMargin_Percentage = $("#POMargin_Percentage").val("");
+                        //var POQty_PerItem = $("#POQty_PerItem").val("");
+                        //var POExtend_Price = $("#POExtend_Price").val("");
+                        //var Item_Desc = $("#Item_Desc").val("");
+
+                        //var Stock_no = $("#Stock_no").val("");
+                        //var POQty_PerItem = $("#POQty_PerItem").val("");
+                        //var POPrice_PerItem = $("#POPrice_PerItem").val("");
+                        //var Currency = $("#Currency").val("");
+                        //var CurrExch_rate = $("#CurrExch_rate").val("");
+                        //var POMargin_Percentage = $("#POMargin_Percentage").val("");
+                        //var POExtend_Price = $("#POExtend_Price").val("");
+                    } else {
+                        warrningMessage(data.message, "WARNING");
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Please Enter PO No & Fill all fields", "INFO");
+        }
+
+
+    }
+    function ApprovedPO() {
+        var Vendor_code = $("#Vendor_code").val();
+        var PO_No = $("#PO_No").val();
+        if (Vendor_code != "" && PO_No != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/ApprovedPO",
+                data: {
+                    PO_No: PO_No
+                },
+                success: function (data) {
+                    UpdateMessage(data.message);
+                },
+                error: function (er) {
+                    alert(er);
+                }
+            })
+
+        } else {
+            infoMessage("Some Fields left blank", "INFO");
+        }
+    }
+
+    /////////////////////////////////////// Calculate Function ////////////////////////////////////////
+    function ChangeCurrency(value) {
+
+        if (value == "PKRS") {
+            $("#CurrExch_rate").val(1);
+
+        }
+        if (value == "EURO") {
+            $("#CurrExch_rate").val(100);
+        }
+        if (value == "US $") {
+            $("#CurrExch_rate").val(150);
+        }
+        $("#CurrExch_rate").keyup();
+    }
+    function CalculateQty() {
+
+        var Qty_Pack = $("#Qty_Pack").val();
+        if (Qty_Pack != "") {
+
+            var r = Qty_Pack * qty;
+            $("#POQty_PerItem").val(r);
+        }
+
+    }
+    function CalculatePOExtend_Price() {
+        //alert(0);
+        //var Qty_Pack = $("#Qty_Pack").val();
+        var POQty_PerItem = $("#POQty_PerItem").val(); //1
+        var POPrice_PerItem = $("#POPrice_PerItem").val(); //191.46
+        var POMargin_Percentage = $("#POMargin_Percentage").val(); // 10
+        var CurrExch_rate = $("#CurrExch_rate").val(); // 1      // 171.31
+        var Qty_Pack = $("#Qty_Pack").val(); // 1      // 171.31
+
+        var Discount = 0;
+        var NetAmount = 0;
+
+        if (CurrExch_rate != "" && POMargin_Percentage != "") {
+            Discount = (Qty_Pack * POPrice_PerItem * CurrExch_rate) * (POMargin_Percentage / 100);
+            NetAmount = (Qty_Pack * POPrice_PerItem * CurrExch_rate) - Discount;
+        }
+        //else {
+        //    Discount = (POQty_PerItem * POPrice_PerItem ) * (POMargin_Percentage / 100);
+        //        NetAmount = (POQty_PerItem * POPrice_PerItem) - Discount;
+        //}
+        var twoPlaces = NetAmount.toFixed(2);
+
+        var POExtend_Price = $("#POExtend_Price").val(twoPlaces);
+        //var POPrice_PerItem = $("#POPrice_PerItem").val(NetAmount);
+
+
+    }
+
+    function calDown() {
+        //var Gross_Amount = $("#Gross_Amount").val();
+        //var Tax_Percentage = $("#Tax_Percentage").val();
+        //var Disc_Percentage = $("#Disc_Percentage").val();
+
+        //var NETAmount = 0
+        //var DisAmount = 0
+        //var TaxPer = 0
+
+        //DisAmount = Gross_Amount * (Tax_Percentage / 100);
+        //TaxPer = Gross_Amount - DisAmount;
+
+        //DisAmount = TaxPer * (Disc_Percentage / 100);
+        //NETAmount = TaxPer - DisAmount;
+        //var NET_Amount = $("#NET_Amount").val(NETAmount);
+        var Gross_Amount = $("#Gross_Amount").val();
+        var Tax_Percentage = $("#Tax_Percentage").val();
+        var Disc_Percentage = $("#Disc_Percentage").val();
+
+        var NETAmount = 0
+        var DisAmount = 0
+        var TaxPer = 0
+
+        if (Tax_Percentage == 0 && Disc_Percentage == 0) {
+            $("#NET_Amount").val(Gross_Amount);
+        } else {
+
+            DisAmount = Gross_Amount * (Tax_Percentage / 100);
+            TaxPer = Gross_Amount - DisAmount;
+
+            DisAmount = TaxPer * (Disc_Percentage / 100);
+            NETAmount = TaxPer - DisAmount;
+            var NET_Amount = $("#NET_Amount").val(NETAmount);
+        }
+
+    }
+    function CalculateBottomDisc() {
+        var NET_Amount = $("#NET_Amount").val();
+        var Disc = $("#Disc_Percentage").val();
+        var Tax = $("#Tax_Percentage").val();
+        var PO_No = $("#PO_No").val();
+
+        if (Disc != "" || Tax != "" && PO_No != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/CalculateBottomDisc",
+                data: {
+                    Disc: Disc,
+                    Tax: Tax,
+                    NET: NET_Amount,
+                    PONO: PO_No
+                },
+                success: function (data) {
+                    toastr.success(data.message, "UPDATED",
+                            options = {
+                                "closeButton": true,
+                                "debug": false,
+                                "progressBar": true,
+                                "preventDuplicates": true,
+                                "positionClass": "toast-top-center",
+                                "onclick": null,
+                                "showDuration": "400",
+                                "hideDuration": "1000",
+                                "timeOut": "7000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                },
+                error: function (result) {
+                    alert("Connection Error Please retry");
+                }
+            });
+        }
+
+    }
+
+    /////////////////////////////////////// Other Function ////////////////////////////////////////
+    function resptrictMinus(e) {
+        var inputKeyCode = e.keyCode ? e.keyCode : e.which;
+        if (inputKeyCode != null) {
+            if (inputKeyCode == 45) e.preventDefault();
+        }
+    }
+
+    function ChangeDateInPO(id) {
+
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date(id);
+        date.setDate(date.getDate() + 15);
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Delivery_date").val(todayDate);
+    }
+
+    $(document).ready(function () {
+        //$("#PONo").val(PO_No);
+
+
+        $("#UpdatePODetailsBtn").hide();
+        $("#DeletePODetailsBtn").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        //document.getElementById('loading').style.display = 'none'; //Not Visible
+
+    });
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "/" + monthNames[dt.getMonth()] + "/" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+    function ToJavaScriptDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthNames = '';
+
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = '';
+            var completedate = '';
+
+            if (results != null) {
+                monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+                dt = new Date(parseFloat(results[1]));
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate().toString();
+                if (day.length == "1") {
+                    day = "0" + day;
+                } else {
+                    day = dt.getDate();
+                }
+                return completedate = year + "-" + mont + "-" + day;
+                //return completedate = dt.getFullYear() + "-" + monthNames[dt.getMonth()] + "-" + dt.getDate();
+            }
+            else {
+                monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                dt = new Date(value);
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate();
+                //return completedate = +dt.getDate(); +"-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                return completedate = day + "-" + mont + "-" + year;
+            }
+        }
+    }
+    function resetPO() {
+        //$('#LoadData')[0].reset();
+        $(".chosen-select").trigger('chosen:updated');
+        var Vendor_code = $("#Vendor_code").val('');
+        $("#Vendor_code").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        var Customer_Code = $("#Customer_Code").val('');
+        $("#Customer_Code").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        //var PO_No = $("#PO_No").val("");
+        var Ship_toCustAddr = $("#Ship_toCustAddr").val("");
+        var Currency = $("#Currency").val("PKRS");
+        //var Delivery_date = $("#Delivery_date").val("");
+        var Delivery_status = $("#Delivery_status").val("N");
+        //var PO_Date = $("#PO_Date").val("");
+    }
+    function resetPODetails() {
+        //var PONo = $("#PONo").val();
+        //$("#LoadData1")[0].reset();
+        $("#UpdatePODetailsBtn").hide();
+        $("#DeletePODetailsBtn").hide();
+        $("#SaveBtn").show();
+        //$(".chosen-select").trigger('chosen:updated');
+        $("#Qty_Pack").val("");
+        var Stock_no = $("#Stock_no").val('');
+        $("#Stock_no").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        var POQty_PerItem = $("#POQty_PerItem").val("");
+        var POPrice_PerItem = $("#POPrice_PerItem").val("");
+        var Currency1 = $("#Currency1").val("PKRS");
+        var CurrExch_rate = $("#CurrExch_rate").val("1");
+        var POMargin_Percentage = $("#POMargin_Percentage").val(0);
+        var POExtend_Price = $("#POExtend_Price").val("");
+    }
+
+
+    $("#PO_Date").datepicker({
+        shownAnim: 'drop',
+        calendarWeeks: true,
+        numberOfMonth: 1,
+        //minDate: minDate,
+        dateFormat: 'dd/M/yy',
+        changeMonth: true,
+        changeYear: true
+    });
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var date = new Date();
+    var dat = date.getDate();
+    var mon = monthNames[date.getMonth()];
+    var year = date.getFullYear();
+    var todayDate = dat + "/" + mon + "/" + year;
+    $("#PO_Date").val(todayDate);
+
+
+    date.setDate(date.getDate() + 15);
+    var dat1 = date.getDate();
+    var mon1 = monthNames[date.getMonth()];
+    var year1 = date.getFullYear();
+    var todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+    $("#Delivery_date").val(todayDate1);
+
+    $("#Delivery_date").datepicker({
+        shownAnim: 'drop',
+        calendarWeeks: true,
+        numberOfMonth: 1,
+        //minDate: minDate,
+        dateFormat: 'dd/M/yy',
+        changeMonth: true,
+        changeYear: true
+    });
+</script>

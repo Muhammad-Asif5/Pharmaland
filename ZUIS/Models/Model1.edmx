@@ -1,0 +1,2914 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Branch">
+          <Key>
+            <PropertyRef Name="Branch_Code" />
+            <PropertyRef Name="DSTB_NO" />
+          </Key>
+          <Property Name="Branch_Code" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="DSTB_NO" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="Company_Code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Branch_Name" Type="varchar" MaxLength="100" />
+          <Property Name="DSTB_IssuedBy" Type="varchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="Branch_Master">
+          <Key>
+            <PropertyRef Name="Branch_No" />
+          </Key>
+          <Property Name="Branch_No" Type="char" MaxLength="2" Nullable="false" />
+          <Property Name="Branch_Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Branch_Abbr" Type="char" MaxLength="3" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City" Type="varchar" MaxLength="50" />
+          <Property Name="Company_Code" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="City_code" />
+          </Key>
+          <Property Name="City_code" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="City_NAME" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="City_ABBR" Type="char" MaxLength="10" />
+          <Property Name="Province" Type="varchar" MaxLength="50" />
+          <Property Name="COUNTRY_code" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <EntityType Name="Company">
+          <Key>
+            <PropertyRef Name="Company_Code" />
+          </Key>
+          <Property Name="Company_Code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Company_name" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="Company_ABBR" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="Branch_Code" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="DSTB_NO" Type="varchar" MaxLength="4" />
+          <Property Name="HOD" Type="varchar" MaxLength="100" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City_code" Type="varchar" MaxLength="3" />
+          <Property Name="REGION" Type="varchar" MaxLength="30" />
+          <Property Name="Country_code" Type="char" MaxLength="3" />
+          <Property Name="POSTAL_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="TEL_NO" Type="varchar" MaxLength="20" />
+          <Property Name="FAX_NO" Type="varchar" MaxLength="20" />
+          <Property Name="EMAIL" Type="varchar" MaxLength="30" />
+          <Property Name="Mobile_No" Type="varchar" MaxLength="20" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="Country_code" />
+          </Key>
+          <Property Name="Country_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Country_Name" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="Country_Abbr" Type="char" MaxLength="10" />
+          <Property Name="Nationality" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="Customer_code" />
+          </Key>
+          <Property Name="Customer_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Cust_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="City_code" Type="varchar" MaxLength="2" />
+          <Property Name="Contact_Person" Type="varchar" MaxLength="50" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City" Type="varchar" MaxLength="30" />
+          <Property Name="Region" Type="varchar" MaxLength="30" />
+          <Property Name="Country_code" Type="char" MaxLength="3" />
+          <Property Name="Postal_Code" Type="varchar" MaxLength="20" />
+          <Property Name="Tel_No" Type="varchar" MaxLength="20" />
+          <Property Name="Fax_No" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="varchar" MaxLength="30" />
+          <Property Name="Mobile_No" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Discount_Approval">
+          <Key>
+            <PropertyRef Name="vendor_code" />
+            <PropertyRef Name="Customer_code" />
+            <PropertyRef Name="SNO" />
+          </Key>
+          <Property Name="vendor_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Customer_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="SNO" Type="int" Nullable="false" />
+          <Property Name="Valid_Date_from" Type="date" Nullable="false" />
+          <Property Name="Valid_Date_to" Type="date" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="UserID" Type="varchar" MaxLength="50" />
+          <Property Name="Created_Date" Type="datetime" />
+          <Property Name="Update_Date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Discount_ApprovalDET">
+          <Key>
+            <PropertyRef Name="vendor_code" />
+            <PropertyRef Name="Customer_code" />
+            <PropertyRef Name="SNO" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="vendor_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Customer_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="SNO" Type="int" Nullable="false" />
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Q_Percentage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="Q_Rate" Type="decimal" Precision="7" Scale="2" />
+          <Property Name="D_Percentage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="D_Rate" Type="decimal" Precision="7" Scale="2" />
+          <Property Name="Cum_Dis" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Expected_BsUnits" Type="decimal" Precision="10" Scale="0" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Emp_ID" />
+          </Key>
+          <Property Name="Emp_ID" Type="int" Nullable="false" />
+          <Property Name="User_id" Type="varchar" MaxLength="50" />
+          <Property Name="Emp_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="User_name" Type="nchar" MaxLength="10" />
+          <Property Name="User_password" Type="nchar" MaxLength="10" />
+          <Property Name="Group_id" Type="nchar" MaxLength="10" />
+          <Property Name="Authorize_Status" Type="nchar" MaxLength="10" />
+          <Property Name="Login_status" Type="nchar" MaxLength="10" />
+          <Property Name="User_desc" Type="nchar" MaxLength="10" />
+          <Property Name="DOB" Type="date" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City" Type="varchar" MaxLength="30" />
+          <Property Name="Region" Type="varchar" MaxLength="30" />
+          <Property Name="Country_code" Type="char" MaxLength="3" />
+          <Property Name="Postal_Code" Type="varchar" MaxLength="20" />
+          <Property Name="Tel_No" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="varchar" MaxLength="30" />
+          <Property Name="Mobile_No" Type="varchar" MaxLength="20" />
+          <Property Name="Dept_Code" Type="char" MaxLength="3" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+        </EntityType>
+        <EntityType Name="Item_Stock">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Brand_name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Generic_name" Type="varchar" MaxLength="100" />
+          <Property Name="Units_PerItem" Type="int" Nullable="false" />
+          <Property Name="Trade_PriceItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Item_Discount" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Current_Price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Discount" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="PPrice" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Manufacturer_Code" Type="char" MaxLength="3" />
+          <Property Name="Item_Type" Type="char" MaxLength="1" />
+          <Property Name="Weight_Unit" Type="varchar" MaxLength="10" />
+          <Property Name="Item_Desc" Type="varchar" MaxLength="255" />
+          <Property Name="BARCODE" Type="varchar" MaxLength="25" />
+          <Property Name="Available_status" Type="char" MaxLength="1" />
+          <Property Name="Location" Type="varchar" MaxLength="30" />
+          <Property Name="RefStock_no" Type="char" MaxLength="8" />
+          <Property Name="Record_date" Type="datetime" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+          <Property Name="AltStock_No" Type="char" MaxLength="7" />
+          <Property Name="GroupNo" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Language">
+          <Key>
+            <PropertyRef Name="Lang_Code" />
+          </Key>
+          <Property Name="Lang_Code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Lang_name" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Manufacture">
+          <Key>
+            <PropertyRef Name="Manufacturer_Code" />
+          </Key>
+          <Property Name="Manufacturer_Code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="M_Name" Type="varchar" MaxLength="50" />
+          <Property Name="M_ShortName" Type="varchar" MaxLength="50" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City" Type="varchar" MaxLength="50" />
+          <Property Name="Tel_no" Type="varchar" MaxLength="12" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="Menu_ID" />
+          </Key>
+          <Property Name="Menu_ID" Type="int" Nullable="false" />
+          <Property Name="Menu_Title" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Abbr" Type="varchar" MaxLength="30" />
+          <Property Name="Note" Type="varchar" MaxLength="200" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Serial_no" Type="int" />
+          <Property Name="Action" Type="varchar" MaxLength="30" />
+          <Property Name="Controller_name" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Menu_User">
+          <Key>
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="Menu_id" />
+          </Key>
+          <Property Name="user_id" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Menu_id" Type="int" Nullable="false" />
+          <Property Name="AddEditDel" Type="varchar" MaxLength="10" />
+          <Property Name="IsFavourite" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="Created_Date" Type="date" />
+          <Property Name="DisplayOrder" Type="int" Nullable="false" />
+          <Property Name="Menu_Group" Type="char" MaxLength="2" />
+        </EntityType>
+        <EntityType Name="Menu_UserReg">
+          <Key>
+            <PropertyRef Name="User_id" />
+          </Key>
+          <Property Name="User_id" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="User_Password" Type="varchar" MaxLength="20" />
+          <Property Name="Emp_ID" Type="int" Nullable="false" />
+          <Property Name="Login_Date" Type="date" />
+          <Property Name="IP_Addr" Type="varchar" MaxLength="100" />
+          <Property Name="UserType" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="MenuType" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="MAC" Type="varchar" MaxLength="100" />
+          <Property Name="EnteredBy" Type="varchar" MaxLength="50" />
+          <Property Name="EnteredOn" Type="date" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedOn" Type="date" />
+          <Property Name="Comments" Type="varchar" MaxLength="500" />
+          <Property Name="SendLogin_Email" Type="int" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="PO_ItemDetail">
+          <Key>
+            <PropertyRef Name="PO_No" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="PO_No" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="POPrice_PerItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="POQty_PerItem" Type="int" Nullable="false" />
+          <Property Name="Currency" Type="char" MaxLength="4" />
+          <Property Name="CurrExch_rate" Type="decimal" Precision="7" Scale="4" />
+          <Property Name="POMargin_Percentage" Type="decimal" Precision="12" Scale="4" Nullable="false" />
+          <Property Name="POExtend_Price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Qty_Pack" Type="int" />
+        </EntityType>
+        <EntityType Name="Purchase_Order">
+          <Key>
+            <PropertyRef Name="PO_No" />
+          </Key>
+          <Property Name="PO_No" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="PO_Title" Type="varchar" MaxLength="50" />
+          <Property Name="PO_Date" Type="datetime" Nullable="false" />
+          <Property Name="Delivery_date" Type="date" />
+          <Property Name="Delivery_status" Type="char" MaxLength="1" />
+          <Property Name="Currency" Type="varchar" MaxLength="4" />
+          <Property Name="Gross_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Customer_Code" Type="char" MaxLength="3" />
+          <Property Name="Ship_toCustAddr" Type="varchar" MaxLength="100" />
+          <Property Name="Ship_toCustCity" Type="varchar" MaxLength="100" />
+          <Property Name="Ship_Via" Type="varchar" MaxLength="10" />
+          <Property Name="Vendor_code" Type="char" MaxLength="3" />
+          <Property Name="PO_CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="PO_Dept_code" Type="char" MaxLength="3" />
+          <Property Name="PG_ApprovedBy" Type="int" />
+          <Property Name="HOD_ApprovedBy" Type="int" />
+          <Property Name="DIR_ApprovedBy" Type="int" />
+          <Property Name="Comments" Type="varchar" MaxLength="100" />
+          <Property Name="Received_Status" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Sale_InvDET">
+          <Key>
+            <PropertyRef Name="Invoice_no" />
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="SNO" />
+          </Key>
+          <Property Name="Invoice_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="SNO" Type="int" Nullable="false" />
+          <Property Name="SPrice_PerItem" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="SPrice_PerUnit" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="SQty" Type="int" Nullable="false" />
+          <Property Name="Expiry_Date" Type="date" />
+          <Property Name="Batch_NO" Type="varchar" MaxLength="50" />
+          <Property Name="Trade_PriceItem" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="Tax_Percentage" Type="decimal" Precision="6" Scale="3" />
+          <Property Name="Tax_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_Currency" Type="decimal" Precision="12" Scale="2" />
+          <Property Name="Currency_Rate" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Sold_Status" Type="char" MaxLength="1" />
+          <Property Name="Supp_InvNo" Type="varchar" MaxLength="50" />
+          <Property Name="Supp_Invno1" Type="varchar" MaxLength="50" />
+          <Property Name="TSPrice_PerItem" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="PPrice_PerItem" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="Serial_no" Type="int" />
+          <Property Name="Record_date" Type="datetime" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Sale_Invoice">
+          <Key>
+            <PropertyRef Name="Invoice_no" />
+          </Key>
+          <Property Name="Invoice_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="Invoice_date" Type="datetime" Nullable="false" />
+          <Property Name="Invoice_type" Type="char" MaxLength="1" />
+          <Property Name="SO_No" Type="char" MaxLength="10" />
+          <Property Name="SO_Date" Type="datetime" />
+          <Property Name="Delivery_date" Type="date" />
+          <Property Name="Delivery_status" Type="char" MaxLength="1" />
+          <Property Name="Currency" Type="varchar" MaxLength="4" />
+          <Property Name="Gross_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Ship_toCustAddr" Type="varchar" MaxLength="100" />
+          <Property Name="Ship_toCustCity" Type="varchar" MaxLength="100" />
+          <Property Name="Contact_Person" Type="varchar" MaxLength="50" />
+          <Property Name="Ship_Via" Type="varchar" MaxLength="10" />
+          <Property Name="Shipper_code" Type="char" MaxLength="3" />
+          <Property Name="Customer_Code" Type="char" MaxLength="3" />
+          <Property Name="Comments" Type="varchar" MaxLength="100" />
+          <Property Name="Record_date" Type="datetime" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Sales_order">
+          <Key>
+            <PropertyRef Name="SO_No" />
+          </Key>
+          <Property Name="SO_No" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="SO_Date" Type="datetime" Nullable="false" />
+          <Property Name="CustPO_No" Type="varchar" MaxLength="30" />
+          <Property Name="CustPO_Date" Type="datetime" />
+          <Property Name="PO_No" Type="varchar" MaxLength="30" />
+          <Property Name="Customer_Code" Type="char" MaxLength="3" />
+          <Property Name="Ship_toCustAddr" Type="varchar" MaxLength="100" />
+          <Property Name="Ship_toCustCity" Type="varchar" MaxLength="100" />
+          <Property Name="Delivery_date" Type="date" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Gross_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Record_date" Type="datetime" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Shipper">
+          <Key>
+            <PropertyRef Name="Shipper_code" />
+          </Key>
+          <Property Name="Shipper_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="Shipper_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Contact_Person" Type="varchar" MaxLength="50" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City_code" Type="varchar" MaxLength="3" />
+          <Property Name="Region" Type="varchar" MaxLength="30" />
+          <Property Name="Country_code" Type="char" MaxLength="3" />
+          <Property Name="Postal_Code" Type="varchar" MaxLength="20" />
+          <Property Name="Tel_No" Type="varchar" MaxLength="20" />
+          <Property Name="Fax_No" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="varchar" MaxLength="30" />
+          <Property Name="Mobile_No" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="SO_ItemDetail">
+          <Key>
+            <PropertyRef Name="SO_No" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="SO_No" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Currency" Type="char" MaxLength="4" />
+          <Property Name="CurrExch_rate" Type="decimal" Precision="7" Scale="4" />
+          <Property Name="SOPrice_PerItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SOQty_PerItem" Type="int" Nullable="false" />
+          <Property Name="SOMargin_Percentage" Type="decimal" Precision="12" Scale="4" />
+          <Property Name="SOExtend_Price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Serial_no" Type="int" />
+        </EntityType>
+        <EntityType Name="Stock_Receipt">
+          <Key>
+            <PropertyRef Name="Supp_Invno" />
+          </Key>
+          <Property Name="Supp_Invno" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="AltSupp_Invno" Type="varchar" MaxLength="50" />
+          <Property Name="Invoice_Date" Type="date" />
+          <Property Name="vendor_code" Type="char" MaxLength="3" />
+          <Property Name="Received_date" Type="datetime" />
+          <Property Name="Total_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Payment_Type" Type="char" MaxLength="1" />
+          <Property Name="Disc_amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PO_NO" Type="char" MaxLength="10" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Received_by" Type="varchar" MaxLength="30" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+          <Property Name="Currency" Type="char" MaxLength="4" />
+          <Property Name="Comments" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Stock_ReceiptDET">
+          <Key>
+            <PropertyRef Name="Supp_Invno" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="Supp_Invno" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Items_Received" Type="int" />
+          <Property Name="PQty_PerItem" Type="int" />
+          <Property Name="Units_PerItem" Type="int" />
+          <Property Name="POMargin_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_PerItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SPrice_PerItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_Currency" Type="decimal" Precision="12" Scale="2" />
+          <Property Name="Currency_Rate" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="WPrice_PerItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Expiry_Date" Type="date" />
+          <Property Name="Batch_NO" Type="varchar" MaxLength="50" />
+          <Property Name="Tot_PPriceItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_PerUnit" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SPrice_PerUnit" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Trade_PriceItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Tax_Amount" Type="int" />
+          <Property Name="Received_Status" Type="char" MaxLength="1" />
+          <Property Name="Items_Available" Type="int" />
+          <Property Name="Record_date" Type="datetime" />
+          <Property Name="Serial_no" Type="int" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="vendor_code" />
+          </Key>
+          <Property Name="vendor_code" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="vendor_Title" Type="char" MaxLength="3" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Contact_Person" Type="varchar" MaxLength="50" />
+          <Property Name="Address" Type="varchar" MaxLength="100" />
+          <Property Name="City" Type="varchar" MaxLength="30" />
+          <Property Name="Region" Type="varchar" MaxLength="30" />
+          <Property Name="Country_code" Type="char" MaxLength="3" />
+          <Property Name="Postal_Code" Type="varchar" MaxLength="20" />
+          <Property Name="Tel_No" Type="varchar" MaxLength="20" />
+          <Property Name="Fax_No" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="varchar" MaxLength="30" />
+          <Property Name="Alt_Address" Type="varchar" MaxLength="100" />
+          <Property Name="Alt_City" Type="varchar" MaxLength="30" />
+          <Property Name="Alt_Country" Type="char" MaxLength="3" />
+          <Property Name="Lang_Code" Type="char" MaxLength="3" />
+          <Property Name="Record_date" Type="datetime" />
+          <Property Name="User_id" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ZUIS.dbo.StockTextrpt' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="StockTextrpt">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+          </Key>
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Brand_name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Items_Available" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ZUIS.dbo.V_InventoryWithSum' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="V_InventoryWithSum">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+          </Key>
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Brand_name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Items_Available" Type="int" />
+          <Property Name="M_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Manufacturer_Code" Type="char" MaxLength="3" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ZUIS.dbo.V_MerckRPT' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="V_MerckRPT">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+            <PropertyRef Name="Units_PerItem" />
+          </Key>
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="Brand_name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Trade_PriceItem" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Units_PerItem" Type="int" Nullable="false" />
+          <Property Name="Items_Available" Type="int" />
+          <Property Name="Manufacturer_Code" Type="char" MaxLength="3" />
+          <Property Name="GroupNo" Type="varchar" MaxLength="30" />
+          <Property Name="SQty" Type="int" />
+          <Property Name="Items_Received" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ZUIS.dbo.V_PBCustomer' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="V_PBCustomer">
+          <Key>
+            <PropertyRef Name="PO_No" />
+            <PropertyRef Name="PO_Date" />
+            <PropertyRef Name="Cust_Name" />
+          </Key>
+          <Property Name="PO_No" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="Branch_No" Type="char" MaxLength="2" />
+          <Property Name="PO_Title" Type="varchar" MaxLength="50" />
+          <Property Name="PO_Date" Type="datetime" Nullable="false" />
+          <Property Name="Delivery_date" Type="date" />
+          <Property Name="Delivery_status" Type="char" MaxLength="1" />
+          <Property Name="Currency" Type="varchar" MaxLength="4" />
+          <Property Name="Gross_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Customer_Code" Type="char" MaxLength="3" />
+          <Property Name="Ship_toCustAddr" Type="varchar" MaxLength="100" />
+          <Property Name="Ship_toCustCity" Type="varchar" MaxLength="100" />
+          <Property Name="Ship_Via" Type="varchar" MaxLength="10" />
+          <Property Name="Vendor_code" Type="char" MaxLength="3" />
+          <Property Name="PO_CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="PO_Dept_code" Type="char" MaxLength="3" />
+          <Property Name="PG_ApprovedBy" Type="int" />
+          <Property Name="HOD_ApprovedBy" Type="int" />
+          <Property Name="DIR_ApprovedBy" Type="int" />
+          <Property Name="Comments" Type="varchar" MaxLength="100" />
+          <Property Name="Received_Status" Type="char" MaxLength="1" />
+          <Property Name="Cust_Name" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ZUIS.dbo.V_StockInventory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="V_StockInventory">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+            <PropertyRef Name="Batch_NO" />
+            <PropertyRef Name="Items_Available" />
+            <PropertyRef Name="DSTB_NO" />
+            <PropertyRef Name="Branch_Code" />
+          </Key>
+          <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="AltStock_No" Type="char" MaxLength="7" />
+          <Property Name="Brand_name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Batch_NO" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Items_Available" Type="int" Nullable="false" />
+          <Property Name="DSTB_NO" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="Branch_Code" Type="varchar" MaxLength="2" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ALTCountry_code">
+          <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Country_code" />
+            </Principal>
+            <Dependent Role="Vendor">
+              <PropertyRef Name="Alt_Country" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BCCode">
+          <End Role="Company" Type="Self.Company" Multiplicity="1" />
+          <End Role="Branch" Type="Self.Branch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Company">
+              <PropertyRef Name="Company_Code" />
+            </Principal>
+            <Dependent Role="Branch">
+              <PropertyRef Name="Company_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Country_code">
+          <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Country_code" />
+            </Principal>
+            <Dependent Role="Vendor">
+              <PropertyRef Name="Country_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Customer_code">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Discount_Approval" Type="Self.Discount_Approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Discount_Approval">
+              <PropertyRef Name="Customer_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DAppDetStock_no">
+          <End Role="Item_Stock" Type="Self.Item_Stock" Multiplicity="1" />
+          <End Role="Discount_ApprovalDET" Type="Self.Discount_ApprovalDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item_Stock">
+              <PropertyRef Name="Stock_no" />
+            </Principal>
+            <Dependent Role="Discount_ApprovalDET">
+              <PropertyRef Name="Stock_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DIR_Empno">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="DIR_ApprovedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscAppvend_code">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Discount_Approval" Type="Self.Discount_Approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="vendor_code" />
+            </Principal>
+            <Dependent Role="Discount_Approval">
+              <PropertyRef Name="vendor_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EMPCountry_code">
+          <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Country_code" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Country_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Employee_Branch_Master">
+          <End Role="Branch_Master" Type="Self.Branch_Master" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch_Master">
+              <PropertyRef Name="Branch_No" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Branch_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HOD_Empno">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="HOD_ApprovedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_INVSale_InvDET">
+          <End Role="Sale_Invoice" Type="Self.Sale_Invoice" Multiplicity="1" />
+          <End Role="Sale_InvDET" Type="Self.Sale_InvDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sale_Invoice">
+              <PropertyRef Name="Invoice_no" />
+            </Principal>
+            <Dependent Role="Sale_InvDET">
+              <PropertyRef Name="Invoice_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Item_Stock_Manufacture">
+          <End Role="Manufacture" Type="Self.Manufacture" Multiplicity="0..1" />
+          <End Role="Item_Stock" Type="Self.Item_Stock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Manufacture">
+              <PropertyRef Name="Manufacturer_Code" />
+            </Principal>
+            <Dependent Role="Item_Stock">
+              <PropertyRef Name="Manufacturer_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemDet_PO_No">
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="1" />
+          <End Role="PO_ItemDetail" Type="Self.PO_ItemDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Purchase_Order">
+              <PropertyRef Name="PO_No" />
+            </Principal>
+            <Dependent Role="PO_ItemDetail">
+              <PropertyRef Name="PO_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemDet_Stock">
+          <End Role="Item_Stock" Type="Self.Item_Stock" Multiplicity="1" />
+          <End Role="SO_ItemDetail" Type="Self.SO_ItemDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item_Stock">
+              <PropertyRef Name="Stock_no" />
+            </Principal>
+            <Dependent Role="SO_ItemDetail">
+              <PropertyRef Name="Stock_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Lang_code">
+          <End Role="Language" Type="Self.Language" Multiplicity="0..1" />
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Language">
+              <PropertyRef Name="Lang_Code" />
+            </Principal>
+            <Dependent Role="Vendor">
+              <PropertyRef Name="Lang_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_muser_mid">
+          <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
+          <End Role="Menu_User" Type="Self.Menu_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="Menu_ID" />
+            </Principal>
+            <Dependent Role="Menu_User">
+              <PropertyRef Name="Menu_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_muser_urid">
+          <End Role="Menu_UserReg" Type="Self.Menu_UserReg" Multiplicity="1" />
+          <End Role="Menu_User" Type="Self.Menu_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu_UserReg">
+              <PropertyRef Name="User_id" />
+            </Principal>
+            <Dependent Role="Menu_User">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PG_Empno">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="PG_ApprovedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PO_Cust">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="0..1" />
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="Customer_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Purchase_Order_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="vendor_code" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="Vendor_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_InvoiceCustCode">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="0..1" />
+          <End Role="Sale_Invoice" Type="Self.Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="Customer_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_Invoiceship">
+          <End Role="Shipper" Type="Self.Shipper" Multiplicity="0..1" />
+          <End Role="Sale_Invoice" Type="Self.Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shipper">
+              <PropertyRef Name="Shipper_code" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="Shipper_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_InvoiceSO">
+          <End Role="Sales_order" Type="Self.Sales_order" Multiplicity="0..1" />
+          <End Role="Sale_Invoice" Type="Self.Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sales_order">
+              <PropertyRef Name="SO_No" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="SO_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvBr">
+          <End Role="Branch_Master" Type="Self.Branch_Master" Multiplicity="0..1" />
+          <End Role="Sale_Invoice" Type="Self.Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch_Master">
+              <PropertyRef Name="Branch_No" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="Branch_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_Receipt_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="Stock_Receipt" Type="Self.Stock_Receipt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="vendor_code" />
+            </Principal>
+            <Dependent Role="Stock_Receipt">
+              <PropertyRef Name="vendor_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_ReceiptDET_Stock_Receipt">
+          <End Role="Stock_Receipt" Type="Self.Stock_Receipt" Multiplicity="1" />
+          <End Role="Stock_ReceiptDET" Type="Self.Stock_ReceiptDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stock_Receipt">
+              <PropertyRef Name="Supp_Invno" />
+            </Principal>
+            <Dependent Role="Stock_ReceiptDET">
+              <PropertyRef Name="Supp_Invno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_ReceiptPO">
+          <End Role="Purchase_Order" Type="Self.Purchase_Order" Multiplicity="0..1" />
+          <End Role="Stock_Receipt" Type="Self.Stock_Receipt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Purchase_Order">
+              <PropertyRef Name="PO_No" />
+            </Principal>
+            <Dependent Role="Stock_Receipt">
+              <PropertyRef Name="PO_NO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuppSale_InvDET">
+          <End Role="Stock_Receipt" Type="Self.Stock_Receipt" Multiplicity="0..1" />
+          <End Role="Sale_InvDET" Type="Self.Sale_InvDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stock_Receipt">
+              <PropertyRef Name="Supp_Invno" />
+            </Principal>
+            <Dependent Role="Sale_InvDET">
+              <PropertyRef Name="Supp_InvNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_UserReg_user_Empid">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="Menu_UserReg" Type="Self.Menu_UserReg" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Menu_UserReg">
+              <PropertyRef Name="Emp_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VCSNO_DApp">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Discount_Approval" Type="Self.Discount_Approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Discount_Approval">
+              <PropertyRef Name="Customer_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VCSNO_DAppDet">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Discount_ApprovalDET" Type="Self.Discount_ApprovalDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Discount_ApprovalDET">
+              <PropertyRef Name="Customer_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="v_StockTextrpt" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="VCode" Type="varchar" Mode="In" />
+          <Parameter Name="receivedDate" Type="datetime" Mode="In" />
+          <Parameter Name="receivedDate1" Type="datetime" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="Stock_no" Type="char" MaxLength="8" Nullable="false" />
+                <Property Name="Brand_name" Type="varchar" MaxLength="100" Nullable="false" />
+                <Property Name="Items_Available" Type="int" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <EntityContainer Name="ModelStoreContainer">
+          <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Branch_Master" EntityType="Self.Branch_Master" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Discount_Approval" EntityType="Self.Discount_Approval" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Discount_ApprovalDET" EntityType="Self.Discount_ApprovalDET" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Item_Stock" EntityType="Self.Item_Stock" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Language" EntityType="Self.Language" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Manufacture" EntityType="Self.Manufacture" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu" EntityType="Self.Menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu_User" EntityType="Self.Menu_User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Menu_UserReg" EntityType="Self.Menu_UserReg" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PO_ItemDetail" EntityType="Self.PO_ItemDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Purchase_Order" EntityType="Self.Purchase_Order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sale_InvDET" EntityType="Self.Sale_InvDET" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sale_Invoice" EntityType="Self.Sale_Invoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sales_order" EntityType="Self.Sales_order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Shipper" EntityType="Self.Shipper" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SO_ItemDetail" EntityType="Self.SO_ItemDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stock_Receipt" EntityType="Self.Stock_Receipt" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stock_ReceiptDET" EntityType="Self.Stock_ReceiptDET" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StockTextrpt" EntityType="Self.StockTextrpt" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [StockTextrpt].[Stock_no] AS [Stock_no], 
+    [StockTextrpt].[Brand_name] AS [Brand_name], 
+    [StockTextrpt].[Items_Available] AS [Items_Available]
+    FROM [dbo].[StockTextrpt] AS [StockTextrpt]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="V_InventoryWithSum" EntityType="Self.V_InventoryWithSum" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [V_InventoryWithSum].[Stock_no] AS [Stock_no], 
+    [V_InventoryWithSum].[Brand_name] AS [Brand_name], 
+    [V_InventoryWithSum].[Items_Available] AS [Items_Available], 
+    [V_InventoryWithSum].[M_Name] AS [M_Name], 
+    [V_InventoryWithSum].[Manufacturer_Code] AS [Manufacturer_Code], 
+    [V_InventoryWithSum].[Branch_No] AS [Branch_No]
+    FROM [dbo].[V_InventoryWithSum] AS [V_InventoryWithSum]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="V_MerckRPT" EntityType="Self.V_MerckRPT" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [V_MerckRPT].[Stock_no] AS [Stock_no], 
+    [V_MerckRPT].[Brand_name] AS [Brand_name], 
+    [V_MerckRPT].[Trade_PriceItem] AS [Trade_PriceItem], 
+    [V_MerckRPT].[Units_PerItem] AS [Units_PerItem], 
+    [V_MerckRPT].[Items_Available] AS [Items_Available], 
+    [V_MerckRPT].[Manufacturer_Code] AS [Manufacturer_Code], 
+    [V_MerckRPT].[GroupNo] AS [GroupNo], 
+    [V_MerckRPT].[SQty] AS [SQty], 
+    [V_MerckRPT].[Items_Received] AS [Items_Received]
+    FROM [dbo].[V_MerckRPT] AS [V_MerckRPT]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="V_PBCustomer" EntityType="Self.V_PBCustomer" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [V_PBCustomer].[PO_No] AS [PO_No], 
+    [V_PBCustomer].[Branch_No] AS [Branch_No], 
+    [V_PBCustomer].[PO_Title] AS [PO_Title], 
+    [V_PBCustomer].[PO_Date] AS [PO_Date], 
+    [V_PBCustomer].[Delivery_date] AS [Delivery_date], 
+    [V_PBCustomer].[Delivery_status] AS [Delivery_status], 
+    [V_PBCustomer].[Currency] AS [Currency], 
+    [V_PBCustomer].[Gross_Amount] AS [Gross_Amount], 
+    [V_PBCustomer].[Tax_Percentage] AS [Tax_Percentage], 
+    [V_PBCustomer].[Disc_Percentage] AS [Disc_Percentage], 
+    [V_PBCustomer].[NET_Amount] AS [NET_Amount], 
+    [V_PBCustomer].[Customer_Code] AS [Customer_Code], 
+    [V_PBCustomer].[Ship_toCustAddr] AS [Ship_toCustAddr], 
+    [V_PBCustomer].[Ship_toCustCity] AS [Ship_toCustCity], 
+    [V_PBCustomer].[Ship_Via] AS [Ship_Via], 
+    [V_PBCustomer].[Vendor_code] AS [Vendor_code], 
+    [V_PBCustomer].[PO_CreatedBy] AS [PO_CreatedBy], 
+    [V_PBCustomer].[PO_Dept_code] AS [PO_Dept_code], 
+    [V_PBCustomer].[PG_ApprovedBy] AS [PG_ApprovedBy], 
+    [V_PBCustomer].[HOD_ApprovedBy] AS [HOD_ApprovedBy], 
+    [V_PBCustomer].[DIR_ApprovedBy] AS [DIR_ApprovedBy], 
+    [V_PBCustomer].[Comments] AS [Comments], 
+    [V_PBCustomer].[Received_Status] AS [Received_Status], 
+    [V_PBCustomer].[Cust_Name] AS [Cust_Name]
+    FROM [dbo].[V_PBCustomer] AS [V_PBCustomer]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="V_StockInventory" EntityType="Self.V_StockInventory" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [V_StockInventory].[Stock_no] AS [Stock_no], 
+    [V_StockInventory].[AltStock_No] AS [AltStock_No], 
+    [V_StockInventory].[Brand_name] AS [Brand_name], 
+    [V_StockInventory].[Batch_NO] AS [Batch_NO], 
+    [V_StockInventory].[Items_Available] AS [Items_Available], 
+    [V_StockInventory].[DSTB_NO] AS [DSTB_NO], 
+    [V_StockInventory].[Branch_Code] AS [Branch_Code]
+    FROM [dbo].[V_StockInventory] AS [V_StockInventory]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_ALTCountry_code" Association="Self.FK_ALTCountry_code">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Vendor" EntitySet="Vendor" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BCCode" Association="Self.FK_BCCode">
+            <End Role="Company" EntitySet="Company" />
+            <End Role="Branch" EntitySet="Branch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Country_code" Association="Self.FK_Country_code">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Vendor" EntitySet="Vendor" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customer_code" Association="Self.FK_Customer_code">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Discount_Approval" EntitySet="Discount_Approval" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DAppDetStock_no" Association="Self.FK_DAppDetStock_no">
+            <End Role="Item_Stock" EntitySet="Item_Stock" />
+            <End Role="Discount_ApprovalDET" EntitySet="Discount_ApprovalDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DIR_Empno" Association="Self.FK_DIR_Empno">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscAppvend_code" Association="Self.FK_DiscAppvend_code">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Discount_Approval" EntitySet="Discount_Approval" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EMPCountry_code" Association="Self.FK_EMPCountry_code">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Employee_Branch_Master" Association="Self.FK_Employee_Branch_Master">
+            <End Role="Branch_Master" EntitySet="Branch_Master" />
+            <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HOD_Empno" Association="Self.FK_HOD_Empno">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_INVSale_InvDET" Association="Self.FK_INVSale_InvDET">
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+            <End Role="Sale_InvDET" EntitySet="Sale_InvDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Item_Stock_Manufacture" Association="Self.FK_Item_Stock_Manufacture">
+            <End Role="Manufacture" EntitySet="Manufacture" />
+            <End Role="Item_Stock" EntitySet="Item_Stock" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemDet_PO_No" Association="Self.FK_ItemDet_PO_No">
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+            <End Role="PO_ItemDetail" EntitySet="PO_ItemDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemDet_Stock" Association="Self.FK_ItemDet_Stock">
+            <End Role="Item_Stock" EntitySet="Item_Stock" />
+            <End Role="SO_ItemDetail" EntitySet="SO_ItemDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Lang_code" Association="Self.FK_Lang_code">
+            <End Role="Language" EntitySet="Language" />
+            <End Role="Vendor" EntitySet="Vendor" />
+          </AssociationSet>
+          <AssociationSet Name="fk_muser_mid" Association="Self.fk_muser_mid">
+            <End Role="Menu" EntitySet="Menu" />
+            <End Role="Menu_User" EntitySet="Menu_User" />
+          </AssociationSet>
+          <AssociationSet Name="fk_muser_urid" Association="Self.fk_muser_urid">
+            <End Role="Menu_UserReg" EntitySet="Menu_UserReg" />
+            <End Role="Menu_User" EntitySet="Menu_User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PG_Empno" Association="Self.FK_PG_Empno">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PO_Cust" Association="Self.FK_PO_Cust">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Purchase_Order_Vendor" Association="Self.FK_Purchase_Order_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_InvoiceCustCode" Association="Self.FK_Sale_InvoiceCustCode">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_Invoiceship" Association="Self.FK_Sale_Invoiceship">
+            <End Role="Shipper" EntitySet="Shipper" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_InvoiceSO" Association="Self.FK_Sale_InvoiceSO">
+            <End Role="Sales_order" EntitySet="Sales_order" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvBr" Association="Self.FK_SaleInvBr">
+            <End Role="Branch_Master" EntitySet="Branch_Master" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_Receipt_Vendor" Association="Self.FK_Stock_Receipt_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_ReceiptDET_Stock_Receipt" Association="Self.FK_Stock_ReceiptDET_Stock_Receipt">
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+            <End Role="Stock_ReceiptDET" EntitySet="Stock_ReceiptDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_ReceiptPO" Association="Self.FK_Stock_ReceiptPO">
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuppSale_InvDET" Association="Self.FK_SuppSale_InvDET">
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+            <End Role="Sale_InvDET" EntitySet="Sale_InvDET" />
+          </AssociationSet>
+          <AssociationSet Name="fk_UserReg_user_Empid" Association="Self.fk_UserReg_user_Empid">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Menu_UserReg" EntitySet="Menu_UserReg" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VCSNO_DApp" Association="Self.FK_VCSNO_DApp">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Discount_Approval" EntitySet="Discount_Approval" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VCSNO_DAppDet" Association="Self.FK_VCSNO_DAppDet">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Discount_ApprovalDET" EntitySet="Discount_ApprovalDET" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="v_StockTextrpt" IsComposable="true" ReturnType="Collection(Model.v_StockTextrpt_Result)">
+            <Parameter Name="VCode" Mode="In" Type="String" />
+            <Parameter Name="receivedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="receivedDate1" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="Branches" EntityType="Model.Branch" />
+          <EntitySet Name="Branch_Master" EntityType="Model.Branch_Master" />
+          <EntitySet Name="Cities" EntityType="Model.City" />
+          <EntitySet Name="Companies" EntityType="Model.Company" />
+          <EntitySet Name="Countries" EntityType="Model.Country" />
+          <EntitySet Name="Customers" EntityType="Model.Customer" />
+          <EntitySet Name="Discount_Approval" EntityType="Model.Discount_Approval" />
+          <EntitySet Name="Discount_ApprovalDET" EntityType="Model.Discount_ApprovalDET" />
+          <EntitySet Name="Employees" EntityType="Model.Employee" />
+          <EntitySet Name="Item_Stock" EntityType="Model.Item_Stock" />
+          <EntitySet Name="Languages" EntityType="Model.Language" />
+          <EntitySet Name="Manufactures" EntityType="Model.Manufacture" />
+          <EntitySet Name="Menus" EntityType="Model.Menu" />
+          <EntitySet Name="Menu_User" EntityType="Model.Menu_User" />
+          <EntitySet Name="Menu_UserReg" EntityType="Model.Menu_UserReg" />
+          <EntitySet Name="PO_ItemDetail" EntityType="Model.PO_ItemDetail" />
+          <EntitySet Name="Purchase_Order" EntityType="Model.Purchase_Order" />
+          <EntitySet Name="Sale_InvDET" EntityType="Model.Sale_InvDET" />
+          <EntitySet Name="Sale_Invoice" EntityType="Model.Sale_Invoice" />
+          <EntitySet Name="Sales_order" EntityType="Model.Sales_order" />
+          <EntitySet Name="Shippers" EntityType="Model.Shipper" />
+          <EntitySet Name="SO_ItemDetail" EntityType="Model.SO_ItemDetail" />
+          <EntitySet Name="Stock_Receipt" EntityType="Model.Stock_Receipt" />
+          <EntitySet Name="Stock_ReceiptDET" EntityType="Model.Stock_ReceiptDET" />
+          <EntitySet Name="Vendors" EntityType="Model.Vendor" />
+          <EntitySet Name="StockTextrpts" EntityType="Model.StockTextrpt" />
+          <EntitySet Name="V_InventoryWithSum" EntityType="Model.V_InventoryWithSum" />
+          <EntitySet Name="V_MerckRPT" EntityType="Model.V_MerckRPT" />
+          <EntitySet Name="V_PBCustomer" EntityType="Model.V_PBCustomer" />
+          <EntitySet Name="V_StockInventory" EntityType="Model.V_StockInventory" />
+          <AssociationSet Name="FK_BCCode" Association="Model.FK_BCCode">
+            <End Role="Company" EntitySet="Companies" />
+            <End Role="Branch" EntitySet="Branches" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Employee_Branch_Master" Association="Model.FK_Employee_Branch_Master">
+            <End Role="Branch_Master" EntitySet="Branch_Master" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvBr" Association="Model.FK_SaleInvBr">
+            <End Role="Branch_Master" EntitySet="Branch_Master" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ALTCountry_code" Association="Model.FK_ALTCountry_code">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Vendor" EntitySet="Vendors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Country_code" Association="Model.FK_Country_code">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Vendor" EntitySet="Vendors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EMPCountry_code" Association="Model.FK_EMPCountry_code">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customer_code" Association="Model.FK_Customer_code">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Discount_Approval" EntitySet="Discount_Approval" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PO_Cust" Association="Model.FK_PO_Cust">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_InvoiceCustCode" Association="Model.FK_Sale_InvoiceCustCode">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VCSNO_DApp" Association="Model.FK_VCSNO_DApp">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Discount_Approval" EntitySet="Discount_Approval" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VCSNO_DAppDet" Association="Model.FK_VCSNO_DAppDet">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Discount_ApprovalDET" EntitySet="Discount_ApprovalDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscAppvend_code" Association="Model.FK_DiscAppvend_code">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Discount_Approval" EntitySet="Discount_Approval" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DAppDetStock_no" Association="Model.FK_DAppDetStock_no">
+            <End Role="Item_Stock" EntitySet="Item_Stock" />
+            <End Role="Discount_ApprovalDET" EntitySet="Discount_ApprovalDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DIR_Empno" Association="Model.FK_DIR_Empno">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HOD_Empno" Association="Model.FK_HOD_Empno">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PG_Empno" Association="Model.FK_PG_Empno">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="fk_UserReg_user_Empid" Association="Model.fk_UserReg_user_Empid">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Menu_UserReg" EntitySet="Menu_UserReg" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Item_Stock_Manufacture" Association="Model.FK_Item_Stock_Manufacture">
+            <End Role="Manufacture" EntitySet="Manufactures" />
+            <End Role="Item_Stock" EntitySet="Item_Stock" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemDet_Stock" Association="Model.FK_ItemDet_Stock">
+            <End Role="Item_Stock" EntitySet="Item_Stock" />
+            <End Role="SO_ItemDetail" EntitySet="SO_ItemDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Lang_code" Association="Model.FK_Lang_code">
+            <End Role="Language" EntitySet="Languages" />
+            <End Role="Vendor" EntitySet="Vendors" />
+          </AssociationSet>
+          <AssociationSet Name="fk_muser_mid" Association="Model.fk_muser_mid">
+            <End Role="Menu" EntitySet="Menus" />
+            <End Role="Menu_User" EntitySet="Menu_User" />
+          </AssociationSet>
+          <AssociationSet Name="fk_muser_urid" Association="Model.fk_muser_urid">
+            <End Role="Menu_UserReg" EntitySet="Menu_UserReg" />
+            <End Role="Menu_User" EntitySet="Menu_User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ItemDet_PO_No" Association="Model.FK_ItemDet_PO_No">
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+            <End Role="PO_ItemDetail" EntitySet="PO_ItemDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Purchase_Order_Vendor" Association="Model.FK_Purchase_Order_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_ReceiptPO" Association="Model.FK_Stock_ReceiptPO">
+            <End Role="Purchase_Order" EntitySet="Purchase_Order" />
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_INVSale_InvDET" Association="Model.FK_INVSale_InvDET">
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+            <End Role="Sale_InvDET" EntitySet="Sale_InvDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuppSale_InvDET" Association="Model.FK_SuppSale_InvDET">
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+            <End Role="Sale_InvDET" EntitySet="Sale_InvDET" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_Invoiceship" Association="Model.FK_Sale_Invoiceship">
+            <End Role="Shipper" EntitySet="Shippers" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_InvoiceSO" Association="Model.FK_Sale_InvoiceSO">
+            <End Role="Sales_order" EntitySet="Sales_order" />
+            <End Role="Sale_Invoice" EntitySet="Sale_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_Receipt_Vendor" Association="Model.FK_Stock_Receipt_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_ReceiptDET_Stock_Receipt" Association="Model.FK_Stock_ReceiptDET_Stock_Receipt">
+            <End Role="Stock_Receipt" EntitySet="Stock_Receipt" />
+            <End Role="Stock_ReceiptDET" EntitySet="Stock_ReceiptDET" />
+          </AssociationSet>
+          </EntityContainer>
+        <ComplexType Name="v_StockTextrpt_Result">
+          <Property Type="String" Name="Stock_no" Nullable="false" MaxLength="8" />
+          <Property Type="String" Name="Brand_name" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Items_Available" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="Branch">
+          <Key>
+            <PropertyRef Name="Branch_Code" />
+            <PropertyRef Name="DSTB_NO" />
+          </Key>
+          <Property Name="Branch_Code" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="DSTB_NO" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Company_Code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DSTB_IssuedBy" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Company" Relationship="Model.FK_BCCode" FromRole="Branch" ToRole="Company" />
+        </EntityType>
+        <EntityType Name="Branch_Master">
+          <Key>
+            <PropertyRef Name="Branch_No" />
+          </Key>
+          <Property Name="Branch_No" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Branch_Abbr" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Company_Code" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Employees" Relationship="Model.FK_Employee_Branch_Master" FromRole="Branch_Master" ToRole="Employee" />
+          <NavigationProperty Name="Sale_Invoice" Relationship="Model.FK_SaleInvBr" FromRole="Branch_Master" ToRole="Sale_Invoice" />
+        </EntityType>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="City_code" />
+          </Key>
+          <Property Name="City_code" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="City_NAME" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="City_ABBR" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Province" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="COUNTRY_code" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Company">
+          <Key>
+            <PropertyRef Name="Company_Code" />
+          </Key>
+          <Property Name="Company_Code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Company_name" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Company_ABBR" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Branch_Code" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="DSTB_NO" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="HOD" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City_code" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="REGION" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Country_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="POSTAL_CODE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TEL_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FAX_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EMAIL" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Branches" Relationship="Model.FK_BCCode" FromRole="Company" ToRole="Branch" />
+        </EntityType>
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="Country_code" />
+          </Key>
+          <Property Name="Country_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Country_Name" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="Country_Abbr" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Nationality" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Vendors" Relationship="Model.FK_ALTCountry_code" FromRole="Country" ToRole="Vendor" />
+          <NavigationProperty Name="Vendors1" Relationship="Model.FK_Country_code" FromRole="Country" ToRole="Vendor" />
+          <NavigationProperty Name="Employees" Relationship="Model.FK_EMPCountry_code" FromRole="Country" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="Customer_code" />
+          </Key>
+          <Property Name="Customer_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Cust_Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City_code" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="Contact_Person" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Region" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Country_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Postal_Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Tel_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Fax_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Discount_Approval" Relationship="Model.FK_Customer_code" FromRole="Customer" ToRole="Discount_Approval" />
+          <NavigationProperty Name="Purchase_Order" Relationship="Model.FK_PO_Cust" FromRole="Customer" ToRole="Purchase_Order" />
+          <NavigationProperty Name="Sale_Invoice" Relationship="Model.FK_Sale_InvoiceCustCode" FromRole="Customer" ToRole="Sale_Invoice" />
+          <NavigationProperty Name="Discount_Approval1" Relationship="Model.FK_VCSNO_DApp" FromRole="Customer" ToRole="Discount_Approval" />
+          <NavigationProperty Name="Discount_ApprovalDET" Relationship="Model.FK_VCSNO_DAppDet" FromRole="Customer" ToRole="Discount_ApprovalDET" />
+        </EntityType>
+        <EntityType Name="Discount_Approval">
+          <Key>
+            <PropertyRef Name="vendor_code" />
+            <PropertyRef Name="Customer_code" />
+            <PropertyRef Name="SNO" />
+          </Key>
+          <Property Name="vendor_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Customer_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="SNO" Type="Int32" Nullable="false" />
+          <Property Name="Valid_Date_from" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Valid_Date_to" Type="DateTime" Precision="0" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Created_Date" Type="DateTime" Precision="3" />
+          <Property Name="Update_Date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Customer" Relationship="Model.FK_Customer_code" FromRole="Discount_Approval" ToRole="Customer" />
+          <NavigationProperty Name="Customer1" Relationship="Model.FK_VCSNO_DApp" FromRole="Discount_Approval" ToRole="Customer" />
+          <NavigationProperty Name="Vendor" Relationship="Model.FK_DiscAppvend_code" FromRole="Discount_Approval" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="Discount_ApprovalDET">
+          <Key>
+            <PropertyRef Name="vendor_code" />
+            <PropertyRef Name="Customer_code" />
+            <PropertyRef Name="SNO" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="vendor_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Customer_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="SNO" Type="Int32" Nullable="false" />
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Q_Percentage" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <Property Name="Q_Rate" Type="Decimal" Precision="7" Scale="2" />
+          <Property Name="D_Percentage" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <Property Name="D_Rate" Type="Decimal" Precision="7" Scale="2" />
+          <Property Name="Cum_Dis" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Expected_BsUnits" Type="Decimal" Precision="10" Scale="0" />
+          <NavigationProperty Name="Customer" Relationship="Model.FK_VCSNO_DAppDet" FromRole="Discount_ApprovalDET" ToRole="Customer" />
+          <NavigationProperty Name="Item_Stock" Relationship="Model.FK_DAppDetStock_no" FromRole="Discount_ApprovalDET" ToRole="Item_Stock" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Emp_ID" />
+          </Key>
+          <Property Name="Emp_ID" Type="Int32" Nullable="false" />
+          <Property Name="User_id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Emp_Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="User_name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="User_password" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Group_id" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Authorize_Status" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Login_status" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="User_desc" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="DOB" Type="DateTime" Precision="0" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Region" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Country_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Postal_Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Tel_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Dept_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Branch_Master" Relationship="Model.FK_Employee_Branch_Master" FromRole="Employee" ToRole="Branch_Master" />
+          <NavigationProperty Name="Country" Relationship="Model.FK_EMPCountry_code" FromRole="Employee" ToRole="Country" />
+          <NavigationProperty Name="Purchase_Order" Relationship="Model.FK_DIR_Empno" FromRole="Employee" ToRole="Purchase_Order" />
+          <NavigationProperty Name="Purchase_Order1" Relationship="Model.FK_HOD_Empno" FromRole="Employee" ToRole="Purchase_Order" />
+          <NavigationProperty Name="Purchase_Order2" Relationship="Model.FK_PG_Empno" FromRole="Employee" ToRole="Purchase_Order" />
+          <NavigationProperty Name="Menu_UserReg" Relationship="Model.fk_UserReg_user_Empid" FromRole="Employee" ToRole="Menu_UserReg" />
+        </EntityType>
+        <EntityType Name="Item_Stock">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Brand_name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Generic_name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Units_PerItem" Type="Int32" Nullable="false" />
+          <Property Name="Trade_PriceItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Item_Discount" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Current_Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Discount" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="PPrice" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Manufacturer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Item_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Weight_Unit" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Item_Desc" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="BARCODE" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="Available_status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Location" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="RefStock_no" Type="String" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Record_date" Type="DateTime" Precision="3" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="AltStock_No" Type="String" MaxLength="7" FixedLength="true" Unicode="false" />
+          <Property Name="GroupNo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Discount_ApprovalDET" Relationship="Model.FK_DAppDetStock_no" FromRole="Item_Stock" ToRole="Discount_ApprovalDET" />
+          <NavigationProperty Name="Manufacture" Relationship="Model.FK_Item_Stock_Manufacture" FromRole="Item_Stock" ToRole="Manufacture" />
+          <NavigationProperty Name="SO_ItemDetail" Relationship="Model.FK_ItemDet_Stock" FromRole="Item_Stock" ToRole="SO_ItemDetail" />
+        </EntityType>
+        <EntityType Name="Language">
+          <Key>
+            <PropertyRef Name="Lang_Code" />
+          </Key>
+          <Property Name="Lang_Code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Lang_name" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Vendors" Relationship="Model.FK_Lang_code" FromRole="Language" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="Manufacture">
+          <Key>
+            <PropertyRef Name="Manufacturer_Code" />
+          </Key>
+          <Property Name="Manufacturer_Code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="M_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="M_ShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Tel_no" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Item_Stock" Relationship="Model.FK_Item_Stock_Manufacture" FromRole="Manufacture" ToRole="Item_Stock" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="Menu_ID" />
+          </Key>
+          <Property Name="Menu_ID" Type="Int32" Nullable="false" />
+          <Property Name="Menu_Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Abbr" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Serial_no" Type="Int32" />
+          <Property Name="Action" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Controller_name" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Menu_User" Relationship="Model.fk_muser_mid" FromRole="Menu" ToRole="Menu_User" />
+        </EntityType>
+        <EntityType Name="Menu_User">
+          <Key>
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="Menu_id" />
+          </Key>
+          <Property Name="user_id" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Menu_id" Type="Int32" Nullable="false" />
+          <Property Name="AddEditDel" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="IsFavourite" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Created_Date" Type="DateTime" Precision="0" />
+          <Property Name="DisplayOrder" Type="Int32" Nullable="false" />
+          <Property Name="Menu_Group" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Menu" Relationship="Model.fk_muser_mid" FromRole="Menu_User" ToRole="Menu" />
+          <NavigationProperty Name="Menu_UserReg" Relationship="Model.fk_muser_urid" FromRole="Menu_User" ToRole="Menu_UserReg" />
+        </EntityType>
+        <EntityType Name="Menu_UserReg">
+          <Key>
+            <PropertyRef Name="User_id" />
+          </Key>
+          <Property Name="User_id" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="User_Password" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Emp_ID" Type="Int32" Nullable="false" />
+          <Property Name="Login_Date" Type="DateTime" Precision="0" />
+          <Property Name="IP_Addr" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="MenuType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MAC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="EnteredBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EnteredOn" Type="DateTime" Precision="0" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
+          <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="SendLogin_Email" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Employee" Relationship="Model.fk_UserReg_user_Empid" FromRole="Menu_UserReg" ToRole="Employee" />
+          <NavigationProperty Name="Menu_User" Relationship="Model.fk_muser_urid" FromRole="Menu_UserReg" ToRole="Menu_User" />
+        </EntityType>
+        <EntityType Name="PO_ItemDetail">
+          <Key>
+            <PropertyRef Name="PO_No" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="PO_No" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="POPrice_PerItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="POQty_PerItem" Type="Int32" Nullable="false" />
+          <Property Name="Currency" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="CurrExch_rate" Type="Decimal" Precision="7" Scale="4" />
+          <Property Name="POMargin_Percentage" Type="Decimal" Nullable="false" Precision="12" Scale="4" />
+          <Property Name="POExtend_Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Qty_Pack" Type="Int32" />
+          <NavigationProperty Name="Purchase_Order" Relationship="Model.FK_ItemDet_PO_No" FromRole="PO_ItemDetail" ToRole="Purchase_Order" />
+        </EntityType>
+        <EntityType Name="Purchase_Order">
+          <Key>
+            <PropertyRef Name="PO_No" />
+          </Key>
+          <Property Name="PO_No" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="PO_Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PO_Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Delivery_date" Type="DateTime" Precision="0" />
+          <Property Name="Delivery_status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="Gross_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Customer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Ship_toCustAddr" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_toCustCity" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_Via" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Vendor_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="PO_CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PO_Dept_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="PG_ApprovedBy" Type="Int32" />
+          <Property Name="HOD_ApprovedBy" Type="Int32" />
+          <Property Name="DIR_ApprovedBy" Type="Int32" />
+          <Property Name="Comments" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Received_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Customer" Relationship="Model.FK_PO_Cust" FromRole="Purchase_Order" ToRole="Customer" />
+          <NavigationProperty Name="Employee" Relationship="Model.FK_DIR_Empno" FromRole="Purchase_Order" ToRole="Employee" />
+          <NavigationProperty Name="Employee1" Relationship="Model.FK_HOD_Empno" FromRole="Purchase_Order" ToRole="Employee" />
+          <NavigationProperty Name="Employee2" Relationship="Model.FK_PG_Empno" FromRole="Purchase_Order" ToRole="Employee" />
+          <NavigationProperty Name="PO_ItemDetail" Relationship="Model.FK_ItemDet_PO_No" FromRole="Purchase_Order" ToRole="PO_ItemDetail" />
+          <NavigationProperty Name="Vendor" Relationship="Model.FK_Purchase_Order_Vendor" FromRole="Purchase_Order" ToRole="Vendor" />
+          <NavigationProperty Name="Stock_Receipt" Relationship="Model.FK_Stock_ReceiptPO" FromRole="Purchase_Order" ToRole="Stock_Receipt" />
+        </EntityType>
+        <EntityType Name="Sale_InvDET">
+          <Key>
+            <PropertyRef Name="Invoice_no" />
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="SNO" />
+          </Key>
+          <Property Name="Invoice_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="SNO" Type="Int32" Nullable="false" />
+          <Property Name="SPrice_PerItem" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="SPrice_PerUnit" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="SQty" Type="Int32" Nullable="false" />
+          <Property Name="Expiry_Date" Type="DateTime" Precision="0" />
+          <Property Name="Batch_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Trade_PriceItem" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="Tax_Percentage" Type="Decimal" Precision="6" Scale="3" />
+          <Property Name="Tax_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_Currency" Type="Decimal" Precision="12" Scale="2" />
+          <Property Name="Currency_Rate" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Sold_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Supp_InvNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Supp_Invno1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TSPrice_PerItem" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="PPrice_PerItem" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="Serial_no" Type="Int32" />
+          <Property Name="Record_date" Type="DateTime" Precision="3" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Sale_Invoice" Relationship="Model.FK_INVSale_InvDET" FromRole="Sale_InvDET" ToRole="Sale_Invoice" />
+          <NavigationProperty Name="Stock_Receipt" Relationship="Model.FK_SuppSale_InvDET" FromRole="Sale_InvDET" ToRole="Stock_Receipt" />
+        </EntityType>
+        <EntityType Name="Sale_Invoice">
+          <Key>
+            <PropertyRef Name="Invoice_no" />
+          </Key>
+          <Property Name="Invoice_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Invoice_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Invoice_type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="SO_No" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="SO_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delivery_date" Type="DateTime" Precision="0" />
+          <Property Name="Delivery_status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="Gross_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Ship_toCustAddr" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_toCustCity" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Contact_Person" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_Via" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Shipper_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Customer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Comments" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Record_date" Type="DateTime" Precision="3" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Branch_Master" Relationship="Model.FK_SaleInvBr" FromRole="Sale_Invoice" ToRole="Branch_Master" />
+          <NavigationProperty Name="Customer" Relationship="Model.FK_Sale_InvoiceCustCode" FromRole="Sale_Invoice" ToRole="Customer" />
+          <NavigationProperty Name="Sale_InvDET" Relationship="Model.FK_INVSale_InvDET" FromRole="Sale_Invoice" ToRole="Sale_InvDET" />
+          <NavigationProperty Name="Shipper" Relationship="Model.FK_Sale_Invoiceship" FromRole="Sale_Invoice" ToRole="Shipper" />
+          <NavigationProperty Name="Sales_order" Relationship="Model.FK_Sale_InvoiceSO" FromRole="Sale_Invoice" ToRole="Sales_order" />
+        </EntityType>
+        <EntityType Name="Sales_order">
+          <Key>
+            <PropertyRef Name="SO_No" />
+          </Key>
+          <Property Name="SO_No" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="SO_Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CustPO_No" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="CustPO_Date" Type="DateTime" Precision="3" />
+          <Property Name="PO_No" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Customer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Ship_toCustAddr" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_toCustCity" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Delivery_date" Type="DateTime" Precision="0" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Gross_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Record_date" Type="DateTime" Precision="3" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Sale_Invoice" Relationship="Model.FK_Sale_InvoiceSO" FromRole="Sales_order" ToRole="Sale_Invoice" />
+        </EntityType>
+        <EntityType Name="Shipper">
+          <Key>
+            <PropertyRef Name="Shipper_code" />
+          </Key>
+          <Property Name="Shipper_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Shipper_Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Contact_Person" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City_code" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Region" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Country_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Postal_Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Tel_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Fax_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Sale_Invoice" Relationship="Model.FK_Sale_Invoiceship" FromRole="Shipper" ToRole="Sale_Invoice" />
+        </EntityType>
+        <EntityType Name="SO_ItemDetail">
+          <Key>
+            <PropertyRef Name="SO_No" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="SO_No" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="CurrExch_rate" Type="Decimal" Precision="7" Scale="4" />
+          <Property Name="SOPrice_PerItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SOQty_PerItem" Type="Int32" Nullable="false" />
+          <Property Name="SOMargin_Percentage" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="SOExtend_Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Serial_no" Type="Int32" />
+          <NavigationProperty Name="Item_Stock" Relationship="Model.FK_ItemDet_Stock" FromRole="SO_ItemDetail" ToRole="Item_Stock" />
+        </EntityType>
+        <EntityType Name="Stock_Receipt">
+          <Key>
+            <PropertyRef Name="Supp_Invno" />
+          </Key>
+          <Property Name="Supp_Invno" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="AltSupp_Invno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Invoice_Date" Type="DateTime" Precision="0" />
+          <Property Name="vendor_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Received_date" Type="DateTime" Precision="3" />
+          <Property Name="Total_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Payment_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Disc_amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PO_NO" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Received_by" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="Comments" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Purchase_Order" Relationship="Model.FK_Stock_ReceiptPO" FromRole="Stock_Receipt" ToRole="Purchase_Order" />
+          <NavigationProperty Name="Sale_InvDET" Relationship="Model.FK_SuppSale_InvDET" FromRole="Stock_Receipt" ToRole="Sale_InvDET" />
+          <NavigationProperty Name="Vendor" Relationship="Model.FK_Stock_Receipt_Vendor" FromRole="Stock_Receipt" ToRole="Vendor" />
+          <NavigationProperty Name="Stock_ReceiptDET" Relationship="Model.FK_Stock_ReceiptDET_Stock_Receipt" FromRole="Stock_Receipt" ToRole="Stock_ReceiptDET" />
+        </EntityType>
+        <EntityType Name="Stock_ReceiptDET">
+          <Key>
+            <PropertyRef Name="Supp_Invno" />
+            <PropertyRef Name="Stock_no" />
+          </Key>
+          <Property Name="Supp_Invno" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Items_Received" Type="Int32" />
+          <Property Name="PQty_PerItem" Type="Int32" />
+          <Property Name="Units_PerItem" Type="Int32" />
+          <Property Name="POMargin_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_PerItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SPrice_PerItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_Currency" Type="Decimal" Precision="12" Scale="2" />
+          <Property Name="Currency_Rate" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="WPrice_PerItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Expiry_Date" Type="DateTime" Precision="0" />
+          <Property Name="Batch_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Tot_PPriceItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="PPrice_PerUnit" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SPrice_PerUnit" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Trade_PriceItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Tax_Amount" Type="Int32" />
+          <Property Name="Received_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Items_Available" Type="Int32" />
+          <Property Name="Record_date" Type="DateTime" Precision="3" />
+          <Property Name="Serial_no" Type="Int32" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Stock_Receipt" Relationship="Model.FK_Stock_ReceiptDET_Stock_Receipt" FromRole="Stock_ReceiptDET" ToRole="Stock_Receipt" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="vendor_code" />
+          </Key>
+          <Property Name="vendor_code" Type="String" Nullable="false" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="vendor_Title" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Contact_Person" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Region" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Country_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Postal_Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Tel_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Fax_No" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Alt_Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Alt_City" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Alt_Country" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Lang_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Record_date" Type="DateTime" Precision="3" />
+          <Property Name="User_id" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Country" Relationship="Model.FK_ALTCountry_code" FromRole="Vendor" ToRole="Country" />
+          <NavigationProperty Name="Country1" Relationship="Model.FK_Country_code" FromRole="Vendor" ToRole="Country" />
+          <NavigationProperty Name="Discount_Approval" Relationship="Model.FK_DiscAppvend_code" FromRole="Vendor" ToRole="Discount_Approval" />
+          <NavigationProperty Name="Language" Relationship="Model.FK_Lang_code" FromRole="Vendor" ToRole="Language" />
+          <NavigationProperty Name="Purchase_Order" Relationship="Model.FK_Purchase_Order_Vendor" FromRole="Vendor" ToRole="Purchase_Order" />
+          <NavigationProperty Name="Stock_Receipt" Relationship="Model.FK_Stock_Receipt_Vendor" FromRole="Vendor" ToRole="Stock_Receipt" />
+        </EntityType>
+        <EntityType Name="StockTextrpt">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+          </Key>
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Brand_name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Items_Available" Type="Int32" />
+        </EntityType>
+        <EntityType Name="V_InventoryWithSum">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+          </Key>
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Brand_name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Items_Available" Type="Int32" />
+          <Property Name="M_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Manufacturer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="V_MerckRPT">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+            <PropertyRef Name="Units_PerItem" />
+          </Key>
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="Brand_name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Trade_PriceItem" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Units_PerItem" Type="Int32" Nullable="false" />
+          <Property Name="Items_Available" Type="Int32" />
+          <Property Name="Manufacturer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="GroupNo" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="SQty" Type="Int32" />
+          <Property Name="Items_Received" Type="Int32" />
+        </EntityType>
+        <EntityType Name="V_PBCustomer">
+          <Key>
+            <PropertyRef Name="PO_No" />
+            <PropertyRef Name="PO_Date" />
+            <PropertyRef Name="Cust_Name" />
+          </Key>
+          <Property Name="PO_No" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Branch_No" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="PO_Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PO_Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Delivery_date" Type="DateTime" Precision="0" />
+          <Property Name="Delivery_status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="Gross_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Tax_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Disc_Percentage" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="NET_Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Customer_Code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="Ship_toCustAddr" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_toCustCity" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ship_Via" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Vendor_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="PO_CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PO_Dept_code" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="PG_ApprovedBy" Type="Int32" />
+          <Property Name="HOD_ApprovedBy" Type="Int32" />
+          <Property Name="DIR_ApprovedBy" Type="Int32" />
+          <Property Name="Comments" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Received_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Cust_Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="V_StockInventory">
+          <Key>
+            <PropertyRef Name="Stock_no" />
+            <PropertyRef Name="Brand_name" />
+            <PropertyRef Name="Batch_NO" />
+            <PropertyRef Name="Items_Available" />
+            <PropertyRef Name="DSTB_NO" />
+            <PropertyRef Name="Branch_Code" />
+          </Key>
+          <Property Name="Stock_no" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="AltStock_No" Type="String" MaxLength="7" FixedLength="true" Unicode="false" />
+          <Property Name="Brand_name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Batch_NO" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Items_Available" Type="Int32" Nullable="false" />
+          <Property Name="DSTB_NO" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Branch_Code" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_BCCode">
+          <End Type="Model.Company" Role="Company" Multiplicity="1" />
+          <End Type="Model.Branch" Role="Branch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Company">
+              <PropertyRef Name="Company_Code" />
+            </Principal>
+            <Dependent Role="Branch">
+              <PropertyRef Name="Company_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Employee_Branch_Master">
+          <End Type="Model.Branch_Master" Role="Branch_Master" Multiplicity="0..1" />
+          <End Type="Model.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch_Master">
+              <PropertyRef Name="Branch_No" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Branch_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvBr">
+          <End Type="Model.Branch_Master" Role="Branch_Master" Multiplicity="0..1" />
+          <End Type="Model.Sale_Invoice" Role="Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch_Master">
+              <PropertyRef Name="Branch_No" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="Branch_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ALTCountry_code">
+          <End Type="Model.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="Model.Vendor" Role="Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Country_code" />
+            </Principal>
+            <Dependent Role="Vendor">
+              <PropertyRef Name="Alt_Country" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Country_code">
+          <End Type="Model.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="Model.Vendor" Role="Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Country_code" />
+            </Principal>
+            <Dependent Role="Vendor">
+              <PropertyRef Name="Country_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EMPCountry_code">
+          <End Type="Model.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="Model.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Country_code" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Country_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Customer_code">
+          <End Type="Model.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="Model.Discount_Approval" Role="Discount_Approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Discount_Approval">
+              <PropertyRef Name="Customer_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PO_Cust">
+          <End Type="Model.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="Customer_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_InvoiceCustCode">
+          <End Type="Model.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="Model.Sale_Invoice" Role="Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="Customer_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VCSNO_DApp">
+          <End Type="Model.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="Model.Discount_Approval" Role="Discount_Approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Discount_Approval">
+              <PropertyRef Name="Customer_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VCSNO_DAppDet">
+          <End Type="Model.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="Model.Discount_ApprovalDET" Role="Discount_ApprovalDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Customer_code" />
+            </Principal>
+            <Dependent Role="Discount_ApprovalDET">
+              <PropertyRef Name="Customer_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscAppvend_code">
+          <End Type="Model.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="Model.Discount_Approval" Role="Discount_Approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="vendor_code" />
+            </Principal>
+            <Dependent Role="Discount_Approval">
+              <PropertyRef Name="vendor_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DAppDetStock_no">
+          <End Type="Model.Item_Stock" Role="Item_Stock" Multiplicity="1" />
+          <End Type="Model.Discount_ApprovalDET" Role="Discount_ApprovalDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item_Stock">
+              <PropertyRef Name="Stock_no" />
+            </Principal>
+            <Dependent Role="Discount_ApprovalDET">
+              <PropertyRef Name="Stock_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DIR_Empno">
+          <End Type="Model.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="DIR_ApprovedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HOD_Empno">
+          <End Type="Model.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="HOD_ApprovedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PG_Empno">
+          <End Type="Model.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="PG_ApprovedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_UserReg_user_Empid">
+          <End Type="Model.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="Model.Menu_UserReg" Role="Menu_UserReg" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Emp_ID" />
+            </Principal>
+            <Dependent Role="Menu_UserReg">
+              <PropertyRef Name="Emp_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Item_Stock_Manufacture">
+          <End Type="Model.Manufacture" Role="Manufacture" Multiplicity="0..1" />
+          <End Type="Model.Item_Stock" Role="Item_Stock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Manufacture">
+              <PropertyRef Name="Manufacturer_Code" />
+            </Principal>
+            <Dependent Role="Item_Stock">
+              <PropertyRef Name="Manufacturer_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemDet_Stock">
+          <End Type="Model.Item_Stock" Role="Item_Stock" Multiplicity="1" />
+          <End Type="Model.SO_ItemDetail" Role="SO_ItemDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item_Stock">
+              <PropertyRef Name="Stock_no" />
+            </Principal>
+            <Dependent Role="SO_ItemDetail">
+              <PropertyRef Name="Stock_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Lang_code">
+          <End Type="Model.Language" Role="Language" Multiplicity="0..1" />
+          <End Type="Model.Vendor" Role="Vendor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Language">
+              <PropertyRef Name="Lang_Code" />
+            </Principal>
+            <Dependent Role="Vendor">
+              <PropertyRef Name="Lang_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_muser_mid">
+          <End Type="Model.Menu" Role="Menu" Multiplicity="1" />
+          <End Type="Model.Menu_User" Role="Menu_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="Menu_ID" />
+            </Principal>
+            <Dependent Role="Menu_User">
+              <PropertyRef Name="Menu_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_muser_urid">
+          <End Type="Model.Menu_UserReg" Role="Menu_UserReg" Multiplicity="1" />
+          <End Type="Model.Menu_User" Role="Menu_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu_UserReg">
+              <PropertyRef Name="User_id" />
+            </Principal>
+            <Dependent Role="Menu_User">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ItemDet_PO_No">
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="1" />
+          <End Type="Model.PO_ItemDetail" Role="PO_ItemDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Purchase_Order">
+              <PropertyRef Name="PO_No" />
+            </Principal>
+            <Dependent Role="PO_ItemDetail">
+              <PropertyRef Name="PO_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Purchase_Order_Vendor">
+          <End Type="Model.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="vendor_code" />
+            </Principal>
+            <Dependent Role="Purchase_Order">
+              <PropertyRef Name="Vendor_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_ReceiptPO">
+          <End Type="Model.Purchase_Order" Role="Purchase_Order" Multiplicity="0..1" />
+          <End Type="Model.Stock_Receipt" Role="Stock_Receipt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Purchase_Order">
+              <PropertyRef Name="PO_No" />
+            </Principal>
+            <Dependent Role="Stock_Receipt">
+              <PropertyRef Name="PO_NO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_INVSale_InvDET">
+          <End Type="Model.Sale_Invoice" Role="Sale_Invoice" Multiplicity="1" />
+          <End Type="Model.Sale_InvDET" Role="Sale_InvDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sale_Invoice">
+              <PropertyRef Name="Invoice_no" />
+            </Principal>
+            <Dependent Role="Sale_InvDET">
+              <PropertyRef Name="Invoice_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuppSale_InvDET">
+          <End Type="Model.Stock_Receipt" Role="Stock_Receipt" Multiplicity="0..1" />
+          <End Type="Model.Sale_InvDET" Role="Sale_InvDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stock_Receipt">
+              <PropertyRef Name="Supp_Invno" />
+            </Principal>
+            <Dependent Role="Sale_InvDET">
+              <PropertyRef Name="Supp_InvNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_Invoiceship">
+          <End Type="Model.Shipper" Role="Shipper" Multiplicity="0..1" />
+          <End Type="Model.Sale_Invoice" Role="Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shipper">
+              <PropertyRef Name="Shipper_code" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="Shipper_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_InvoiceSO">
+          <End Type="Model.Sales_order" Role="Sales_order" Multiplicity="0..1" />
+          <End Type="Model.Sale_Invoice" Role="Sale_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sales_order">
+              <PropertyRef Name="SO_No" />
+            </Principal>
+            <Dependent Role="Sale_Invoice">
+              <PropertyRef Name="SO_No" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_Receipt_Vendor">
+          <End Type="Model.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="Model.Stock_Receipt" Role="Stock_Receipt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="vendor_code" />
+            </Principal>
+            <Dependent Role="Stock_Receipt">
+              <PropertyRef Name="vendor_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_ReceiptDET_Stock_Receipt">
+          <End Type="Model.Stock_Receipt" Role="Stock_Receipt" Multiplicity="1" />
+          <End Type="Model.Stock_ReceiptDET" Role="Stock_ReceiptDET" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stock_Receipt">
+              <PropertyRef Name="Supp_Invno" />
+            </Principal>
+            <Dependent Role="Stock_ReceiptDET">
+              <PropertyRef Name="Supp_Invno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="Entities">
+          <FunctionImportMapping FunctionImportName="v_StockTextrpt" FunctionName="Model.Store.v_StockTextrpt">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model.v_StockTextrpt_Result">
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+                <ScalarProperty Name="Brand_name" ColumnName="Brand_name" />
+                <ScalarProperty Name="Items_Available" ColumnName="Items_Available" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Branches">
+            <EntityTypeMapping TypeName="Model.Branch">
+              <MappingFragment StoreEntitySet="Branch">
+                <ScalarProperty Name="DSTB_IssuedBy" ColumnName="DSTB_IssuedBy" />
+                <ScalarProperty Name="Branch_Name" ColumnName="Branch_Name" />
+                <ScalarProperty Name="Company_Code" ColumnName="Company_Code" />
+                <ScalarProperty Name="DSTB_NO" ColumnName="DSTB_NO" />
+                <ScalarProperty Name="Branch_Code" ColumnName="Branch_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Branch_Master">
+            <EntityTypeMapping TypeName="Model.Branch_Master">
+              <MappingFragment StoreEntitySet="Branch_Master">
+                <ScalarProperty Name="Company_Code" ColumnName="Company_Code" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Branch_Abbr" ColumnName="Branch_Abbr" />
+                <ScalarProperty Name="Branch_Name" ColumnName="Branch_Name" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cities">
+            <EntityTypeMapping TypeName="Model.City">
+              <MappingFragment StoreEntitySet="City">
+                <ScalarProperty Name="COUNTRY_code" ColumnName="COUNTRY_code" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="City_ABBR" ColumnName="City_ABBR" />
+                <ScalarProperty Name="City_NAME" ColumnName="City_NAME" />
+                <ScalarProperty Name="City_code" ColumnName="City_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Companies">
+            <EntityTypeMapping TypeName="Model.Company">
+              <MappingFragment StoreEntitySet="Company">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Mobile_No" ColumnName="Mobile_No" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="FAX_NO" ColumnName="FAX_NO" />
+                <ScalarProperty Name="TEL_NO" ColumnName="TEL_NO" />
+                <ScalarProperty Name="POSTAL_CODE" ColumnName="POSTAL_CODE" />
+                <ScalarProperty Name="Country_code" ColumnName="Country_code" />
+                <ScalarProperty Name="REGION" ColumnName="REGION" />
+                <ScalarProperty Name="City_code" ColumnName="City_code" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="HOD" ColumnName="HOD" />
+                <ScalarProperty Name="DSTB_NO" ColumnName="DSTB_NO" />
+                <ScalarProperty Name="Branch_Code" ColumnName="Branch_Code" />
+                <ScalarProperty Name="Company_ABBR" ColumnName="Company_ABBR" />
+                <ScalarProperty Name="Company_name" ColumnName="Company_name" />
+                <ScalarProperty Name="Company_Code" ColumnName="Company_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Countries">
+            <EntityTypeMapping TypeName="Model.Country">
+              <MappingFragment StoreEntitySet="Country">
+                <ScalarProperty Name="Nationality" ColumnName="Nationality" />
+                <ScalarProperty Name="Country_Abbr" ColumnName="Country_Abbr" />
+                <ScalarProperty Name="Country_Name" ColumnName="Country_Name" />
+                <ScalarProperty Name="Country_code" ColumnName="Country_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="Model.Customer">
+              <MappingFragment StoreEntitySet="Customer">
+                <ScalarProperty Name="Mobile_No" ColumnName="Mobile_No" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Fax_No" ColumnName="Fax_No" />
+                <ScalarProperty Name="Tel_No" ColumnName="Tel_No" />
+                <ScalarProperty Name="Postal_Code" ColumnName="Postal_Code" />
+                <ScalarProperty Name="Country_code" ColumnName="Country_code" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Contact_Person" ColumnName="Contact_Person" />
+                <ScalarProperty Name="City_code" ColumnName="City_code" />
+                <ScalarProperty Name="Cust_Name" ColumnName="Cust_Name" />
+                <ScalarProperty Name="Customer_code" ColumnName="Customer_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Discount_Approval">
+            <EntityTypeMapping TypeName="Model.Discount_Approval">
+              <MappingFragment StoreEntitySet="Discount_Approval">
+                <ScalarProperty Name="Update_Date" ColumnName="Update_Date" />
+                <ScalarProperty Name="Created_Date" ColumnName="Created_Date" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Valid_Date_to" ColumnName="Valid_Date_to" />
+                <ScalarProperty Name="Valid_Date_from" ColumnName="Valid_Date_from" />
+                <ScalarProperty Name="SNO" ColumnName="SNO" />
+                <ScalarProperty Name="Customer_code" ColumnName="Customer_code" />
+                <ScalarProperty Name="vendor_code" ColumnName="vendor_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Discount_ApprovalDET">
+            <EntityTypeMapping TypeName="Model.Discount_ApprovalDET">
+              <MappingFragment StoreEntitySet="Discount_ApprovalDET">
+                <ScalarProperty Name="Expected_BsUnits" ColumnName="Expected_BsUnits" />
+                <ScalarProperty Name="Cum_Dis" ColumnName="Cum_Dis" />
+                <ScalarProperty Name="D_Rate" ColumnName="D_Rate" />
+                <ScalarProperty Name="D_Percentage" ColumnName="D_Percentage" />
+                <ScalarProperty Name="Q_Rate" ColumnName="Q_Rate" />
+                <ScalarProperty Name="Q_Percentage" ColumnName="Q_Percentage" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+                <ScalarProperty Name="SNO" ColumnName="SNO" />
+                <ScalarProperty Name="Customer_code" ColumnName="Customer_code" />
+                <ScalarProperty Name="vendor_code" ColumnName="vendor_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="Model.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="Dept_Code" ColumnName="Dept_Code" />
+                <ScalarProperty Name="Mobile_No" ColumnName="Mobile_No" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Tel_No" ColumnName="Tel_No" />
+                <ScalarProperty Name="Postal_Code" ColumnName="Postal_Code" />
+                <ScalarProperty Name="Country_code" ColumnName="Country_code" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="User_desc" ColumnName="User_desc" />
+                <ScalarProperty Name="Login_status" ColumnName="Login_status" />
+                <ScalarProperty Name="Authorize_Status" ColumnName="Authorize_Status" />
+                <ScalarProperty Name="Group_id" ColumnName="Group_id" />
+                <ScalarProperty Name="User_password" ColumnName="User_password" />
+                <ScalarProperty Name="User_name" ColumnName="User_name" />
+                <ScalarProperty Name="Emp_Name" ColumnName="Emp_Name" />
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Emp_ID" ColumnName="Emp_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Item_Stock">
+            <EntityTypeMapping TypeName="Model.Item_Stock">
+              <MappingFragment StoreEntitySet="Item_Stock">
+                <ScalarProperty Name="GroupNo" ColumnName="GroupNo" />
+                <ScalarProperty Name="AltStock_No" ColumnName="AltStock_No" />
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Record_date" ColumnName="Record_date" />
+                <ScalarProperty Name="RefStock_no" ColumnName="RefStock_no" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Available_status" ColumnName="Available_status" />
+                <ScalarProperty Name="BARCODE" ColumnName="BARCODE" />
+                <ScalarProperty Name="Item_Desc" ColumnName="Item_Desc" />
+                <ScalarProperty Name="Weight_Unit" ColumnName="Weight_Unit" />
+                <ScalarProperty Name="Item_Type" ColumnName="Item_Type" />
+                <ScalarProperty Name="Manufacturer_Code" ColumnName="Manufacturer_Code" />
+                <ScalarProperty Name="PPrice" ColumnName="PPrice" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Current_Price" ColumnName="Current_Price" />
+                <ScalarProperty Name="Item_Discount" ColumnName="Item_Discount" />
+                <ScalarProperty Name="Trade_PriceItem" ColumnName="Trade_PriceItem" />
+                <ScalarProperty Name="Units_PerItem" ColumnName="Units_PerItem" />
+                <ScalarProperty Name="Generic_name" ColumnName="Generic_name" />
+                <ScalarProperty Name="Brand_name" ColumnName="Brand_name" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Languages">
+            <EntityTypeMapping TypeName="Model.Language">
+              <MappingFragment StoreEntitySet="Language">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Lang_name" ColumnName="Lang_name" />
+                <ScalarProperty Name="Lang_Code" ColumnName="Lang_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Manufactures">
+            <EntityTypeMapping TypeName="Model.Manufacture">
+              <MappingFragment StoreEntitySet="Manufacture">
+                <ScalarProperty Name="Tel_no" ColumnName="Tel_no" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="M_ShortName" ColumnName="M_ShortName" />
+                <ScalarProperty Name="M_Name" ColumnName="M_Name" />
+                <ScalarProperty Name="Manufacturer_Code" ColumnName="Manufacturer_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menus">
+            <EntityTypeMapping TypeName="Model.Menu">
+              <MappingFragment StoreEntitySet="Menu">
+                <ScalarProperty Name="Controller_name" ColumnName="Controller_name" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Serial_no" ColumnName="Serial_no" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Abbr" ColumnName="Abbr" />
+                <ScalarProperty Name="Menu_Title" ColumnName="Menu_Title" />
+                <ScalarProperty Name="Menu_ID" ColumnName="Menu_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu_User">
+            <EntityTypeMapping TypeName="Model.Menu_User">
+              <MappingFragment StoreEntitySet="Menu_User">
+                <ScalarProperty Name="Menu_Group" ColumnName="Menu_Group" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+                <ScalarProperty Name="Created_Date" ColumnName="Created_Date" />
+                <ScalarProperty Name="IsFavourite" ColumnName="IsFavourite" />
+                <ScalarProperty Name="AddEditDel" ColumnName="AddEditDel" />
+                <ScalarProperty Name="Menu_id" ColumnName="Menu_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu_UserReg">
+            <EntityTypeMapping TypeName="Model.Menu_UserReg">
+              <MappingFragment StoreEntitySet="Menu_UserReg">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SendLogin_Email" ColumnName="SendLogin_Email" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="EnteredOn" ColumnName="EnteredOn" />
+                <ScalarProperty Name="EnteredBy" ColumnName="EnteredBy" />
+                <ScalarProperty Name="MAC" ColumnName="MAC" />
+                <ScalarProperty Name="MenuType" ColumnName="MenuType" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="IP_Addr" ColumnName="IP_Addr" />
+                <ScalarProperty Name="Login_Date" ColumnName="Login_Date" />
+                <ScalarProperty Name="Emp_ID" ColumnName="Emp_ID" />
+                <ScalarProperty Name="User_Password" ColumnName="User_Password" />
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PO_ItemDetail">
+            <EntityTypeMapping TypeName="Model.PO_ItemDetail">
+              <MappingFragment StoreEntitySet="PO_ItemDetail">
+                <ScalarProperty Name="Qty_Pack" ColumnName="Qty_Pack" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="POExtend_Price" ColumnName="POExtend_Price" />
+                <ScalarProperty Name="POMargin_Percentage" ColumnName="POMargin_Percentage" />
+                <ScalarProperty Name="CurrExch_rate" ColumnName="CurrExch_rate" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="POQty_PerItem" ColumnName="POQty_PerItem" />
+                <ScalarProperty Name="POPrice_PerItem" ColumnName="POPrice_PerItem" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="PO_No" ColumnName="PO_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Purchase_Order">
+            <EntityTypeMapping TypeName="Model.Purchase_Order">
+              <MappingFragment StoreEntitySet="Purchase_Order">
+                <ScalarProperty Name="Received_Status" ColumnName="Received_Status" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="DIR_ApprovedBy" ColumnName="DIR_ApprovedBy" />
+                <ScalarProperty Name="HOD_ApprovedBy" ColumnName="HOD_ApprovedBy" />
+                <ScalarProperty Name="PG_ApprovedBy" ColumnName="PG_ApprovedBy" />
+                <ScalarProperty Name="PO_Dept_code" ColumnName="PO_Dept_code" />
+                <ScalarProperty Name="PO_CreatedBy" ColumnName="PO_CreatedBy" />
+                <ScalarProperty Name="Vendor_code" ColumnName="Vendor_code" />
+                <ScalarProperty Name="Ship_Via" ColumnName="Ship_Via" />
+                <ScalarProperty Name="Ship_toCustCity" ColumnName="Ship_toCustCity" />
+                <ScalarProperty Name="Ship_toCustAddr" ColumnName="Ship_toCustAddr" />
+                <ScalarProperty Name="Customer_Code" ColumnName="Customer_Code" />
+                <ScalarProperty Name="NET_Amount" ColumnName="NET_Amount" />
+                <ScalarProperty Name="Disc_Percentage" ColumnName="Disc_Percentage" />
+                <ScalarProperty Name="Tax_Percentage" ColumnName="Tax_Percentage" />
+                <ScalarProperty Name="Gross_Amount" ColumnName="Gross_Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Delivery_status" ColumnName="Delivery_status" />
+                <ScalarProperty Name="Delivery_date" ColumnName="Delivery_date" />
+                <ScalarProperty Name="PO_Date" ColumnName="PO_Date" />
+                <ScalarProperty Name="PO_Title" ColumnName="PO_Title" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="PO_No" ColumnName="PO_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sale_InvDET">
+            <EntityTypeMapping TypeName="Model.Sale_InvDET">
+              <MappingFragment StoreEntitySet="Sale_InvDET">
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Record_date" ColumnName="Record_date" />
+                <ScalarProperty Name="Serial_no" ColumnName="Serial_no" />
+                <ScalarProperty Name="PPrice_PerItem" ColumnName="PPrice_PerItem" />
+                <ScalarProperty Name="TSPrice_PerItem" ColumnName="TSPrice_PerItem" />
+                <ScalarProperty Name="Supp_Invno1" ColumnName="Supp_Invno1" />
+                <ScalarProperty Name="Supp_InvNo" ColumnName="Supp_InvNo" />
+                <ScalarProperty Name="Sold_Status" ColumnName="Sold_Status" />
+                <ScalarProperty Name="Currency_Rate" ColumnName="Currency_Rate" />
+                <ScalarProperty Name="PPrice_Currency" ColumnName="PPrice_Currency" />
+                <ScalarProperty Name="Tax_Amount" ColumnName="Tax_Amount" />
+                <ScalarProperty Name="Tax_Percentage" ColumnName="Tax_Percentage" />
+                <ScalarProperty Name="Trade_PriceItem" ColumnName="Trade_PriceItem" />
+                <ScalarProperty Name="Batch_NO" ColumnName="Batch_NO" />
+                <ScalarProperty Name="Expiry_Date" ColumnName="Expiry_Date" />
+                <ScalarProperty Name="SQty" ColumnName="SQty" />
+                <ScalarProperty Name="SPrice_PerUnit" ColumnName="SPrice_PerUnit" />
+                <ScalarProperty Name="SPrice_PerItem" ColumnName="SPrice_PerItem" />
+                <ScalarProperty Name="SNO" ColumnName="SNO" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="Invoice_no" ColumnName="Invoice_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sale_Invoice">
+            <EntityTypeMapping TypeName="Model.Sale_Invoice">
+              <MappingFragment StoreEntitySet="Sale_Invoice">
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Record_date" ColumnName="Record_date" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Customer_Code" ColumnName="Customer_Code" />
+                <ScalarProperty Name="Shipper_code" ColumnName="Shipper_code" />
+                <ScalarProperty Name="Ship_Via" ColumnName="Ship_Via" />
+                <ScalarProperty Name="Contact_Person" ColumnName="Contact_Person" />
+                <ScalarProperty Name="Ship_toCustCity" ColumnName="Ship_toCustCity" />
+                <ScalarProperty Name="Ship_toCustAddr" ColumnName="Ship_toCustAddr" />
+                <ScalarProperty Name="NET_Amount" ColumnName="NET_Amount" />
+                <ScalarProperty Name="Disc_Percentage" ColumnName="Disc_Percentage" />
+                <ScalarProperty Name="Tax_Percentage" ColumnName="Tax_Percentage" />
+                <ScalarProperty Name="Gross_Amount" ColumnName="Gross_Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Delivery_status" ColumnName="Delivery_status" />
+                <ScalarProperty Name="Delivery_date" ColumnName="Delivery_date" />
+                <ScalarProperty Name="SO_Date" ColumnName="SO_Date" />
+                <ScalarProperty Name="SO_No" ColumnName="SO_No" />
+                <ScalarProperty Name="Invoice_type" ColumnName="Invoice_type" />
+                <ScalarProperty Name="Invoice_date" ColumnName="Invoice_date" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="Invoice_no" ColumnName="Invoice_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sales_order">
+            <EntityTypeMapping TypeName="Model.Sales_order">
+              <MappingFragment StoreEntitySet="Sales_order">
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Record_date" ColumnName="Record_date" />
+                <ScalarProperty Name="NET_Amount" ColumnName="NET_Amount" />
+                <ScalarProperty Name="Disc_Percentage" ColumnName="Disc_Percentage" />
+                <ScalarProperty Name="Tax_Percentage" ColumnName="Tax_Percentage" />
+                <ScalarProperty Name="Gross_Amount" ColumnName="Gross_Amount" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Delivery_date" ColumnName="Delivery_date" />
+                <ScalarProperty Name="Ship_toCustCity" ColumnName="Ship_toCustCity" />
+                <ScalarProperty Name="Ship_toCustAddr" ColumnName="Ship_toCustAddr" />
+                <ScalarProperty Name="Customer_Code" ColumnName="Customer_Code" />
+                <ScalarProperty Name="PO_No" ColumnName="PO_No" />
+                <ScalarProperty Name="CustPO_Date" ColumnName="CustPO_Date" />
+                <ScalarProperty Name="CustPO_No" ColumnName="CustPO_No" />
+                <ScalarProperty Name="SO_Date" ColumnName="SO_Date" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="SO_No" ColumnName="SO_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Shippers">
+            <EntityTypeMapping TypeName="Model.Shipper">
+              <MappingFragment StoreEntitySet="Shipper">
+                <ScalarProperty Name="Mobile_No" ColumnName="Mobile_No" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Fax_No" ColumnName="Fax_No" />
+                <ScalarProperty Name="Tel_No" ColumnName="Tel_No" />
+                <ScalarProperty Name="Postal_Code" ColumnName="Postal_Code" />
+                <ScalarProperty Name="Country_code" ColumnName="Country_code" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="City_code" ColumnName="City_code" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Contact_Person" ColumnName="Contact_Person" />
+                <ScalarProperty Name="Shipper_Name" ColumnName="Shipper_Name" />
+                <ScalarProperty Name="Shipper_code" ColumnName="Shipper_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SO_ItemDetail">
+            <EntityTypeMapping TypeName="Model.SO_ItemDetail">
+              <MappingFragment StoreEntitySet="SO_ItemDetail">
+                <ScalarProperty Name="Serial_no" ColumnName="Serial_no" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SOExtend_Price" ColumnName="SOExtend_Price" />
+                <ScalarProperty Name="SOMargin_Percentage" ColumnName="SOMargin_Percentage" />
+                <ScalarProperty Name="SOQty_PerItem" ColumnName="SOQty_PerItem" />
+                <ScalarProperty Name="SOPrice_PerItem" ColumnName="SOPrice_PerItem" />
+                <ScalarProperty Name="CurrExch_rate" ColumnName="CurrExch_rate" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="SO_No" ColumnName="SO_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stock_Receipt">
+            <EntityTypeMapping TypeName="Model.Stock_Receipt">
+              <MappingFragment StoreEntitySet="Stock_Receipt">
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Received_by" ColumnName="Received_by" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="PO_NO" ColumnName="PO_NO" />
+                <ScalarProperty Name="Tax_amount" ColumnName="Tax_amount" />
+                <ScalarProperty Name="Disc_amount" ColumnName="Disc_amount" />
+                <ScalarProperty Name="Payment_Type" ColumnName="Payment_Type" />
+                <ScalarProperty Name="Total_Amount" ColumnName="Total_Amount" />
+                <ScalarProperty Name="Received_date" ColumnName="Received_date" />
+                <ScalarProperty Name="vendor_code" ColumnName="vendor_code" />
+                <ScalarProperty Name="Invoice_Date" ColumnName="Invoice_Date" />
+                <ScalarProperty Name="AltSupp_Invno" ColumnName="AltSupp_Invno" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="Supp_Invno" ColumnName="Supp_Invno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stock_ReceiptDET">
+            <EntityTypeMapping TypeName="Model.Stock_ReceiptDET">
+              <MappingFragment StoreEntitySet="Stock_ReceiptDET">
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Serial_no" ColumnName="Serial_no" />
+                <ScalarProperty Name="Record_date" ColumnName="Record_date" />
+                <ScalarProperty Name="Items_Available" ColumnName="Items_Available" />
+                <ScalarProperty Name="Received_Status" ColumnName="Received_Status" />
+                <ScalarProperty Name="Tax_Amount" ColumnName="Tax_Amount" />
+                <ScalarProperty Name="Tax_Percentage" ColumnName="Tax_Percentage" />
+                <ScalarProperty Name="Trade_PriceItem" ColumnName="Trade_PriceItem" />
+                <ScalarProperty Name="SPrice_PerUnit" ColumnName="SPrice_PerUnit" />
+                <ScalarProperty Name="PPrice_PerUnit" ColumnName="PPrice_PerUnit" />
+                <ScalarProperty Name="Tot_PPriceItem" ColumnName="Tot_PPriceItem" />
+                <ScalarProperty Name="Batch_NO" ColumnName="Batch_NO" />
+                <ScalarProperty Name="Expiry_Date" ColumnName="Expiry_Date" />
+                <ScalarProperty Name="WPrice_PerItem" ColumnName="WPrice_PerItem" />
+                <ScalarProperty Name="Currency_Rate" ColumnName="Currency_Rate" />
+                <ScalarProperty Name="PPrice_Currency" ColumnName="PPrice_Currency" />
+                <ScalarProperty Name="SPrice_PerItem" ColumnName="SPrice_PerItem" />
+                <ScalarProperty Name="PPrice_PerItem" ColumnName="PPrice_PerItem" />
+                <ScalarProperty Name="POMargin_Percentage" ColumnName="POMargin_Percentage" />
+                <ScalarProperty Name="Units_PerItem" ColumnName="Units_PerItem" />
+                <ScalarProperty Name="PQty_PerItem" ColumnName="PQty_PerItem" />
+                <ScalarProperty Name="Items_Received" ColumnName="Items_Received" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="Supp_Invno" ColumnName="Supp_Invno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="Model.Vendor">
+              <MappingFragment StoreEntitySet="Vendor">
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Record_date" ColumnName="Record_date" />
+                <ScalarProperty Name="Lang_Code" ColumnName="Lang_Code" />
+                <ScalarProperty Name="Alt_Country" ColumnName="Alt_Country" />
+                <ScalarProperty Name="Alt_City" ColumnName="Alt_City" />
+                <ScalarProperty Name="Alt_Address" ColumnName="Alt_Address" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Fax_No" ColumnName="Fax_No" />
+                <ScalarProperty Name="Tel_No" ColumnName="Tel_No" />
+                <ScalarProperty Name="Postal_Code" ColumnName="Postal_Code" />
+                <ScalarProperty Name="Country_code" ColumnName="Country_code" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Contact_Person" ColumnName="Contact_Person" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="vendor_Title" ColumnName="vendor_Title" />
+                <ScalarProperty Name="vendor_code" ColumnName="vendor_code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockTextrpts">
+            <EntityTypeMapping TypeName="Model.StockTextrpt">
+              <MappingFragment StoreEntitySet="StockTextrpt">
+                <ScalarProperty Name="Items_Available" ColumnName="Items_Available" />
+                <ScalarProperty Name="Brand_name" ColumnName="Brand_name" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="V_InventoryWithSum">
+            <EntityTypeMapping TypeName="Model.V_InventoryWithSum">
+              <MappingFragment StoreEntitySet="V_InventoryWithSum">
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="Manufacturer_Code" ColumnName="Manufacturer_Code" />
+                <ScalarProperty Name="M_Name" ColumnName="M_Name" />
+                <ScalarProperty Name="Items_Available" ColumnName="Items_Available" />
+                <ScalarProperty Name="Brand_name" ColumnName="Brand_name" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="V_MerckRPT">
+            <EntityTypeMapping TypeName="Model.V_MerckRPT">
+              <MappingFragment StoreEntitySet="V_MerckRPT">
+                <ScalarProperty Name="Items_Received" ColumnName="Items_Received" />
+                <ScalarProperty Name="SQty" ColumnName="SQty" />
+                <ScalarProperty Name="GroupNo" ColumnName="GroupNo" />
+                <ScalarProperty Name="Manufacturer_Code" ColumnName="Manufacturer_Code" />
+                <ScalarProperty Name="Items_Available" ColumnName="Items_Available" />
+                <ScalarProperty Name="Units_PerItem" ColumnName="Units_PerItem" />
+                <ScalarProperty Name="Trade_PriceItem" ColumnName="Trade_PriceItem" />
+                <ScalarProperty Name="Brand_name" ColumnName="Brand_name" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="V_PBCustomer">
+            <EntityTypeMapping TypeName="Model.V_PBCustomer">
+              <MappingFragment StoreEntitySet="V_PBCustomer">
+                <ScalarProperty Name="Cust_Name" ColumnName="Cust_Name" />
+                <ScalarProperty Name="Received_Status" ColumnName="Received_Status" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="DIR_ApprovedBy" ColumnName="DIR_ApprovedBy" />
+                <ScalarProperty Name="HOD_ApprovedBy" ColumnName="HOD_ApprovedBy" />
+                <ScalarProperty Name="PG_ApprovedBy" ColumnName="PG_ApprovedBy" />
+                <ScalarProperty Name="PO_Dept_code" ColumnName="PO_Dept_code" />
+                <ScalarProperty Name="PO_CreatedBy" ColumnName="PO_CreatedBy" />
+                <ScalarProperty Name="Vendor_code" ColumnName="Vendor_code" />
+                <ScalarProperty Name="Ship_Via" ColumnName="Ship_Via" />
+                <ScalarProperty Name="Ship_toCustCity" ColumnName="Ship_toCustCity" />
+                <ScalarProperty Name="Ship_toCustAddr" ColumnName="Ship_toCustAddr" />
+                <ScalarProperty Name="Customer_Code" ColumnName="Customer_Code" />
+                <ScalarProperty Name="NET_Amount" ColumnName="NET_Amount" />
+                <ScalarProperty Name="Disc_Percentage" ColumnName="Disc_Percentage" />
+                <ScalarProperty Name="Tax_Percentage" ColumnName="Tax_Percentage" />
+                <ScalarProperty Name="Gross_Amount" ColumnName="Gross_Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Delivery_status" ColumnName="Delivery_status" />
+                <ScalarProperty Name="Delivery_date" ColumnName="Delivery_date" />
+                <ScalarProperty Name="PO_Date" ColumnName="PO_Date" />
+                <ScalarProperty Name="PO_Title" ColumnName="PO_Title" />
+                <ScalarProperty Name="Branch_No" ColumnName="Branch_No" />
+                <ScalarProperty Name="PO_No" ColumnName="PO_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="V_StockInventory">
+            <EntityTypeMapping TypeName="Model.V_StockInventory">
+              <MappingFragment StoreEntitySet="V_StockInventory">
+                <ScalarProperty Name="Branch_Code" ColumnName="Branch_Code" />
+                <ScalarProperty Name="DSTB_NO" ColumnName="DSTB_NO" />
+                <ScalarProperty Name="Items_Available" ColumnName="Items_Available" />
+                <ScalarProperty Name="Batch_NO" ColumnName="Batch_NO" />
+                <ScalarProperty Name="Brand_name" ColumnName="Brand_name" />
+                <ScalarProperty Name="AltStock_No" ColumnName="AltStock_No" />
+                <ScalarProperty Name="Stock_no" ColumnName="Stock_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

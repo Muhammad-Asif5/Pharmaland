@@ -1,0 +1,322 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<style>
+    /*table tbody tr td{border:2px solid black important;}*/
+</style>
+@{
+    ViewBag.Title = "Merck";
+}
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<h2>Merck Report</h2>
+<div id="loading"></div>
+
+<div class="form-inline" style="position:relative">
+    <div class="form-group">
+        <label for="email">From:</label>
+        <input type="date" class="form-control" id="SO_Date" name="SO_Date" placeholder="From Date">
+    </div>
+    <div class="form-group">
+        <label for="pwd">To:</label>
+        <input type="date" class="form-control" id="SO_Date1" name="SO_Date1" placeholder="To Date">
+    </div>
+    <div class="form-group">
+        <label for="POPrice_PerItem" class="">Select</label>
+        <div style="margin-left:50px; position:absolute;top:0px;">
+            <select name="Branch_Code" class="chosen-select" id="Branch_Code" onchange="onchangeBranch(this.value)">
+                <option disabled selected value="-1">--Select Branch--</option>
+                <option value="748">748 : ZUIS ISB</option>
+                <option value="741">741 : ZUIS PWR</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" style="margin-left:150px; position:absolute;top:0px;">
+        <label for="Vendor" class="">Select Vendor</label>
+        <div style="margin-left:100px; position:absolute;top:0px;">
+            <select name="Vendor" class="chosen-select" id="Vendor" onchange="onchangeVendor(this.value)">
+                <option disabled selected value="-1">--Select Vendor--</option>
+                <option value="101">101 : Martin Dow</option>
+                <option value="102">102 : Seatle Pvt</option>
+                <option value="103">103 : Tradelink</option>
+                <option value="104">104 : Merck</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<hr />
+<a class="btn btn-primary" onclick="tableToExcel('datatable', 'Stock & Sales')" href="#"><i class="fa fa-print"></i> Download</a>
+<table id="datatable" class="table-striped table-bordered" style="margin-top:10px;">
+    <caption id="Mycaption"></caption>
+    <thead id="tblHeader"></thead>
+    <tbody></tbody>
+</table>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Messages.js"></script>
+<script src="~/Scripts/ExportToExcel.js"></script>
+<script>
+
+    var $loading = $('#loading').hide();
+
+    function onchangeBranch(value) {
+        $("#Vendor").val("").trigger('chosen:updated');
+    }
+    function onchangeVendor(value) {
+        
+        var Vendor = $("#Vendor").val();
+        var BCode = $("#Branch_Code").val();
+        if (BCode != null && value!="") {
+           
+            mainData(Vendor);
+        }
+    }
+
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+    function mainData(Vendor) {
+        $.ajax({
+            type: "POST",
+            url: "/Merck/MyProperty1",
+            data: { Vendor: Vendor },
+            success: function (data) {
+                
+                LoadAllData(data.data, data.subTotal);
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+    }
+
+    function LoadAllData(data, subTotal) {
+        var SO_Date = $("#SO_Date").val();
+        var SO_Date1 = $("#SO_Date1").val();
+        HeadtRpt();
+        //var listGroupNo = ['CH A', 'CH B', 'CH C'];
+        var distinct = [];
+        /////////////////////////  get Distinct Group  /////////////////////////////////////////
+        var unique = {};
+        data.forEach(function (x) {
+            
+            if (!unique[x.GroupNo]) {
+                distinct.push(x.GroupNo);
+                unique[x.GroupNo] = true;
+            }
+        });
+        
+        if (distinct.length > 0) {
+            var localCount = 0;
+            var subtotal = 0;
+            
+            for (var b = 0; b < distinct.length; b++) {
+                ////////////////////////  get Distinct Stock  /////////////////////////////////////////
+                var mdata = data;
+                var groupData = mdata.filter(function (row) {
+                    return row.GroupNo == distinct[b];
+                });
+                
+                $("table tbody").append(
+                             "<tr>" +
+                             "<th></th>" +
+                             "<th>Stock No</th>" +
+                             "<th>Names</th>" +
+                             "<th colspan='17'>" + distinct[b] + "</th>" +
+                             "</tr>");
+                var NetSaless = 0;
+                for (var a = 0; a < groupData.length; a++) {
+                    
+                    var NetSaless = NetSaless + groupData[a].NetSales;
+                    
+                    var openStock = groupData[a].Items_Received;
+                    var recept = groupData[a].Items_Received;
+
+                    $("table tbody").append("<tr  onclick='ViewAlert(this.id)' id='asif" + localCount + "'>" +
+                                 "<td>" + (a + 1) + "</td>" +
+                                 "<td>" + groupData[a].Stock_no + "</td>" +
+                                 "<td>" + groupData[a].Brand_name + "</td>" +
+                                 "<td>" + groupData[a].Units_PerItem + "</td>" +
+                                 "<td style='text-align:right'>" + groupData[a].Trade_PriceItem + "</td>" +
+                                 "<td style='text-align:right'>0</td>" +
+                                 "<td style='text-align:right'>" + recept + "</td>" +
+                                 "<td style='text-align:center'></td>" +
+                                 "<td style='text-align:center'></td>" +
+                                 //"<td style='text-align:center'></td>" +
+                                 "<td style='text-align:center'></td>" +
+                                 "<td style='text-align:center'>" + recept + "</td>" + //" + groupData[a].Total + "
+                                 "<td style='text-align:center'></td>" +
+                                 "<td style='text-align:center'></td>" +
+                                 "<td style='text-align:center'>" + groupData[a].SQty + "</td>" +
+                                 "<td style='text-align:center'>" + groupData[a].NetSales + "</td>" +
+                                 "<td style='text-align:center'>0</td>" +
+                                 "<td style='text-align:center'>0</td>" +
+                                 "<td style='text-align:center'>" + groupData[a].NetSales + "</td>" +
+                                 "<td style='text-align:center'>0</td>" +
+                                 "<td style='text-align:center'>0</td>" +
+                                 "</tr>");
+                    //$("#asif" + localCount).append("<td>123</td><td>123</td><td>123</td><td>123</td><td>123</td><td>123</td>");
+                    //$("#asif" + localCount).append("<td>123</td><td>123</td><td>123</td>");
+                    localCount++;
+                    
+                } // End loop data.Student.length
+
+                var subtotall = NetSaless;
+                ///////////////////////////////////////   Other End   /////////////////////////////////////////
+
+                $("table tbody").append(
+                     "<tr>" +
+                     "<td></td>" +
+                     "<th style='text-align:center;' colspan='2'><label>Sub Total For Group:</label></th>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<th>" + subtotall.toFixed(2) + "</th>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "<th>" + subtotall.toFixed(2) + "</th>" +
+                     "<td></td>" +
+                     "<td></td>" +
+                     "</tr>");
+            }
+            ///////////////////////////////  Date From To Date ////////////////////////////
+            //' + $("#SO_Date1").val() + '
+            
+
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>From:</label></td>');
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>' + SO_Date  + '</label></td>');
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>To:</label></td>');
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>' + SO_Date1 + '</label></td>');
+        }
+    }
+
+    function HeadtRpt() {
+        
+        $("table thead").html("");
+        $("table tbody").html("");
+        document.getElementById("datatable").deleteCaption();
+        //var a = $('#cmbCourseID option:selected').text();
+        //$("table").append("<caption style='color:black;'>" + a + "</caption>");
+
+        $("table").append("<caption style='font-size:12pt; text-align:center; color:black; border:2px solid black'>" +
+            "<label style='font-size:12pt; color:black;'>" +
+            "Weekly/Monthly Stock and Sales Status Report" +
+            "</label>" +
+            "<br/>" +
+            "<label style='font-size:12pt; color:black;'>" +
+            "Zuis Pharmaland" +
+            "</label>" +
+            "<br/>" +
+             "<label style='font-size:12pt; color:black;'>" +
+            "House#CB-974/8,Street#3,East ,Shabbir Lane" +
+            "</label>" +
+
+            "</caption>");
+
+
+        $("table thead").append("<tr>" +
+                 "<th style='text-align:center' colspan='3'>Item Name</th>" +
+                 "<th>Pack</th>" +
+                 "<th>T.P</th>" +
+                 "<th>Opening Stock</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>Receipt</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>Returns</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>T.IN</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>T.OUT</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>Total</th>" +
+                "</tr>" +
+                 "");
+        $('<tr><td colspan="6" style="text-align:center"><label></label></td></tr>').insertBefore('table > thead > tr:first');
+
+        $('table > thead > tr > td:last').after('<td style="background-color:#165651;color:#f4f4f4;text-align:center;" colspan="5"><label>    P  U  R  C  H  A  S  E  S</label></td>');
+        $("table thead > tr >th:last").after("" +
+              "<th style='background-color:#76847c;color:white; text-align:center;'>Sale</th>" +
+              "<th style='background-color:#76847c;color:white; text-align:center;'>Returns</th>" +
+              "<th style='background-color:#76847c;color:white; text-align:center;'>Net Sales</th>" +
+              "<th style='background-color:#76847c;color:white; text-align:center;'>Value T.P</th>" +
+              "<th style='background-color:#76847c;color:white; text-align:center;'>Adj</th>" +
+              "<th style='background-color:#76847c;color:white; text-align:center;'>Balance</th>" +
+             "");
+        $('table > thead > tr > td:last').after('<td style="background-color:#76847c;color:white; text-align:center;" colspan="6"><label>SALE</label></td>');
+        $("table thead > tr >th:last").after("" +
+            "<th style='background-color:#165651;color:white; text-align:center;'>Value T.P</th>" +
+            "<th style='background-color:#165651;color:white; text-align:center;'>Today Sale</th>" +
+            "<th style='background-color:#165651;color:white; text-align:center;'>Today Return</th>" +
+           "");
+        $('table > thead > tr > td:last').after('<td style="background-color:#165651;color:white; text-align:center;" colspan="3"><label>OTHER</label></td>');
+
+        //$("table thead tr:last").after(
+        //                   "<tr>" +
+        //                   "<th></th>" +
+        //                   "<th>Stock No</th>" +
+        //                   "<th>Names</th>" +
+        //                   "<th colspan='17'>CH A</th>" +
+        //                   "</tr>");
+    }
+
+    $(document).ready(function () {
+       // var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+       // var minDate = new Date();
+       // $("#SO_Date").datepicker({
+       //     shownAnim: 'drop',
+       //     calendarWeeks: true,
+       //     numberOfMonth: 1,
+       //     //minDate: minDate,
+       //     dateFormat: 'dd/MM/yy',
+       //     changeMonth: true,
+       //     changeYear: true,
+       //     onClose: function (selectedDate) {
+       //         $('#SO_Date1').datepicker("option", "minDate", selectedDate);
+       //     }
+       // });
+       // var todayDate = "";
+       // var date = new Date();
+       // var dat = date.getDate();
+       // var mon = monthNames[date.getMonth()];
+       // var year = date.getFullYear();
+       // todayDate = dat + "/" + mon + "/" + year;
+       // //$("#SO_Date").val(todayDate);
+
+       // //var date = new Date(id);
+       // date.setDate(date.getDate() + 7);
+       // var dat1 = date.getDate();
+       // var mon1 = monthNames[date.getMonth()];
+       // var year1 = date.getFullYear();
+       // todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+
+       //// $("#SO_Date1").val(todayDate1);
+
+       // $("#SO_Date1").datepicker({
+       //     shownAnim: 'drop',
+       //     numberOfMonth: 1,
+       //     //minDate: minDate,
+       //     dateFormat: 'dd/MM/yy',
+       //     changeMonth: true,
+       //     changeYear: true
+       // });
+       
+        $('.chosen-select').chosen({ width: "100%" });
+    })
+
+</script>

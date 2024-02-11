@@ -1,0 +1,55 @@
+﻿@*@{
+    ViewBag.Title = "Unauthorize";
+}
+
+<h2 style="color:red;">Session Expired</h2>
+
+<h4 style="color:red;">Access denied you are not authorized to access this page</h4>
+
+@Html.ActionLink("Return", "Login", "Login")*@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="refresh" content="3; URL=../Login/Login">
+    <style>
+        .content {
+            font-size: 11px;
+            color: #595959;
+            font-weight: normal;
+            font-family: verdana, arial, helvetica, sans-serif;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <br />
+        <br />
+        <br />
+        <div style="text-align: center; margin-top: 35px;"><h3><asp:Label ID="lblconfirm" runat="server" /></h3></div>
+        <br />
+        <div style="text-align: center;">
+            <h2 style="color:red;">Session Expired</h2>
+            <h4 style="color:red;">Access denied you are not authorized to access this page</h4>
+            <span class="content">
+                Please wait, you will be redirected back to the Main page.
+                <br />
+                @Html.ActionLink("Go Back to Login", "../Login/Login")
+            </span>
+
+        </div>
+    </form>
+</body>
+</html>
+
+
+
+
+

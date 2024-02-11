@@ -1,0 +1,629 @@
+﻿@model IEnumerable<ZUIS.Models.VM>
+
+
+<div id="circle">
+    <div class="loader">
+        <div class="loader">
+            <div class="loader">
+                <div class="loader">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="vendor_code" class="">Supplier Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input maxlength="3" tabindex="1" type="text" class="form-control" name="vendor_code" id="vendor_code" placeholder="vendor_code">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="vendor_Title" class="">vendor_Title</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="2" name="vendor_Title" id="vendor_Title" class="form-control">
+                            <option>--Select Title--</option>
+                            <option value="001">Dr</option>
+                            <option value="002">Mr</option>
+                            <option value="003">Ms</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Name" class="">Name</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="3" type="text" name="Name" id="Name" class="form-control" placeholder="Name">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Contact_Person" class="">Contact</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="4" type="text" name="Contact_Person" id="Contact_Person" class="form-control" placeholder="Contact_Person">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Address" class="">Address</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="5" type="text" name="Address" id="Address" class="form-control" placeholder="Address">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="City" class="">City</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="6" type="text" name="City" id="City" class="form-control" placeholder="City">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Region" class="">Region</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="7" type="text" name="Region" id="Region" class="form-control" placeholder="Region">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Country_code" class="">Country_code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Country_code", (List<SelectListItem>)ViewBag.DDLCountry,
+                                                                                         "--Select Country--", new { @class = "chosen-select", @tabindex = "8" })
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Postal_Code" class="">Postal Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="9" type="text" name="Postal_Code" id="Postal_Code" class="form-control" placeholder="Postal_Code">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Email" class="">Email</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="10" type="text" name="Email" id="Email" class="form-control" placeholder="Email">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Tel_No" class="">Tel_No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="11" type="text" name="Tel_No" id="Tel_No" class="form-control" placeholder="Tel_No">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Fax_No" class="">Fax_No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="12" type="text" name="Fax_No" id="Fax_No" class="form-control" placeholder="Fax_No">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Alt_Address" class="">Alt_Address</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="13" type="text" name="Alt_Address" id="Alt_Address" class="form-control" placeholder="Alt_Address">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Alt_City" class="">Alt_City</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="14" type="text" name="Alt_City" id="Alt_City" class="form-control" placeholder="Alt_City">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Alt_Country" class="">Alt_Country</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="15" type="text" name="Alt_Country" id="Alt_Country" class="form-control" placeholder="Alt_Country">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Lang_Code" class="">Lang_Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="16" type="text" name="Lang_Code" id="Lang_Code" class="form-control" placeholder="Lang_Code">
+                    </div>
+                </div>
+                
+                <div class="">
+                    <div class="col-sm-3">
+
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <button tabindex="12" type="button" id="SaveBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                        <button tabindex="13" type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                        <button tabindex="14" type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>
+                        <button type="button" onclick="resetData()" class="btn btn-primary">New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="width:8%">Code</th>
+                    <th style="width:15%">Name</th>
+                    <th style="width:10%">Contact</th>
+                    <th style="width:10%">Address</th>
+                    <th style="width:5%">City</th>
+                    <th style="width:5%">Region</th>
+                    <th style="width:7%">Postal Code</th>
+                    <th style="width:10%">Phone No</th>
+                    <th style="width:10%">Country</th>
+                    <th style="width:10%">Fax No</th>
+                    <th style="width:10%">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int counter = 0;// Index start value
+                    foreach (var item in Model)
+                    {
+                        <tr onclick="GetEmployeeById(this.id)" id="@item.vendor_code">
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.vendor_code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Contact_Person)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Address)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.City)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Region)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Postal_Code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Tel_No)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Country.Country_Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Fax_No)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+
+                        </tr>
+                        counter++;
+                    }
+                }
+
+
+            </tbody>
+
+        </table>
+    </div>
+    
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script>
+    var GlobalFlag = 0;
+    var flag = [];
+
+    function resetData() {
+        $("#vendor_code").prop('readonly', false);
+        $(".chosen-select").trigger('chosen:updated');
+        $('#LoadData')[0].reset();
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+        
+    }
+    function SaveData() {
+        //alert("save");
+        var Code = $("#vendor_code").val();
+        var vendor_Title = $("#vendor_Title").val();
+        var Name = $("#Name").val();
+        var Contact = $("#Contact_Person").val();
+        var Address = $("#Address").val();
+        var City = $("#City").val();
+        var Region = $("#Region").val();
+        var Country_code = $("#Country_code").val();
+        var pCode = $("#Postal_Code").val();
+        var Email = $("#Email").val();
+        var PhoneNo = $("#Tel_No").val();
+        var FaxNo = $("#Fax_No").val();
+        var Alt_Address = $("#Alt_Address").val();
+        var Alt_City = $("#Alt_City").val();
+        var Alt_Country = $("#Alt_Country").val();
+        var Lang_Code = $("#Lang_Code").val();
+        var Country = Country_code.substring(4);
+        alert(Country);
+        var str = $("form").serialize();
+        if (Code != "" && Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Default/SaveSupplier",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $("#myDatatable").DataTable();
+                        //var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        var rowIndex = table.row.add([Code, Name, Contact, Address, City, Region, pCode, FaxNo, Email, PhoneNo, Country, FaxNo]).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr('id', Code);
+                        $(row).attr('onclick','GetEmployeeById(this.id)');
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                    } else {
+                        toastr.warning(data.message, "WARNING",
+                       options = {
+                           "closeButton": true,
+                           "debug": false,
+                           "progressBar": true,
+                           "preventDuplicates": true,
+                           "positionClass": "toast-top-center",
+                           "onclick": null,
+                           "showDuration": "400",
+                           "hideDuration": "1000",
+                           "timeOut": "7000",
+                           "extendedTimeOut": "1000",
+                           "showEasing": "swing",
+                           "hideEasing": "linear",
+                           "showMethod": "fadeIn",
+                           "hideMethod": "fadeOut"
+                       });
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Supplier", "INFO",
+                     options = {
+                         "closeButton": true,
+                         "debug": false,
+                         "progressBar": true,
+                         "preventDuplicates": true,
+                         "positionClass": "toast-top-center",
+                         "onclick": null,
+                         "showDuration": "400",
+                         "hideDuration": "1000",
+                         "timeOut": "7000",
+                         "extendedTimeOut": "1000",
+                         "showEasing": "swing",
+                         "hideEasing": "linear",
+                         "showMethod": "fadeIn",
+                         "hideMethod": "fadeOut"
+                     }
+                 );
+        }
+
+
+    }
+
+    function UpdateData() {
+        //alert("save");
+        var Code = $("#vendor_code").val();
+        var vendor_Title = $("#vendor_Title").val();
+        var Name = $("#Name").val();
+        var Contact = $("#Contact_Person").val();
+        var Address = $("#Address").val();
+        var City = $("#City").val();
+        var Region = $("#Region").val();
+        var Country_code = $("#Country_code").val();
+        var pCode = $("#Postal_Code").val();
+        var Email = $("#Email").val();
+        var PhoneNo = $("#Tel_No").val();
+        var FaxNo = $("#Fax_No").val();
+        var Alt_Address = $("#Alt_Address").val();
+        var Alt_City = $("#Alt_City").val();
+        var Alt_Country = $("#Alt_Country").val();
+        var Lang_Code = $("#Lang_Code").val();
+        
+        var Country_cod = $("#Country_code option:selected").text();
+        var CountryCode = Country_cod.substring(0, 4);
+        var Country = Country_cod.substring(4);
+        //alert(CountryCode);
+        //alert(Country);
+
+        var str = $("form").serialize();
+        if (Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Default/UpdateSupplier",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $('#myDatatable').DataTable();
+                        //var fullID = GlobalFlag;
+                        index = table.row('#' + Code); //1234126
+                        var temp = table.row(index[0]).data();
+                        temp[0] = Code;
+                        temp[1] = Name;
+                        temp[2] = Contact;
+                        temp[3] = Address;
+                        temp[4] = City;
+                        temp[5] = Region;
+                        temp[6] = pCode;
+                        temp[7] = PhoneNo;
+                        temp[8] = Country;
+                        temp[9] = FaxNo;
+                        temp[10] = Email;
+
+                        table.row(index[0]).data(temp).draw();
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Supplier", "INFO",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+        }
+
+
+    }
+
+    function RemoveData() {
+        var code = $("#vendor_code").val();
+        //alert("remove");
+        if (code != "") {
+            var Con = confirm("are you sure ?");
+            if (Con == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Default/DeleteSupplier",
+                    data: {
+                        code: code
+                    },
+                    success: function (data) {
+                        if (data.success == true) {
+                            $("#vendor_code").prop('readonly', false);
+                            resetData();
+
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+
+                            toastr.error(data.message, "DELETED",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+                        }
+
+                    },
+                    error: function (result) {
+                        //alert("Connection Error Please retry");
+                    }
+                });
+            }
+        } else {
+            //alert("Select Supplier");
+            toastr.warning("Select Supplier", "WARNING",
+                            options = {
+                                "closeButton": true,
+                                "debug": false,
+                                "progressBar": true,
+                                "preventDuplicates": true,
+                                "positionClass": "toast-top-center",
+                                "onclick": null,
+                                "showDuration": "400",
+                                "hideDuration": "1000",
+                                "timeOut": "7000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+                        );
+        }
+
+    }
+
+    function GetEmployeeById(id) {
+        //alert(id);
+        //flag.push(id);
+        //GlobalFlag = flag[0];
+
+        $("#UpdateBtn").show();
+        $("#RemoveBtn").show();
+        $("#SaveBtn").hide();
+
+        //var id = id.substring(0, 5);
+        //var index = id.substring(5);
+        $.ajax({
+            type: "POST",
+            url: "/Default/GetSupplierById",
+            data: { id: id },
+            success: function (data) {
+                $("#vendor_code").prop('readonly', true);
+
+                var Code = $("#vendor_code").val(data[0].vendor_code);
+                var vendor_Title = $("#vendor_Title").val(data[0].vendor_Title);
+                var Name = $("#Name").val(data[0].Name);
+                var Contact = $("#Contact_Person").val(data[0].Contact_Person);
+                var Address = $("#Address").val(data[0].Address);
+                var City = $("#City").val(data[0].City);
+                var Region = $("#Region").val(data[0].Region);
+                $("#Country_code").val(data[0].Country_code).trigger('chosen:updated');
+                var pCode = $("#Postal_Code").val(data[0].Postal_Code);
+                var Email = $("#Email").val(data[0].Email);
+                var Tel_No = $("#Tel_No").val(data[0].Tel_No);
+                var Fax_No = $("#Fax_No").val(data[0].Fax_No);
+                var Alt_Address = $("#Alt_Address").val(data[0].Alt_Address);
+                var Alt_City = $("#Alt_City").val(data[0].Alt_City);
+                var Alt_Country = $("#Alt_Country").val(data[0].Alt_Country);
+                var Lang_Code = $("#Lang_Code").val(data[0].Lang_Code);
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: "100%" });
+        document.getElementById('circle').style.display = 'none'; //Not Visible
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+        var table = $("#myDatatable").DataTable({
+            buttons:[
+                {
+                    extend: 'print',
+                    className:'btn btn-primary btn-sm'
+                },
+                {
+                    extend: 'excel',
+                    filename: 'Vendor',
+                    sheetName: 'Vendor',
+                    className: 'btn btn-primary btn-sm'
+                }
+            ],
+            dom: 'lBfrtip',
+            // "paging": false,
+            // searching: false,                   // for disable search box
+            select: {
+                info: false
+            },
+            "columnDefs": [
+               { "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "orderable": false }
+            ],
+            
+            language: {
+                search: "", // for hide label of search
+                searchPlaceholder: "Search Vendor", // place holder of search box
+            },
+            //   responsive: true,
+            select: true,                       // for Select Row
+            //    //bDestroy: true,                     // this will disable table when new load data
+            "bLengthChange": false,           //  for Show more Entries
+            // scrollY: '20vh',
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
+            //"bScrollCollapse": true,
+            "processing": true,
+            //"bPaginate": false,
+            //"sPaginationType": "full_numbers",
+        });
+
+        $('input[type="search"]').addClass('form-control'); // <-- add this line
+    });
+
+</script>

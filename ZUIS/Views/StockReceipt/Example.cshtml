@@ -1,0 +1,847 @@
+﻿
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+
+<style>
+    .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+        background: red;
+    }
+
+    .ui-datepicker table {
+        background: #236;
+        color: #fff;
+    }
+
+    #uTable {
+        width: 100%;
+    }
+
+        #uTable td {
+            width: 100px;
+            text-align: center;
+        }
+
+    .table > caption + thead > tr:first-child > td, .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table > thead:first-child > tr:first-child > th {
+        font-size: 8pt;
+    }
+
+    .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > td, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+        font-size: 8pt;
+    }
+</style>
+<div id="circle">
+    <div class="loader">
+        <div class="loader">
+            <div class="loader">
+                <div class="loader">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mr_t_30">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Received</a></li>
+        <li><a data-toggle="tab" href="#menu1">Other</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h3>HOME</h3>
+            <p>Some content.</p>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <h3>Menu 1</h3>
+            <p>Some content in menu 1.</p>
+        </div>
+    </div>
+    <form id="LoadData" class="">
+        <div class="row">
+
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Supp_Invno " class="control-label">Supp_Invno </label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input onkeyup="FindByInvno(this.value)" tabindex="1" type="number" name="Supp_Invno" id="Supp_Invno" class="form-control" placeholder="Supp_Invno" />
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="PO_NO" class="">PO_NO</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("PO_No", (List<SelectListItem>)ViewBag.DDLPo,
+                                                                                                           "--Select PO--", new { @class = "chosen-select", @tabindex = "4" })
+                    </div>
+                    @*<div class="input-group col-sm-9">
+                            <input tabindex="2" type="number" name="PO_NO" id="PO_NO" class="form-control" placeholder="Search PO_NO">
+                            <div class="input-group-btn">
+                                <button onclick="FindByPO()" class="btn btn-default" type="button">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="vendor_code" class="">vendor_code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Vendor_code", (List<SelectListItem>)ViewBag.DDLVendor,
+                                                                                         "--Select Vendor--", new { @class = "chosen-select", @tabindex = "2" })
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Currency" class="">Currency</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="4" id="Currency" name="Currency" class="form-control">
+                            <option selected value="PKRS">PKRS</option>
+                            <option value="EURO">EURO</option>
+                            <option value="$ US">$ US</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Received_date" class="">Received_date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="5" type="text" name="Received_date" id="Received_date" class="form-control">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Invoice_Date" class="">Invoice_Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="6" type="text" name="Invoice_Date" id="Invoice_Date" class="form-control" placeholder="Invoice_Date">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Status" class="">Status</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="7" name="Status" id="Status" class="form-control">
+                            <option selected value="Y">Y</option>
+                            <option value="N">N</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Payment_Type" class="">Payment_Type</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="8" id="Payment_Type" name="Payment_Type" class="form-control">
+                            <option selected value="R">PKRS</option>
+                            <option value="E">EURO</option>
+                            <option value="$">$ US</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="form-group">
+                        <button tabindex="9" type="button" onclick="SaveStockReceipt()" class="btn btn-success">Save</button>
+                        @*<button type="button" id="GenerareBtn" onclick="Generare()" class="btn btn-info">Generare</button>*@
+                        @*<button type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                            <button  type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>*@
+                        <button type="button" onclick="resetPO()" class="btn btn-primary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form id="LoadData1" class="form-inline">
+        <table id="uTable">
+            <tr>
+                <td>
+                    <div class="form-group">
+
+                        <label for="Items_Received" class="">Items_Received</label>
+                        <input onkeyup="Items_Received_Available(this.value)" tabindex="12" type="number" name="Items_Received" id="Items_Received" class="form-control" placeholder="Items_Received">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Units_PerItem" class="">Units_PerItem</label>
+                        <input tabindex="13" type="number" class="form-control" name="Units_PerItem" id="Units_PerItem" placeholder="Units_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Items_Available" class="">Items_Available</label>
+                        <input tabindex="14" type="number" class="form-control" name="Items_Available" id="Items_Available" placeholder="Items_Available">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="PPrice_PerItem" class="">PPrice_PerItem</label>
+                        <input tabindex="15" type="number" class="form-control" name="PPrice_PerItem" id="PPrice_PerItem" placeholder="PPrice_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="PPrice_PerUnit" class="">PPrice_PerUnit</label>
+                        <input tabindex="16" type="number" class="form-control" name="PPrice_PerUnit" id="PPrice_PerUnit" placeholder="PPrice_PerUnit">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="SPrice_PerItem" class="">SPrice_PerItem</label>
+                        <input tabindex="17" type="number" class="form-control" name="SPrice_PerItem" id="SPrice_PerItem" placeholder="SPrice_PerItem">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="SPrice_PerUnit" class="">SPrice_PerUnit</label>
+                        <input tabindex="18" type="number" class="form-control" name="SPrice_PerUnit" id="SPrice_PerUnit" placeholder="SPrice_PerUnit">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="WPrice_PerItem" class="">WPrice_PerItem</label>
+                        <input tabindex="19" type="number" class="form-control" name="WPrice_PerItem" id="WPrice_PerItem" placeholder="WPrice_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="PPrice_Currency" class="">PPrice_Currency</label>
+                        <input tabindex="20" type="number" class="form-control" name="PPrice_Currency" id="PPrice_Currency" placeholder="PPrice_Currency">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Currency_Rate" class="">Currency_Rate</label>
+
+                        <input tabindex="21" type="number" class="form-control" name="Currency_Rate" id="Currency_Rate" placeholder="Currency_Rate">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="WPrice_PerItem" class="">Expiry_Date</label>
+                        <input tabindex="22" type="text" class="form-control" name="Expiry_Date" id="Expiry_Date" placeholder="Expiry_Date">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="WPrice_PerItem" class="">Batch_NO</label>
+                        <input tabindex="23" type="number" class="form-control" name="Batch_NO" id="Batch_NO" placeholder="Batch_NO">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="Tax_Percentage" class="">Tax_Percentage</label>
+                        <input tabindex="24" type="number" class="form-control" name="Tax_Percentage" id="Tax_Percentage" placeholder="Tax_Percentage">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Tax_Amount" class="">Tax_Amount</label>
+                        <input tabindex="25" type="number" class="form-control" name="Tax_Amount" id="Tax_Amount" placeholder="Tax_Amount">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Received_Status" class="">Received_Status</label>
+                        <select tabindex="26" class="form-control" name="Received_Status" id="Received_Status">
+                            <option selected disabled>--Select Status--</option>
+                            <option value="R">Received</option>
+                            <option value="N">Not Received</option>
+                        </select>
+                    </div>
+                </td>
+
+                @*<td>
+                        <div class="form-group">
+                            <label for="Record_date" class="">Record_date</label>
+                            <input tabindex="13" type="number" class="form-control" name="Record_date" id="Record_date" placeholder="Record_date">
+                        </div>
+                    </td>*@
+                <td>
+                    <button tabindex="27" type="button" onclick="UpdateStockReceiptDetData()" class="btn btn-success">Save</button>
+                    @*<button type="button" id="UpdatePODetailsBtn" onclick="UpdatePODetailsData()" class="btn btn-success">Update</button>*@
+                    @*<button type="button" id="DeletePODetailsBtn" onclick="DeletePODetailsData()" class="btn btn-danger">Remove</button>*@
+                    <button type="button" onclick="resetSRDetails()" class="btn btn-default">Cancel</button>
+                </td>
+            </tr>
+        </table>
+        <div class="form-group mr_t_20">
+
+
+        </div>
+    </form>
+
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="">Stock No</th>
+                    <th style="">Brand Name</th>
+                    <th style="">Generic Name</th>
+                    <th style="">PQ/Item</th>
+                    <th style="">Qty Recv</th>
+                    <th style="">Qty Avail</th>
+                    <th style="">Exp Date</th>
+                    <th style="">Batch No</th>
+                    <th style="">PP/Item</th>
+                    <th style="">PP/Unit</th>
+                    <th style="">SP/Item</th>
+                    <th style="">SP/Unit</th>
+                    <th style="">WSP/Item</th>
+                    <th style="">PP Curr</th>
+                    <th style="">Curr Rate</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+    <hr />
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div style="width:330px;">
+                <div>
+                    <label for="PO_CreatedBy" class="pull-left">Created By</label>
+                    <input style="width:200px;" readonly type="text" name="PO_CreatedBy" id="PO_CreatedBy" placeholder="PO_CreatedBy" class="form-control pull-right" />
+                </div>
+                <br>
+                <div style="margin-top:20px;">
+                    <label for="PO_Dept_code" class="pull-left">Dept Code</label>
+                    <input style="width:200px;" readonly type="text" name="PO_Dept_code" id="PO_Dept_code" placeholder="PO_Dept_code" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="PG_ApprovedBy" class="pull-left">PG Approved By</label>
+                    <input style="width:200px;" readonly type="text" name="PG_ApprovedBy" id="PG_ApprovedBy" placeholder="PG_ApprovedBy" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="HOD_ApprovedBy" class="pull-left">HOD Approved By</label>
+                    <input style="width:200px;" readonly type="text" name="HOD_ApprovedBy" id="HOD_ApprovedBy" placeholder="HOD_ApprovedBy" class="form-control pull-right" />
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div style="width:330px; float:right;">
+                <div>
+                    <label for="Total_Amount" class="">Total_Amount</label>
+                    <input style="width:200px;" readonly="readonly" type="text" name="Total_Amount" id="Total_Amount" placeholder="Total_Amount" class="form-control pull-right" />
+                </div>
+                <br />
+                <div>
+                    <label for="Tax_amount" class="pull-left">Tax_amount</label>
+                    <input autocomplete="off" onkeyup="calDown()" style="width:200px;" type="text" name="Tax_amount" id="Tax_amount" placeholder="Tax_amount" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="Disc_amount" class="pull-left">Disc_amount</label>
+                    <input style="width:200px;" autocomplete="off" onkeyup="calDown()" type="text" name="Disc_amount" id="Disc_amount" placeholder="Disc_amount" value="0" class="form-control pull-right" />
+                </div>
+                <br />
+                <div style="margin-top:20px;">
+                    <label for="DIR_ApprovedBy" class="pull-left">NET Amount</label>
+                    <input style="width:200px;" readonly="readonly" type="text" name="NET_Amount" id="NET_Amount" placeholder="NET_Amount" class="form-control pull-right" />
+                </div>
+                @*<br />
+
+                    <div style="margin-top:20px;">
+                        <button onclick="CalculateBottomDisc()" type="button" class="btn btn-default">Save</button>
+                    </div>*@
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="~/Scripts/Messages.js"></script>
+
+
+<script>
+    var flagStockNo = 0;
+    function Items_Received_Available(value){
+        var Items_Received = $("#Items_Received").val();
+        var Items_Available = $("#Items_Available").val(Items_Received);
+
+    }
+    ///////////////////////////////// Get Data //////////////////////////////////
+    function FindByInvno(id) {
+        if (id != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/GetAllStockReceiptDELInTable",
+                data: {
+                    poNo: id
+                },
+                success: function (data) {
+                    resetPO();
+                    if (data.length > 0) {
+                        $("#PO_No").val(data[0].PO_NO).trigger('chosen:updated');
+                        $("#Vendor_code").val(data[0].vendor_code).trigger('chosen:updated');
+                        $("#Currency").val(data[0].Currency);
+
+                        var Received_date = ConvertDate(data[0].Received_date);
+                        var Invoice_Date = ConvertDate(data[0].Invoice_Date);
+                        //var DeliveryDate = ToJavaScriptDate(data[0].DeliveryDate);
+                        //alert(Received_date);
+                        $("#Received_date").val(Received_date);
+                        //$("#Delivery_date").val(DeliveryDate);
+                        $("#Invoice_Date").val(Invoice_Date);
+                        $("#Status").val(data[0].Status);
+                        $("#Payment_Type").val(data[0].Payment_Type);
+                        $("#myDatatable body").html("");
+                        //alert(data[0].Total_Amount);
+                        $("#Total_Amount").val(data[0].Total_Amount);
+                        $("#Tax_amount").val(data[0].Tax_amount);
+                        $("#Disc_amount").val(data[0].Disc_amount);
+
+                        var table = $("#myDatatable").DataTable({
+                            data: data,
+
+                            //rowId: 'staffId',
+                            columns: [
+
+                                { "data": "Stock_no", "searchable": false, "orderable": false },
+                                { "data": "Brand_name", "searchable": false, "orderable": false },
+                                { "data": "Generic_name", "searchable": false, "orderable": false },
+                                { "data": "POQty_PerItem", "searchable": false, "orderable": false },
+
+                                { "data": "Items_Received", "searchable": false, "orderable": false },
+                                { "data": "Items_Available", "searchable": false, "orderable": false },
+                                //{ "data": "Expiry_Date", "searchable": false, "orderable": false },
+                                {
+                                    "data": "Expiry_Date", "searchable": false, "orderable": false, render: function (data) {
+                                        return ConvertDate(data);
+                                    }
+                                },
+                                { "data": "Batch_NO", "searchable": false, "orderable": false },
+
+
+                                { "data": "PPrice_PerItem", "searchable": false, "orderable": false },
+                                { "data": "PPrice_PerUnit", "searchable": false, "orderable": false },
+                                { "data": "SPrice_PerItem", "searchable": false, "orderable": false },
+                                { "data": "SPrice_PerUnit", "searchable": false, "orderable": false },
+                                { "data": "WPrice_PerItem", "searchable": false, "orderable": false },
+                                { "data": "PPrice_Currency", "searchable": false, "orderable": false },
+                                { "data": "Currency_Rate", "searchable": false, "orderable": false },
+
+                                //{
+                                //    "data": "PO_Date", "searchable": false, "orderable": false, "render": function (data) {
+                                //       return ConvertDate(data);
+                                //    }
+                                //},
+                            ],
+                            "order": [[0, "asc"]],
+                            "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                                //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                                var r = aData.Stock_no + aData.Supp_Invno;
+                                $(nRow).attr('id', r);
+                                $(nRow).attr('onclick', 'GetRowDataFromTable(this.id)');
+                            },
+                            //"paging": false,
+                            searching: false,                   // for disable search box
+                            select: {
+                                info: false
+                            },
+                            //buttons: [
+                            //    {
+                            //        extend: 'print',
+                            //        className: 'btn btn-primary btn-sm'
+                            //    },
+                            //    {
+                            //        extend: 'excel',
+                            //        filename: 'Stock',
+                            //        sheetName: 'Stock',
+                            //        className: 'btn btn-primary btn-sm'
+                            //    }
+                            //],
+                            //dom: 'lBfrtip',
+                            language: {
+                                search: "", // for hide label of search
+                                searchPlaceholder: "Search Purchase", // place holder of search box
+                            },
+                            responsive: true,
+                            //select: 'single',
+                            select: true,                       // for Select Row
+                            bDestroy: true,                     // this will disable table when new load data
+                            "bLengthChange": false,           //  for Show more Entries
+                            //scrollY: '20vh',
+                            "sScrollX": "100%",
+                            "sScrollXInner": "100%",
+                            "bScrollCollapse": true,
+                            "processing": true,
+                            //"bPaginate": false,
+                            "sPaginationType": "full_numbers",
+                            "langauge": {
+                                "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                            },
+
+
+                        });
+                        $('input[type="search"]').addClass('form-control'); // <-- add this line
+                    } else {
+
+                    }
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            alert("Please Enter PO_NO");
+        }
+    }
+
+    function GetRowDataFromTable(id) {
+        var StockNno = id.substring(0, 8);
+        var SuppInvno = id.substring(8);
+        flagStockNo = id;
+
+        if (id != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/GetPODetailsById",
+                data: {
+                    StockNo: StockNno,
+                    SuppInvno: SuppInvno
+                },
+                success: function (data) {
+                    if (data.length > 0) {
+                        //$("#UpdatePODetailsBtn").show();
+                        //$("#DeletePODetailsBtn").show();
+                        //$("#SaveBtn").hide();
+                        //alert(data[0].Expiry_Date);
+                        var Items_Received = $("#Items_Received").val(data[0].Items_Received);
+                        var Units_PerItem = $("#Units_PerItem").val(data[0].Units_PerItem);
+                        var PPrice_PerItem = $("#PPrice_PerItem").val(data[0].PPrice_PerItem);
+                        var SPrice_PerItem = $("#SPrice_PerItem").val(data[0].SPrice_PerItem);
+                        var PPrice_Currency = $("#PPrice_Currency").val(data[0].PPrice_Currency);
+                        var Currency_Rate = $("#Currency_Rate").val(data[0].Currency_Rate);
+                        var WPrice_PerItem = $("#WPrice_PerItem").val(data[0].WPrice_PerItem);
+                        var Expiry_Date = $("#Expiry_Date").val(ConvertDate(data[0].Expiry_Date));
+                        var Batch_NO = $("#Batch_NO").val(data[0].Batch_NO);
+                        var PPrice_PerUnit = $("#PPrice_PerUnit").val(data[0].PPrice_PerUnit);
+                        var SPrice_PerUnit = $("#SPrice_PerUnit").val(data[0].SPrice_PerUnit);
+                        var Tax_Percentage = $("#Tax_Percentage").val(data[0].Tax_Percentage);
+                        var Tax_Amount = $("#Tax_Amount").val(data[0].Tax_Amount);
+                        var Received_Status = $("#Received_Status").val(data[0].Received_Status);
+                        var Items_Available = $("#Items_Available").val(data[0].Items_Available);
+                        //var Record_date = $("#Record_date").val(data[0].Record_date);
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        }
+    }
+
+    ViewByParameter(@Url.RequestContext.RouteData.Values["id"]);
+    function ViewByParameter(id) {
+        //
+        if (id != undefined) {
+            $("#Supp_Invno").val(id).keyup();
+        }
+
+    }
+    ///////////////////////////////// Save Data //////////////////////////////////
+    function SaveStockReceipt() {
+        //alert("save");
+        var Supp_Invno = $("#Supp_Invno").val();
+        var PO_NO = $("#PO_No").val();
+        var vendor_code = $("#vendor_code").val();
+        var Currency = $("#Currency").val();
+        var Received_date = $("#Received_date").val();
+        var Delivery_date = $("#Delivery_date").val();
+        var Invoice_Date = $("#Invoice_Date").val();
+        var Status = $("#Status").val();
+        var Payment_Type = $("#Payment_Type").val();
+
+        var str = $("#LoadData").serialize();
+
+        //var data = new FormData();
+        //data.append("PO_NO", PO_NO);
+        //data = str;
+
+
+        if (Supp_Invno != "" && PO_NO != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/SaveStockReceipt",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        //FindByPO(PO_NO);
+                        FindByInvno(Supp_Invno);
+                        SaveMessage(data.message);
+                        //resetPO();
+                    } else {
+                        warrning(data.message);
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            info();
+        }
+
+
+    }
+
+    function UpdateStockReceiptDetData() {
+        //$("#UpdatePODetailsBtn").hide();
+        //$("#DeletePODetailsBtn").hide();
+        //$("#SaveBtn").show();
+
+        var QtyRece = $("#Items_Received").val();
+        var UnitPItem = $("#Units_PerItem").val();
+        var PPPItem = $("#PPrice_PerItem").val();
+        var SPPItem = $("#SPrice_PerItem").val();
+        var PPCurr = $("#PPrice_Currency").val();
+        var CurrRate = $("#Currency_Rate").val();
+        var WPPItem = $("#WPrice_PerItem").val();
+        var ExpDate = $("#Expiry_Date").val();
+        var BatchNO = $("#Batch_NO").val();
+        var PPPUnit = $("#PPrice_PerUnit").val();
+        var SPPUnit = $("#SPrice_PerUnit").val();
+        var TaxPercentage = $("#Tax_Percentage").val();
+        var TaxAmount = $("#Tax_Amount").val();
+        var ReceStatus = $("#Received_Status").val();
+        var ItemsAvail = $("#Items_Available").val();
+        //var str = $("#LoadData1").serialize();
+
+        var StockNno = flagStockNo.substring(0, 8);
+        var SuppInvno = flagStockNo.substring(8);
+        if (ItemsAvail != "" && QtyRece != "" && WPPItem != "" && UnitPItem != "" && SPPItem != "" && PPCurr != "" && PPPUnit != "" && SPPUnit != "" && TaxPercentage != "" && TaxAmount != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/UpdateSRDetailsExample",
+                data: {
+                    QtyRece: QtyRece,
+                    UnitPItem: UnitPItem,
+                    PPPItem: PPPItem,
+                    SPPItem: SPPItem,
+                    PPCurr: PPCurr,
+                    CurrRate: CurrRate,
+                    WPPItem: WPPItem,
+                    ExpDate: ExpDate,
+                    BatchNO: BatchNO,
+                    PPPUnit: PPPUnit,
+                    SPPUnit: SPPUnit,
+                    TaxPercentage: TaxPercentage,
+                    TaxAmount: TaxAmount,
+                    ReceStatus: ReceStatus,
+                    ItemsAvail: ItemsAvail,
+                    StockNno: StockNno,
+                    SuppInvno: SuppInvno
+                },
+                success: function (data) {
+                    $("#myDatatable body").html("");
+                    var table = $("#myDatatable").DataTable();
+
+                    index = table.row('#' + StockNno + SuppInvno); //1234126
+                    var temp = table.row(index[0]).data();
+                    //alert(CurrExch_rate);
+                    temp.Items_Received = QtyRece;
+                    temp.Expiry_Date = ConvertDate(ExpDate);
+                    temp.Batch_NO = BatchNO;
+                    temp.Items_Available = ItemsAvail;
+                    //temp.Units_PerItem = UnitPItem;
+                    //temp[8] = POQty_PerItem;
+                    //temp[9] = POQty_PerItem;
+                    temp.SPrice_PerItem = SPPItem;
+                    temp.WPrice_PerItem = WPPItem;
+                    temp.PPrice_Currency = PPCurr;
+                    temp.Currency_Rate = CurrRate;
+                    table.row(index[0]).data(temp).draw();
+
+                    UpdateMessage(data.message);
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            warrningMessage("Fill all fields","WARRING");
+            //alert("Fill all fields");
+        }
+    }
+    ///////////////////////////////// Reset Data //////////////////////////////////
+    function resetSRDetails() {
+        var QtyRece = $("#Items_Received").val("");
+        var UnitPItem = $("#Units_PerItem").val("");
+        var PPPItem = $("#PPrice_PerItem").val("");
+        var SPPItem = $("#SPrice_PerItem").val("");
+        var PPCurr = $("#PPrice_Currency").val("");
+        var CurrRate = $("#Currency_Rate").val("");
+        var WPPItem = $("#WPrice_PerItem").val("");
+        var ExpDate = $("#Expiry_Date").val("");
+        var BatchNO = $("#Batch_NO").val("");
+        var PPPUnit = $("#PPrice_PerUnit").val("");
+        var SPPUnit = $("#SPrice_PerUnit").val("");
+        var TaxPercentage = $("#Tax_Percentage").val("");
+        var TaxAmount = $("#Tax_Amount").val("");
+        var ReceStatus = $("#Received_Status").val("R");
+        var ItemsAvail = $("#Items_Available").val("");
+    }
+    function resetPO() {
+        //$("#PO_No").val("");
+        $("#PO_No").val("").trigger('chosen:updated');
+        $("#Vendor_code").val("").trigger('chosen:updated');
+        $("#Currency").val("PKRS");
+        //$("#Received_date").val("");
+        //$("#Delivery_date").val("");
+        //$("#Invoice_Date").val("");
+        $("#Status").val("Y");
+        $("#Payment_Type").val("R");
+    }
+    ///////////////////////////////// Other Data //////////////////////////////////
+    $(document).ready(function () {
+
+        $("#Received_date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Received_date").val(todayDate);
+
+        $("#Invoice_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#Expiry_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        //$("#UpdatePODetailsBtn").hide();
+        $("#DeletePODetailsBtn").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        document.getElementById('circle').style.display = 'none'; //Not Visible
+
+    });
+
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            if (results == null) {
+                var dt = new Date(value);
+                var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                //"/" + dt.getFullYear().toString().substr(2,2));
+                return completedate;
+            } else {
+                var dt = new Date(parseFloat(results[1]));
+                var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                //"/" + dt.getFullYear().toString().substr(2,2));
+                return completedate;
+            }
+
+        }
+    }
+    function ToJavaScriptDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthNames = '';
+
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = '';
+            var completedate = '';
+
+            if (results != null) {
+                monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+                dt = new Date(parseFloat(results[1]));
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate().toString();
+                if (day.length == "1") {
+                    day = "0" + day;
+                } else {
+                    day = dt.getDate();
+                }
+                return completedate = year + "-" + mont + "-" + day;
+                //return completedate = dt.getFullYear() + "-" + monthNames[dt.getMonth()] + "-" + dt.getDate();
+            }
+            else {
+                monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                dt = new Date(value);
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate();
+                //return completedate = +dt.getDate(); +"-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                return completedate = day + "-" + mont + "-" + year;
+            }
+        }
+    }
+
+
+</script>

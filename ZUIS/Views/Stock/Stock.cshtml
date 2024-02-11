@@ -1,0 +1,715 @@
+﻿@model ZUIS.Models.VM 
+@{
+    ViewBag.Title = "Index";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+
+<div id="loading"></div>
+
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Stock_no" class="">Stock No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input maxlength="8" tabindex="1" type="text" class="form-control" name="Stock_no" id="Stock_no" placeholder="Stock_no">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Brand_name" class="">Brand Name</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="2" type="text" name="Brand_name" id="Brand_name" class="form-control" placeholder="Brand_name">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Generic_name" class="">Generic Name</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="3" type="text" name="Generic_name" id="Generic_name" class="form-control" placeholder="Generic_name">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Manufacturer_Code" class="control-label">Manufacturer Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Manufacturer_Code", (List<SelectListItem>)ViewBag.DDLManufacture,
+                                                                                "--Select Manufacture--", new { @class = "chosen-select", @tabindex = "4" })
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Item_Type" class="">Item TYPE</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="5" name="Item_Type" id="Item_Type" class="form-control">
+                            <option selected value="">--Select Type--</option>
+                            <option value="M">Medicen</option>
+                            <option value="E">Equipment</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Trade_PriceItem" class="">T.P</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input onkeyup="CalculateCurrentPrice(this.value)" tabindex="6" type="text" name="Trade_PriceItem" id="Trade_PriceItem" class="form-control" placeholder="Trade_PriceItem">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Item_Discount" class="">Quot%</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input oninput="this.value = Math.abs(this.value)" onkeyup="CalculateCurrentPrice(this.value)" value="0" tabindex="7" type="number" name="Item_Discount" id="Item_Discount" class="form-control" placeholder="Item_Discount">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Current_Price" class="">Rate</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input readonly="readonly" tabindex="8" type="number" name="Current_Price" id="Current_Price" class="form-control" placeholder="Current_Price">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Discount" class="">Disc %</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input value="0" oninput="this.value = Math.abs(this.value)" onkeyup="CalculatePurchasePrice(this.value)" tabindex="9" type="number" name="Discount" id="Discount" class="form-control" placeholder="Discount">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="PPrice" class="">Purchase Price</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input readonly="readonly" tabindex="10" type="number" name="PPrice" id="PPrice" class="form-control" placeholder="PPrice">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-4">
+                @*<div class="">
+                        <div class="col-sm-3">
+                            <label for="BARCODE" class="">BARCODE</label>
+                        </div>
+                        <div class="form-group col-sm-9">
+                            <input maxlength="25" tabindex="15" type="text" name="BARCODE" id="BARCODE" class="form-control" placeholder="BARCODE">
+                        </div>
+                    </div>*@
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Units_PerItem" class="">Units_PerItem</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="11" type="number" name="Units_PerItem" id="Units_PerItem" class="form-control" placeholder="Units_PerItem">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Available_status" class="">Available Status</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="12" name="Available_status" id="Available_status" class="form-control">
+                            <option value="">--Select Status--</option>
+                            <option value="Y">Active</option>
+                            <option value="N">Cose</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="GroupNo" class="">GroupNo</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input maxlength="30" tabindex="13" type="text" name="GroupNo" id="GroupNo" class="form-control" placeholder="GroupNo">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="RefStock_no" class="">RefStock No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input maxlength="8" tabindex="14" type="text" name="RefStock_no" id="RefStock_no" class="form-control" placeholder="RefStock_no">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <button tabindex="19" type="button" id="SaveBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                        <button tabindex="20" type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                        <button tabindex="21" type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>
+                        <button type="button" onclick="resetData()" class="btn btn-primary">New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+               
+                <tr>
+                    <th style="">STOCK_NUMBER</th>
+                    <th style="">Brand Name</th>
+                    <th style="">Generic Name</th>
+                    <th style="">Units PerItem</th>
+                    <th style="">T.P</th>
+                    <th style="">%</th>
+                    <th style="">Rate</th>
+                    <th style="">Disc %</th>
+                    <th style="">Purchase Price</th>
+                    <th style="">Manufacturer</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+
+<script>
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+
+    function CalculatePurchasePrice(value) {
+
+        var Current_Price = $("#Current_Price").val();
+        var Discount = $("#Discount").val();
+
+        var Dis = Current_Price * (Discount / 100);
+        var total = Current_Price - Dis;
+        var PPrice = $("#PPrice").val(total);
+    }
+    function CalculateCurrentPrice(value) {
+
+        var Trade_PriceItem = $("#Trade_PriceItem").val();
+        var Item_Discount = $("#Item_Discount").val();
+
+        var Discount = Trade_PriceItem * (Item_Discount / 100);
+        var total = Trade_PriceItem - Discount;
+        var Current_Price = $("#Current_Price").val(total);
+    }
+    var GlobalFlag = 0;
+    var flag = [];
+
+    function LoadAllData() {
+        $("#Stock_no").val(@ViewBag.StockNO);
+        $.ajax({
+            type: "POST",
+            url: "/Stock/GetAllStockInTable",
+            data: {},
+            success: function (data) {
+                var table = $("#myDatatable").DataTable({
+                    data: data,
+
+                    //rowId: 'staffId',
+                    columns: [
+                        { "data": "Stock_no" },
+                        { "data": "Brand_name", "orderable": false },
+                        { "data": "Generic_name", "orderable": false },
+                        { "data": "Units_PerItem", "searchable": false, "orderable": false },
+                        { "data": "Trade_PriceItem", "searchable": false, "orderable": false },
+                        { "data": "Item_Discount" },
+                        { "data": "Current_Price", "searchable": false, "orderable": false },
+                        { "data": "Discount", "searchable": false, "orderable": false },
+                        { "data": "PPrice", "searchable": false, "orderable": false },
+                        { "data": "M_Name" }
+                    ],
+                    "order": [[0, "asc"]],
+                    "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                        //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                        var r = aData.Stock_no;
+                        $(nRow).attr('id', r);
+                        $(nRow).attr('onclick', 'GetStockById(this.id)');
+                    },
+                    //"paging": false,
+                    //searching: false,                   // for disable search box
+                    select: {
+                        info: false
+                    },
+                    //buttons: [
+                    //    {
+                    //        extend: 'print',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    },
+                    //    {
+                    //        extend: 'excel',
+                    //        filename: 'Stock',
+                    //        sheetName: 'Stock',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    }
+                    //],
+                    //dom: 'lBfrtip',
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Stock", // place holder of search box
+                    },
+                    responsive: true,
+                    //select: 'single',
+                    select: true,                       // for Select Row
+                    //bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    //scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    "bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    "sPaginationType": "full_numbers",
+                    "langauge": {
+                        "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                    },
+
+
+                });
+
+                $('input[type="search"]').addClass('form-control'); // <-- add this line
+                //$("#loading").hide();
+                //document.getElementById('loading').style.display = 'none'; //Not Visible
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+    }
+    function resetData() {
+        $("#Stock_no").prop('readonly', false);
+        $(".chosen-select").trigger('chosen:updated');
+        $('#LoadData')[0].reset();
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+        $("#Stock_no").val(@ViewBag.StockNO);
+    }
+    function SaveData() {
+        //alert("save");
+        var Code = $("#Stock_no").val();
+        var Name = $("#Brand_name").val();
+        var Generic_name = $("#Generic_name").val();
+        var Item_Type = $("#Item_Type").val();
+        var Weight_Unit = $("#Weight_Unit").val();
+        var Trade_PriceItem = $("#Trade_PriceItem").val();
+        var Item_Discount = $("#Item_Discount").val();
+        var BARCODE = $("#BARCODE").val();
+        var Units_PerItem = $("#Units_PerItem").val();
+        var Current_Price = $("#Current_Price").val();
+        var Discount = $("#Discount").val();
+        var PPrice = $("#PPrice").val();
+        var Available_status = $("#Available_status").val();
+        var GroupNo = $("#GroupNo").val();
+        var RefStock_no = $("#RefStock_no").val();
+        var Manufacturer_Code = $("#Manufacturer_Code").val();
+
+        var str = $("form").serialize();
+        if (Code != "" && Name != "" && Units_PerItem != "" && Item_Type != "" && Available_status != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Stock/SaveStock",
+                data: str,
+                success: function (data) {
+
+                    //alert(data.id);
+                    //alert(data.mName);
+                    if (data.success == true) {
+                        var table = $("#myDatatable").DataTable();
+                        ////var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        //var rowIndex = table.row.add([Code, Name, Generic_name, UNITS_PERITEM, PRICE, Manufacturer_Code]).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+
+                        var rowIndex = table.row.add({
+                            "Stock_no": Code, "Brand_name": Name, "Generic_name": Generic_name,
+                            "Units_PerItem": Units_PerItem, "Trade_PriceItem": Trade_PriceItem,
+                            "Item_Discount": Item_Discount, "Current_Price": Current_Price,
+                            "Discount": Discount, "PPrice": PPrice,
+                            "M_Name": data.mName
+                        }).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr('id', Code);
+                        $(row).attr('onclick', 'GetStockById(this.id)');
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+
+                        $("#Stock_no").val(data.id);
+                    } else {
+                        toastr.warning(data.message, "WARNING",
+                       options = {
+                           "closeButton": true,
+                           "debug": false,
+                           "progressBar": true,
+                           "preventDuplicates": true,
+                           "positionClass": "toast-top-center",
+                           "onclick": null,
+                           "showDuration": "400",
+                           "hideDuration": "1000",
+                           "timeOut": "7000",
+                           "extendedTimeOut": "1000",
+                           "showEasing": "swing",
+                           "hideEasing": "linear",
+                           "showMethod": "fadeIn",
+                           "hideMethod": "fadeOut"
+                       });
+                        // resetData();
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Stock", "INFO",
+                     options = {
+                         "closeButton": true,
+                         "debug": false,
+                         "progressBar": true,
+                         "preventDuplicates": true,
+                         "positionClass": "toast-top-center",
+                         "onclick": null,
+                         "showDuration": "400",
+                         "hideDuration": "1000",
+                         "timeOut": "7000",
+                         "extendedTimeOut": "1000",
+                         "showEasing": "swing",
+                         "hideEasing": "linear",
+                         "showMethod": "fadeIn",
+                         "hideMethod": "fadeOut"
+                     }
+                 );
+        }
+
+
+    }
+
+    function UpdateData() {
+        //alert("save");
+        var Discount = $("#Discount").val();
+        var PPrice = $("#PPrice").val();
+        var Stock_no = $("#Stock_no").val();
+        var Brand_name = $("#Brand_name").val();
+        var Generic_name = $("#Generic_name").val();
+        var Item_Type = $("#Item_Type").val();
+        var Weight_Unit = $("#Weight_Unit").val();
+        var Trade_PriceItem = $("#Trade_PriceItem").val();
+        var Item_Discount = $("#Item_Discount").val();
+        var BARCODE = $("#BARCODE").val();
+        var Units_PerItem = $("#Units_PerItem").val();
+        var Current_Price = $("#Current_Price").val();
+        var Available_status = $("#Available_status").val();
+        var GroupNo = $("#GroupNo").val();
+        var RefStock_no = $("#RefStock_no").val();
+        var Manufacturer_Code = $("#Manufacturer_Code").val();
+        var Discount = $("#Discount").val();
+
+        var str = $("#LoadData").serialize();
+
+        if (Brand_name != "" && Units_PerItem != "" && Item_Type != "" && Available_status != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Stock/UpdateStock",
+                data: str,
+                success: function (data) {
+
+                    if (data.success == true) {
+                        var table = $("#myDatatable").DataTable();
+                        
+                        //var fullID = GlobalFlag;
+                        index = table.row('#' + Stock_no); //1234126
+                        var temp = table.row(index[0]).data();
+                        //temp[0] = code;
+                        temp.Generic_name = Generic_name;
+                        temp.Brand_name = Brand_name;
+                        temp.Units_PerItem = Units_PerItem;
+                        temp.Trade_PriceItem = Trade_PriceItem;
+                        temp.Item_Discount = Item_Discount;
+                        temp.Current_Price = Current_Price;
+                        temp.Discount = Discount;
+                        temp.PPrice = PPrice;
+                        temp.M_Name = data.mName;
+                        table.row(index[0]).data(temp).draw();
+
+                        //index = table.row('#' + Stock_no);
+                        //index = table.row('#' + Stock_no); //1234126
+                        //var temp = table.row(index[0]).data();
+                        // //alert(CurrExch_rate);
+                        // //temp = Stock_no;
+                        ////temp.Stock_no = Stock_no;
+                        //temp.Generic_name = Generic_name;
+                        //temp.Units_PerItem = Units_PerItem;
+                        //temp.Current_Price = Current_Price;
+                        //temp.Manufacturer_Code = Manufacturer_Code;
+                        //table.row(index[0]).data(temp).draw();
+
+                        //table.row(index[0]).data({
+                        //    "Stock_no": Stock_no, "Brand_name": Brand_name, "Generic_name": Generic_name,
+                        //    "Units_PerItem": Units_PerItem, "Current_Price": Current_Price, "Manufacturer_Code": Manufacturer_Code,
+                        //}).draw();
+                        //alert(0);
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                        $("#Stock_no").val(data.id);
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Stock", "INFO",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+        }
+
+
+    }
+
+    function RemoveData() {
+        var code = $("#Stock_no").val();
+        //alert("remove");
+        if (code != "") {
+            var Con = confirm("are you sure ?");
+            if (Con == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Stock/DeleteStock",
+                    data: {
+                        code: code
+                    },
+                    success: function (data) {
+                        if (data.success == true) {
+                            $("#Stock_no").prop('readonly', false);
+                            resetData();
+                            $("#Stock_no").val(data.id);
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+
+                            toastr.error(data.message, "DELETED",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+                        }
+
+                    },
+                    error: function (result) {
+                        //alert("Connection Error Please retry");
+                    }
+                });
+            }
+        } else {
+            //alert("Select Stock");
+            toastr.warning("Select Stock", "WARNING",
+                            options = {
+                                "closeButton": true,
+                                "debug": false,
+                                "progressBar": true,
+                                "preventDuplicates": true,
+                                "positionClass": "toast-top-center",
+                                "onclick": null,
+                                "showDuration": "400",
+                                "hideDuration": "1000",
+                                "timeOut": "7000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+                        );
+        }
+
+    }
+
+    function GetStockById(id) {
+        //alert(id);
+        //flag.push(id);
+        //GlobalFlag = flag[0];
+
+        $("#UpdateBtn").show();
+        $("#RemoveBtn").show();
+        $("#SaveBtn").hide();
+
+        //var id = id.substring(0, 5);
+        //var index = id.substring(5);
+        $.ajax({
+            type: "POST",
+            url: "/Stock/GetStockById",
+            data: { id: id },
+            success: function (data) {
+                $("#Stock_no").prop('readonly', true);
+
+                var Stock_no = $("#Stock_no").val(data[0].Stock_no);
+                var Brand_name = $("#Brand_name").val(data[0].Brand_name);
+                var Generic_name = $("#Generic_name").val(data[0].Generic_name);
+                var Item_Type = $("#Item_Type").val(data[0].Item_Type);
+                var Weight_Unit = $("#Weight_Unit").val(data[0].Weight_Unit);
+                var Item_Discount = $("#Item_Discount").val(data[0].Item_Discount);
+                var Trade_PriceItem = $("#Trade_PriceItem").val(data[0].Trade_PriceItem);
+                var Discount = $("#Discount").val(data[0].Discount);
+                var PPrice = $("#PPrice").val(data[0].PPrice);
+                var BARCODE = $("#BARCODE").val(data[0].BARCODE);
+                var Units_PerItem = $("#Units_PerItem").val(data[0].Units_PerItem);
+                var Current_Price = $("#Current_Price").val(data[0].Current_Price);
+                var Available_status = $("#Available_status").val(data[0].Available_status);
+                var GroupNo = $("#GroupNo").val(data[0].GroupNo);
+                var RefStock_no = $("#RefStock_no").val(data[0].RefStock_no);
+                //alert(data[0].Manufacturer_Code);
+                $("#Manufacturer_Code").val(data[0].Manufacturer_Code).trigger('chosen:updated');
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+        LoadAllData();
+
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+        //var table = $("#myDatatable").DataTable({
+        //    buttons: [
+        //        {
+        //            extend: 'print',
+        //            className: 'btn btn-primary btn-sm'
+        //        },
+        //        {
+        //            extend: 'excel',
+        //            //filename: 'Stock',
+        //            sheetName: 'Stock',
+        //            className: 'btn btn-primary btn-sm'
+        //        }
+        //    ],
+        //    //dom: 'lBfrtip',
+        //    // "paging": false,
+        //    // searching: false,                   // for disable search box
+        //    select: {
+        //        info: false
+        //    },
+        //    "columnDefs": [
+        //       { "targets": [0, 1, 2, 3, 4, 5], "orderable": false }
+        //    ],
+
+        //    language: {
+        //        search: "", // for hide label of search
+        //        searchPlaceholder: "Search Stock", // place holder of search box
+        //    },
+        //    //   responsive: true,
+        //    select: true,                       // for Select Row
+        //    //    //bDestroy: true,                     // this will disable table when new load data
+        //    "bLengthChange": false,           //  for Show more Entries
+        //    // scrollY: '20vh',
+        //    "sScrollX": "100%",
+        //    "sScrollXInner": "100%",
+        //    //"bScrollCollapse": true,
+        //    "processing": true,
+        //    //"bPaginate": false,
+        //    //"sPaginationType": "full_numbers",
+        //});
+
+        //$('input[type="search"]').addClass('form-control'); // <-- add this line
+    });
+
+
+</script>

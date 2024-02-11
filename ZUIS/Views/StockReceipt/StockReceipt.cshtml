@@ -1,0 +1,990 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+
+<style>
+     .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+        background: red;
+    }
+
+    .ui-datepicker table {
+        background: #236;
+        color: #fff;
+    }
+
+    #uTable {
+        width: 100%; 
+    }
+
+        #uTable td {
+            width: 100px;
+            text-align: center;
+        }
+        .chosen-container-single .chosen-single span {
+   color:green;  font-weight:bolder;
+}
+</style>
+
+<div id="loading"></div>
+
+<div class="container-fluid mr_t_30">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Received</a></li>
+        <li><a data-toggle="tab" href="#menu1">Other</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <form id="LoadData" class="mr_t_20">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Branch_No" class="control-label">Branch</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <select id="Branch_No" name="Branch_No" class="chosen-select">
+                                    <option>--Select Branch--</option>
+                                    <option value="01">ISB</option>
+                                    <option value="02">PWR</option>
+                                </select>                             
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="AltSupp_Invno" class="control-label">Invoice No</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <input onkeyup="FindByInvno(this.value)" type="text" id="Supp_Invno" name="Supp_Invno" />
+                                <input tabindex="1" type="text" name="AltSupp_Invno" id="AltSupp_Invno" class="form-control" placeholder="AltSupp_Invno" />
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="vendor_code" class="">Vendor</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                @Html.DropDownList("Vendor_code", (List<SelectListItem>)ViewBag.DDLVendor,
+                                                                                         "--Select Vendor--", new { @class = "chosen-select", @tabindex = "5" })
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="PO_No" class="">PO NO</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                @Html.DropDownList("PO_No", (List<SelectListItem>)ViewBag.DDLPo,
+                                     "--Select PO--", new { @class = "chosen-select", @tabindex = "2", @onchange = "onchangePO(this.value)" })
+                            </div>
+                            @*<div class="input-group col-sm-9">
+                <input tabindex="2" type="number" name="PO_NO" id="PO_NO" class="form-control" placeholder="Search PO_NO">
+                <div class="input-group-btn">
+                    <button onclick="FindByPO()" class="btn btn-default" type="button">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </div>
+            </div>*@
+                        </div>
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Currency" class="">Currency</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <select tabindex="6" id="Currency" name="Currency" class="form-control">
+                                    <option selected value="PKRS">PKRS</option>
+                                    <option value="EURO">EURO</option>
+                                    <option value="$ US">$ US</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Comments" class="control-label">Comments</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <textarea tabindex="9" name="Comments" id="Comments" class="form-control" placeholder="Comments"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Received_date" class="">Received Date</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <input tabindex="3" type="text" name="Received_date" id="Received_date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Invoice_Date" class="">Invoice Date</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <input tabindex="7" type="text" name="Invoice_Date" id="Invoice_Date" class="form-control" placeholder="Invoice_Date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Status" class="">Status</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <select tabindex="4" name="Status" id="Status" class="form-control">
+                                    <option value="Y">Complete</option>
+                                    <option selected value="N">Not Complete</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="col-sm-3">
+                                <label for="Payment_Type" class="">Payment Type</label>
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <select tabindex="8" id="Payment_Type" name="Payment_Type" class="form-control">
+                                    <option selected value="A">Advance</option>
+                                    <option value="C">Cheque</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <div class="form-group">
+                                <button tabindex="9" type="button" onclick="SaveStockReceipt()" class="btn btn-success">Save</button>
+                                @*<button type="button" id="GenerareBtn" onclick="Generare()" class="btn btn-info">Generare</button>*@
+                                @*<button type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                            <button  type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>*@
+                                <button type="button" onclick="resetPO()" class="btn btn-primary">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form id="LoadData1" class="form-inline">
+                <table id="uTable">
+                    <tr>
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="Items_Received" class="">Items_Received</label>
+                            </div>
+                            <div class="form-group">
+                                <input oninput="this.value = Math.abs(this.value)" onkeyup="Items_Received_Available(this.value)" tabindex="12" type="number" name="Items_Received" id="Items_Received" class="form-control" placeholder="Items_Received">
+                            </div>
+                        </td>                       
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="PPrice_PerItem" class="">PPrice_PerItem</label>
+
+                            </div>
+                            <div class="form-group">
+                                <input onkeypress="resptrictMinus(event)" onkeyup="Items_Received_Available(this.value)" tabindex="13" type="number" class="form-control" name="PPrice_PerItem" id="PPrice_PerItem" placeholder="PPrice_PerItem">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="Discount" class="">Discount</label>
+
+                            </div>
+                            <div class="form-group">
+                                <input oninput="this.value = Math.abs(this.value)" value="0" onkeyup="Items_Received_Available(this.value)" tabindex="14" type="number" class="form-control" name="Discount" id="Discount" placeholder="Discount">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="Tot_PPriceItem" class="">Tot_PPriceItem</label>
+                            </div>
+                            <div class="form-group">
+                                <input tabindex="15" type="number" class="form-control" name="Tot_PPriceItem" id="Tot_PPriceItem" placeholder="Tot_PPriceItem">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="WPrice_PerItem" class="">Expiry_Date</label>
+
+                            </div>
+                            <div class="form-group">
+                                <input tabindex="16" type="text" class="form-control" name="Expiry_Date" id="Expiry_Date" placeholder="Expiry_Date">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="WPrice_PerItem" class="">Batch_NO</label>
+                            </div>
+                            <div class="form-group">
+                                <input tabindex="17" type="text" class="form-control" name="Batch_NO" id="Batch_NO" placeholder="Batch_NO">
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="col-sm-12">
+                                <label for="Received_Status" class="">Received</label>
+                            </div>
+                            <div class="form-group">
+                                <select tabindex="18" class="form-control" name="Received_Status" id="Received_Status">
+                                    <option value="Y">Yes</option>
+                                    <option value="N">NO</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="form-group mr_t_20">
+                    <button tabindex="19" type="button" onclick="UpdateStockReceiptDetData()" class="btn btn-success">Save</button>
+                    @*<button type="button" id="UpdatePODetailsBtn" onclick="UpdatePODetailsData()" class="btn btn-success">Update</button>*@
+                    <button type="button" id="DeleteSRDetailsBtn" onclick="DeleteSRDetailsData()" class="btn btn-danger">Remove</button>
+                    <button type="button" onclick="resetSRDetails()" class="btn btn-default">Cancel</button>
+
+                </div>
+            </form>
+            <hr />
+            <div>
+                <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+                    <thead style="background:#79e1e8">
+                        <tr>
+                            <th style="width:10%">Stock No</th>
+                            <th style="width:20%">Brand Name</th>
+                            <th style="width:10%">PO Qty</th>
+                            <th style="width:10%">Qty Received</th>
+                            <th style="width:10%">Exp Date</th>
+                            <th style="width:10%">Batch No</th>
+                            <th style="width:10%">PP/Item</th>
+                            <th style="width:10%">Total PP/Item</th>
+                            <th style="width:5%">Status</th>
+                            <th style="width:5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+
+                </table>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-6">
+                    <div style="width:330px;">
+                        <div>
+                            <label for="Received_by" class="pull-left">Received By</label>
+                            <input style="width:200px;" readonly type="text" name="Received_by" id="Received_by" placeholder="Received_by" class="form-control pull-right" />
+                        </div>
+        
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div style="width:330px; float:right;">
+                        <div>
+                            <label for="Total_Amount" class="">Total_Amount</label>
+                            <input style="width:200px;" readonly="readonly" type="text" name="Total_Amount" id="Total_Amount" placeholder="Total_Amount" class="form-control pull-right" />
+                        </div>
+                        <br />
+                        <div>
+                            <label for="Tax_amount" class="pull-left">Tax_amount</label>
+                            <input autocomplete="off" onkeyup="calDown()" style="width:200px;" type="text" name="Tax_amount" id="Tax_amount" placeholder="Tax_amount" class="form-control pull-right" />
+                        </div>
+                        <br />
+                        <div style="margin-top:20px;">
+                            <label for="Disc_amount" class="pull-left">Disc_amount</label>
+                            <input style="width:200px;" autocomplete="off" onkeyup="calDown()" type="text" name="Disc_amount" id="Disc_amount" placeholder="Disc_amount" value="0" class="form-control pull-right" />
+                        </div>
+                        @*<br />
+
+                    <div style="margin-top:20px;">
+                        <button onclick="CalculateBottomDisc()" type="button" class="btn btn-default">Save</button>
+                    </div>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <h3>Menu 1</h3>
+            <p>Some content in menu 1.</p>
+        </div>
+    </div>
+    
+
+
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="~/Scripts/Messages.js"></script>
+
+
+<script>
+
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+
+
+
+    function onchangePO(value){
+        //alert(value);
+        if (value != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/GetPOInfo",
+                data: {
+                    po: value
+                },
+                success: function (data) {
+
+                    if (data.length > 0) {
+
+                        $("#Vendor_code").val(data[0].Vendor_code).trigger('chosen:updated');
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        }
+    }
+    var flagStockNo = 0;
+    function Items_Received_Available(value){
+
+        //alert(0);
+        //var Qty_Pack = $("#Qty_Pack").val();
+        var Items_Received = $("#Items_Received").val(); //1
+        var PPrice_PerItem = $("#PPrice_PerItem").val(); //191.46
+        var Margin_Discount = $("#Discount").val(); // 10
+        // var CurrExch_rate = $("#CurrExch_rate").val(); // 1      // 171.31
+        //var Qty_Pack = $("#Qty_Pack").val(); // 1      // 171.31
+
+        var Discount = 0;
+        var NetAmount = 0;
+
+        Discount = (Items_Received * PPrice_PerItem) * (Margin_Discount / 100);
+        NetAmount = (Items_Received * PPrice_PerItem) - Discount;
+
+        //Discount = (Qty_Pack * POPrice_PerItem * CurrExch_rate) * (POMargin_Percentage / 100);
+        //NetAmount = (Qty_Pack * POPrice_PerItem * CurrExch_rate) - Discount;
+        //alert(Discount);
+        var twoPlaces = NetAmount.toFixed(2);
+        var Tot_PPriceItem = $("#Tot_PPriceItem").val(twoPlaces);
+
+    }
+    ///////////////////////////////// Get Data //////////////////////////////////
+    function FindByInvno(id) {
+        var BranchNo = $("#Branch_No").val();
+
+        if (id != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/GetAllStockReceiptDELInTable",
+                data: {
+                    SupInv: id,
+                    BranchNo:BranchNo
+                },
+                success: function (data) {
+                    resetPO();
+                    if (data.length > 0) {
+                        if("@ViewBag.UserType"=="Admin"){
+                            $("#Branch_No").val(data[0].Branch_No).trigger('chosen:updated');
+                        }else{
+                            $("#Branch_No").val(data[0].Branch_No).trigger('chosen:updated');
+                            $("#Branch_No").prop('disabled', true).trigger('chosen:updated');
+                        }
+
+                        $("#PO_No").val(data[0].PO_NO).trigger('chosen:updated');
+                        $("#Vendor_code").val(data[0].vendor_code).trigger('chosen:updated');
+                        $("#Currency").val(data[0].Currency);
+                        // alert(data[0].Received_date);
+                        var Received_date = ConvertDate(data[0].Received_date);
+                        var Invoice_Date = ConvertDate(data[0].Invoice_Date);
+                        //var DeliveryDate = ToJavaScriptDate(data[0].DeliveryDate);
+                        var AltSupp_Invno = $("#AltSupp_Invno").val(data[0].AltSupp_Invno);
+
+                        $("#Received_date").val("");
+                        $("#Received_date").val(Received_date);
+                        //$("#Delivery_date").val(DeliveryDate);
+                        $("#Invoice_Date").val(Invoice_Date);
+                        $("#Status").val(data[0].Status);
+                        $("#Payment_Type").val(data[0].Payment_Type);
+                        $("#myDatatable body").html("");
+                        //alert(data[0].Total_Amount);
+                        $("#Total_Amount").val(data[0].Total_Amount);
+                        $("#Tax_amount").val(data[0].Tax_amount);
+                        $("#Disc_amount").val(data[0].Disc_amount);
+                        $("#Received_by").val(data[0].Received_by);
+                        $("#Comments").val(data[0].Comments);
+                    } else {
+                        GlobalReceivedDate();
+                    }
+                    $("#myDatatable body").html("");
+
+                    var table = $("#myDatatable").DataTable({
+                        data: data,
+
+                        //rowId: 'staffId',
+                        columns: [
+
+                            { "data": "Stock_no", "searchable": false, "orderable": false },
+                            { "data": "Brand_name", "searchable": false, "orderable": false },
+                            //{ "data": "Items_Available", "searchable": false, "orderable": false },
+                            { "data": "Qty_Pack", "searchable": false, "orderable": false },
+
+                            { "data": "Items_Received", "searchable": false, "orderable": false },
+                            //{ "data": "Expiry_Date", "searchable": false, "orderable": false },
+                            {
+                                "data": "Expiry_Date", "searchable": false, "orderable": false, render: function (data) {
+                                    return ConvertDate(data);
+                                }
+                            },
+                            { "data": "Batch_NO", "searchable": false, "orderable": false },
+
+
+                            { "data": "PPrice_PerItem", "searchable": false, "orderable": false },
+                            { "data": "Tot_PPriceItem", "searchable": false, "orderable": false },
+                            {
+                                "data": "Received_Status", "searchable": false, "orderable": false, render: function (data) {
+                                    if (data == "Y") {
+                                        return "<label class='label label-success'>Y</label>";
+                                    } else {
+                                        return "<label class='label label-danger'>N</label>";
+                                    }
+                                }
+                            },
+                            { "data": "Stock_no", "searchable": false, "orderable": false,"render":function(data){
+                                return "<input type='checkbox' value='"+data+"' class='check' id='forDelete'/>";
+                            }
+                            }
+                        ],
+                        "order": [[0, "asc"]],
+                        "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                            //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                            var r = aData.Stock_no + aData.Branch_No + aData.Supp_Invno;
+                            $(nRow).attr('id', r);
+                            $(nRow).attr('onclick', 'GetRowDataFromTable(this.id)');
+                        },
+                        //"paging": false,
+                        searching: false,                   // for disable search box
+                        select: {
+                            info: false
+                        },
+                        //buttons: [
+                        //    {
+                        //        extend: 'print',
+                        //        className: 'btn btn-primary btn-sm'
+                        //    },
+                        //    {
+                        //        extend: 'excel',
+                        //        filename: 'Stock',
+                        //        sheetName: 'Stock',
+                        //        className: 'btn btn-primary btn-sm'
+                        //    }
+                        //],
+                        //dom: 'lBfrtip',
+                        language: {
+                            search: "", // for hide label of search
+                            searchPlaceholder: "Search Purchase", // place holder of search box
+                        },
+                        responsive: true,
+                        //select: 'single',
+                        select: true,                       // for Select Row
+                        bDestroy: true,                     // this will disable table when new load data
+                        "bLengthChange": false,           //  for Show more Entries
+                        //scrollY: '20vh',
+                        "sScrollX": "100%",
+                        "sScrollXInner": "100%",
+                        "bScrollCollapse": true,
+                        "processing": true,
+                        "bPaginate": false,
+                        //"sPaginationType": "full_numbers",
+                        "langauge": {
+                            "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                        },
+
+
+                    });
+                    $('input[type="search"]').addClass('form-control'); // <-- add this line
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            //alert("Please Enter PO_NO");
+        }
+    }   // Done
+
+    function GetRowDataFromTable(id) {
+        var StockNno = id.substring(0, 8);
+        var BrNo = id.substring(8,10);
+        var SuppInvno = id.substring(10);
+        flagStockNo = id;
+        var str = $("#LoadData").serialize();
+
+        if (id != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/GetPODetailsById",
+                data:{
+                    StockNo: StockNno,
+                    SuppInvno: SuppInvno,
+                    BrNo:BrNo
+                },
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#DeleteSRDetailsBtn").show();
+                        //$("#DeletePODetailsBtn").show();
+                        //$("#UpdatePODetailsBtn").show();
+                        //$("#DeletePODetailsBtn").show();
+                        //alert(data[0].POMargin_Percentage);
+                        $("#Items_Received").val("");
+                        //$("#Items_Available").val("");
+                        $("#Expiry_Date").val("");
+                        $("#Batch_NO").val("");
+                        $("#PPrice_PerItem").val("");
+                        $("#Tot_PPriceItem").val("");
+                        $("#Received_Status").val(data[0].Received_Status);
+                        var Items_Received = $("#Items_Received").val(data[0].Items_Received);
+                        //var Items_Available = $("#Items_Available").val(data[0].Items_Available);
+                        var Expiry_Date = $("#Expiry_Date").val(ConvertDate(data[0].Expiry_Date));
+                        var Batch_NO = $("#Batch_NO").val(data[0].Batch_NO);
+                        var PPrice_PerItem = $("#PPrice_PerItem").val(data[0].PPrice_PerItem);
+                        var Tot_PPriceItem = $("#Tot_PPriceItem").val(data[0].Tot_PPriceItem);
+                        $("#Discount").val(data[0].POMargin_Percentage); // 10
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        }
+    }   // Done
+
+    //ViewByParameter(Url.RequestContext.RouteData.Values["id"]);
+
+    ///////////////////////////////// Save Data //////////////////////////////////
+    function SaveStockReceipt() {
+        //alert("save");
+        $("#Branch_No").prop('disabled', false).trigger('chosen:updated');
+
+        var BranchNo = $("#Branch_No").val();
+        var Supp_Invno=$("#Supp_Invno").val();
+        var AltSupp_Invno = $("#AltSupp_Invno").val();
+        var PO_NO = $("#PO_No").val();
+        var vendor_code = $("#vendor_code").val();
+        var Currency = $("#Currency").val();
+        var Received_date = $("#Received_date").val();
+        var Delivery_date = $("#Delivery_date").val();
+        var Invoice_Date = $("#Invoice_Date").val();
+        var Status = $("#Status").val();
+        var Payment_Type = $("#Payment_Type").val();
+
+        var str = $("#LoadData").serialize();
+
+        //var data = new FormData();
+        //data.append("PO_NO", PO_NO);
+        //data = str;
+
+        if ( PO_NO != "") {
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/SaveStockReceipt",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        //FindByPO(PO_NO);
+                        FindByInvno(Supp_Invno);
+                        SaveMessage(data.message);
+                        //resetPO();
+                    } else {
+                        SaveMessage(data.message);
+                        //warrningMessage(data.message, "WARNING");
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            //info();
+            infoMessage("","INFO");
+        }
+
+
+    }
+
+
+    function DeleteMessage(message) {
+        toastr.error(message, "DELETED",
+            options = {
+                "closeButton": true,
+                "debug": false,
+                "progressBar": true,
+                "preventDuplicates": true,
+                "positionClass": "toast-top-center",
+                "onclick": null,
+                "showDuration": "400",
+                "hideDuration": "1000",
+                "timeOut": "7000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        );
+    }
+    function UpdateStockReceiptDetData() {
+        //alert(0);
+        //var QtyRece = $("#Items_Received").val();
+        //var UnitPItem = $("#Units_PerItem").val();
+        //var PPPItem = $("#PPrice_PerItem").val();
+        //var SPPItem = $("#SPrice_PerItem").val();
+        //var PPCurr = $("#PPrice_Currency").val();
+        //var CurrRate = $("#Currency_Rate").val();
+        //var WPPItem = $("#WPrice_PerItem").val();
+        //var ExpDate = $("#Expiry_Date").val();
+        //var BatchNO = $("#Batch_NO").val();
+        //var PPPUnit = $("#Tot_PPriceItem").val();
+        //var SPPUnit = $("#SPrice_PerUnit").val();
+        //var TaxPercentage = $("#Tax_Percentage").val();
+        //var TaxAmount = $("#Tax_Amount").val();
+
+        //var ItemsAvail = $("#Items_Available").val();
+        //var str = $("#LoadData1").serialize();
+
+        var QtyRece = $("#Items_Received").val();
+        var Discount =$("#Discount").val();
+        //var ItemsAvail = $("#Items_Available").val();
+        var ExpDate = $("#Expiry_Date").val();
+        var BatchNO = $("#Batch_NO").val();
+        var PPPItem = $("#PPrice_PerItem").val();
+        var PPPUnit = $("#Tot_PPriceItem").val();
+        var ReceStatus = $("#Received_Status").val();
+
+        var StockNno = flagStockNo.substring(0, 8);
+        var BranchNo = flagStockNo.substring(8,10);
+        var SuppInvno = flagStockNo.substring(10);
+        
+        if (QtyRece != "" && ExpDate != "" && PPPItem != "" && PPPUnit != "", BatchNO != "" ) {
+
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/UpdateSRDetails",
+                data: {
+                    BranchNo:BranchNo,
+                    QtyRece: QtyRece,
+                    ExpDate: ExpDate,
+                    PPPItem: PPPItem,
+                    Tot_Price: PPPUnit,
+                    BatchNO: BatchNO,
+                    ReceStatus:ReceStatus,
+                    StockNno: StockNno,
+                    SuppInvno: SuppInvno,
+                    Discount:Discount
+                },
+                success: function (data) {
+                    $("#myDatatable body").html("");
+                    var table = $("#myDatatable").DataTable();
+
+                    index = table.row('#' + StockNno +BranchNo+ SuppInvno); //1234126
+                    var temp = table.row(index[0]).data();
+                    //alert(CurrExch_rate);
+                    temp.Items_Received = QtyRece;
+                    temp.Expiry_Date = ConvertDate(ExpDate);
+                    temp.Batch_NO = BatchNO;
+                    temp.PPrice_PerItem = PPPItem;
+                    temp.Tot_PPriceItem = PPPUnit;
+                    temp.Received_Status = ReceStatus;
+
+                    table.row(index[0]).data(temp).draw();
+
+                    UpdateMessage(data.message);
+                    resetSRDetails();
+
+                    $("#Total_Amount").val(data.l[0]);
+                    $("#Tax_amount").val(data.l[1]);
+                    $("#Disc_amount").val(data.l[2]);
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            warrningMessage("Fill all fields","WARRING");
+            //alert("Fill all fields");
+        }
+    } // Done
+
+
+
+    var allStockNo=[];
+    function DeleteSRDetailsData() {
+        allStockNo=[];
+        var chked = $('input:checkbox');
+        var checkedValue = null;
+
+        var len = chked.length;
+        for(var i=0; i<len; ++i){
+            //alert(i + (chked[i].checked?' checked ':' unchecked ') + chked[i].value);
+            if(chked[i].checked){
+                checkedValue = chked[i].value;
+                allStockNo.push(checkedValue);
+                //break;
+            }
+        }
+        debugger
+        var StockNno = flagStockNo.substring(0, 8);
+        var BrNo = flagStockNo.substring(8,10);
+        var SuppInvno = flagStockNo.substring(10);
+
+        if (BrNo !="" && StockNno != "" && SuppInvno != "" && allStockNo.length !=0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/StockReceipt/DeleteSRDetails",
+                data: {
+                    BrNo:BrNo,
+                    StockNo: StockNno,
+                    SuppInvno: SuppInvno,
+                    myJsonString:allStockNo
+                },
+                success: function (data) {
+                    $("#myDatatable body").html("");
+                    var chk = new Array(chked.length);
+                    var i = 0;
+                    chked.each(function () {
+                        var table = $('#myDatatable').DataTable();
+                        index = table.row('#' + allStockNo[i] +BrNo+ SuppInvno); //1234126
+                        var temp = table.row(index[0]).data();
+                        table.row(index[0]).remove().draw();
+                        //chk[i] = $(this).prop("checked");
+                        i++;
+                    });
+                    UpdateMessage(data.message);
+                    resetSRDetails();
+
+                    $("#Total_Amount").val(data.l[0]);
+                    $("#Tax_amount").val(data.l[1]);
+                    $("#Disc_amount").val(data.l[2]);
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            warrningMessage("Please Check Before Delete", "WARRING");
+            //alert("Fill all fields");
+        }
+    }
+    ///////////////////////////////// Reset Data //////////////////////////////////
+    function resetSRDetails() {
+        $("#DeleteSRDetailsBtn").hide();
+        //var QtyRece = $("#Items_Received").val("");
+        //var UnitPItem = $("#Units_PerItem").val("");
+        //var PPPItem = $("#PPrice_PerItem").val("");
+        //var SPPItem = $("#SPrice_PerItem").val("");
+        //var PPCurr = $("#PPrice_Currency").val("");
+        //var CurrRate = $("#Currency_Rate").val("");
+        //var WPPItem = $("#WPrice_PerItem").val("");
+        //var ExpDate = $("#Expiry_Date").val("");
+        //var BatchNO = $("#Batch_NO").val("");
+        //var PPPUnit = $("#Tot_PPriceItem").val("");
+        //var SPPUnit = $("#SPrice_PerUnit").val("");
+        //var TaxPercentage = $("#Tax_Percentage").val("");
+        //var TaxAmount = $("#Tax_Amount").val("");
+        //var ReceStatus = $("#Received_Status").val("R");
+        //var ItemsAvail = $("#Items_Available").val("");
+        $("#Items_Received").val("");
+        $("#Items_Available").val("");
+        $("#Expiry_Date").val("");
+        $("#Batch_NO").val("");
+        $("#PPrice_PerItem").val("");
+        $("#Tot_PPriceItem").val("");
+        //$("#DeletePODetailsBtn").hide();
+    }
+    function resetPO() {
+        //$("#PO_No").val("");
+        $("#PO_No").val("").trigger('chosen:updated');
+        $("#Vendor_code").val("").trigger('chosen:updated');
+        $("#Currency").val("PKRS");
+        $("#Received_date").val("");
+        //$("#Delivery_date").val("");
+        //$("#Invoice_Date").val("");
+        $("#Status").val("N");
+        $("#Payment_Type").val("R");
+    }
+    ///////////////////////////////// Other Data //////////////////////////////////
+    function resptrictMinus(e) {
+        var inputKeyCode = e.keyCode ? e.keyCode : e.which;
+        if (inputKeyCode != null) {
+            if (inputKeyCode == 45) e.preventDefault();
+        }
+    }
+
+    GlobalReceivedDate();
+    function GlobalReceivedDate() {
+        $("#Received_date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Received_date").val(todayDate);
+    }
+
+    var urlParams = new URLSearchParams(window.location.search);
+    function ViewByParameter(id) {
+        debugger
+        if (id !=null) {
+            var BranchNo = id.substring(0,2);
+            var InvNo = id.substring(2);
+            $("#Branch_No").val(BranchNo);
+            $("#Supp_Invno").val(InvNo).keyup();
+        } else {
+            
+            if("@ViewBag.UserType"=="Admin"){
+                var id=@ViewBag.SunInvoiceNo;
+                br = "@ViewBag.Branch_No";
+                $("#Branch_No").val(br).trigger('chosen:updated');
+               // $("#Branch_No").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+                $("#Supp_Invno").val(id).keyup();
+            }else{
+                var id=@ViewBag.SunInvoiceNo;
+                br = "@ViewBag.Branch_No";
+                $("#Branch_No").val(br).trigger('chosen:updated');
+                //$("#Branch_No").trigger('chosen:updated').prop('readonly', true).prop('readonly', true);
+                $("#Branch_No").prop('disabled', true).trigger('chosen:updated');
+               $("#Supp_Invno").val(id).keyup();
+            }
+
+        }
+    }
+
+    $(document).ready(function () {
+        var url = urlParams.get('SR');
+        ViewByParameter(url);
+
+        //$("#DeletePODetailsBtn").hide();
+        $("#DeleteSRDetailsBtn").hide();
+
+        $("#Invoice_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#Expiry_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        //$("#UpdatePODetailsBtn").hide();
+        //$("#DeletePODetailsBtn").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        //document.getElementById('circle').style.display = 'none'; //Not Visible
+
+    });
+
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            if (results == null) {
+                var dt = new Date(value);
+                var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                //"/" + dt.getFullYear().toString().substr(2,2));
+                return completedate;
+            } else {
+                var dt = new Date(parseFloat(results[1]));
+                var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                //"/" + dt.getFullYear().toString().substr(2,2));
+                return completedate;
+            }
+
+        }
+    }
+    function ToJavaScriptDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthNames = '';
+
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = '';
+            var completedate = '';
+
+            if (results != null) {
+                monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+                dt = new Date(parseFloat(results[1]));
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate().toString();
+                if (day.length == "1") {
+                    day = "0" + day;
+                } else {
+                    day = dt.getDate();
+                }
+                return completedate = year + "-" + mont + "-" + day;
+                //return completedate = dt.getFullYear() + "-" + monthNames[dt.getMonth()] + "-" + dt.getDate();
+            }
+            else {
+                monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                dt = new Date(value);
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate();
+                //return completedate = +dt.getDate(); +"-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                return completedate = day + "-" + mont + "-" + year;
+            }
+        }
+    }
+
+</script>

@@ -1,0 +1,541 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+<style>
+    .mr_t_10 {
+        margin-top: 10px;
+    }
+
+    #uTable {
+        width: 100%;
+    }
+
+        #uTable td {
+            width: 100px;
+            text-align: center;
+        }
+
+    .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+        background: red;
+    }
+
+    .ui-datepicker table {
+        background: #236;
+        color: #fff;
+    }
+
+    /*.table > caption + thead > tr:first-child > td, .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table > thead:first-child > tr:first-child > th {
+        font-size: 8pt;
+    }
+
+    .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > td, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+        font-size: 8pt;
+    }*/
+</style>
+
+
+<div id="loading"></div>
+
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Vendor_code" class="control-label">Vendor</label>
+                        <input hidden type="text" name="SNO" id="SNO"/>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Vendor_code", (List<SelectListItem>)ViewBag.DDLVendor,
+                                                                                         "--Select Vendor--", new { @class = "chosen-select", @tabindex = "2" })
+                    </div>
+                </div>     
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Customer_Code" class="">Customer</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Customer_Code", (List<SelectListItem>)ViewBag.DDLCustomer,
+                                                                                                  "--Select Customer--", new { @class = "chosen-select", @tabindex = "3"})
+                    </div>
+                </div>           
+            </div>
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Valid_Date_from" class="">Valid Date from</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input onkeypress="resptrictMinus(event)" onchange="ChangeDateInPO(this.value)" tabindex="6" type="text" name="Valid_Date_from" id="Valid_Date_from" class="form-control" placeholder="dd-MM-yyyy">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Status" class="">Status</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="7" name="Status" id="Status" class="form-control">
+
+                            <option value="Y">Valid</option>
+                            <option selected value="N">Not Valid</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Valid_Date_to" class="">Valid_Date_to</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input onkeypress="resptrictMinus(event)" tabindex="8" type="text" name="Valid_Date_to" id="Valid_Date_to" class="form-control" placeholder="Valid_Date_to">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="form-group">
+                        <button tabindex="9" type="button" id="SaveAR" onclick="SaveARData()" class="btn btn-success">Save</button>
+                        <button type="button" onclick="resetAR()" class="btn btn-primary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="width:20%">vendor_code</th>
+                    <th style="width:25%">Customer_code</th>
+                    <th style="width:15%">Valid_Date_from</th>
+                    <th style="width:15%">Valid_Date_to</th>
+                    <th style="width:5%">Status</th>
+                    <th style="width:5%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:5%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int counter = 0;// Index start value
+                    foreach (var item in ViewBag.Data)
+                    {
+                        <tr id="@item.vendor_code@item.Customer_code@item.SNO">
+
+                            <td>
+                                @item.Name
+                            </td>
+                            <td>
+                                @item.Cust_Name
+                            </td>
+                            <td>
+                                @item.Valid_Date_from
+                            </td>
+                            <td>
+                                @item.Valid_Date_to
+                            </td>
+                            <td>
+                                @{
+                        if (item.Status == "Y")
+                        {
+                            <label class="label label-success">Valid</label>
+                        }
+                        else
+                        {
+                            <label class="label label-danger">Not Valid</label>
+                        }
+                                }
+
+                            </td>
+                            <td>
+                                <button onclick="ClickTableRowToGetAR(this.id)" id="@item.vendor_code@item.Customer_code@item.SNO" class="btn btn-primary btn-block">Edit</button>
+                            </td>
+                            <td>
+                                <button onclick="DeleteDR(this.id)" id="@item.vendor_code@item.Customer_code@item.SNO" class="btn btn-danger btn-block">Delete</button>
+                            </td>
+                            <td>
+                                <a href="~/ApprovalRate/ApprovalRateDetails?vc_cc_sn=@item.vendor_code@item.Customer_code@item.SNO" target="_blank" class="btn btn-info btn-block">Details</a>
+                            </td>
+                            <td>
+                                <a href="~/WebForm/DiscAproval.aspx?vc=@item.vendor_code&cc=@item.Customer_code&sno=@item.SNO" target="_blank" class="btn btn-info btn-block">Report</a>
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Messages.js"></script>
+
+
+
+<script>
+
+    /////////////////////////////////////// Read Function ////////////////////////////////////////
+
+    function ClickTableRowToGetAR(id) {
+
+        var vCode = id.substring(0, 3);
+        var CCode = id.substring(3,6);
+        var sno = id.substring(6);
+
+        $.ajax({
+            type: "POST",
+            url: "/ApprovalRate/GetARByID",
+            data: {
+                vCode: vCode,
+                CCode: CCode,
+                no: sno
+            },
+            success: function (data) {
+
+                $("#SNO").val(data[0].SNO);
+                $("#Vendor_code").val(data[0].vendor_code).trigger('chosen:updated');
+                $("#Vendor_code").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+
+                $("#Customer_Code").val(data[0].Customer_code).trigger('chosen:updated');
+                $("#Customer_Code").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+
+                var ValidDateFrom = ConvertDate(data[0].Valid_Date_from);
+                var ValidDateTo = ConvertDate(data[0].Valid_Date_to);
+
+                $("#Valid_Date_from").val(ValidDateFrom);
+                $("#Valid_Date_to").val(ValidDateTo);
+                $("#Status").val(data[0].Status);
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+
+    }
+    /////////////////////////////////////// Save Function ////////////////////////////////////////
+    function SaveARData() {
+        var table = $("#myDatatable").DataTable();
+
+        var SNO = $("#SNO").val();
+        var Vcode = $("#Vendor_code").val();
+        var CCode = $("#Customer_Code").val();
+        var Validfrom = $("#Valid_Date_from").val();
+        var Validto = $("#Valid_Date_to").val();
+        var Status = $("#Status").val();
+        var str = $("#LoadData").serialize();
+
+        if (Vcode != "" && CCode != "" && Validfrom != "" && Validto != "" && Status != "") {
+
+            $.ajax({
+                type: "POST",
+                url: "/ApprovalRate/SaveAR",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        
+
+
+                        if (SNO == "")
+                        {
+                            if (Status == "Y") {
+                                var CName = data.final.Cust_Name;
+                                var VName = data.final.Name;
+
+                             var MyUniqueID = data.final.id;//data.mdata[0].Emp_ID; // this is the uniqueId.
+                                //var id = info[0].vendor_code + info[0].Customer_code + info[0].SNO;
+                             var vCode = MyUniqueID.substring(0, 3);
+                             var cCode = MyUniqueID.substring(3,6);
+                             var sNO = MyUniqueID.substring(6);
+
+                             var rowIndex = table.row.add([VName, CName, Validfrom, Validto,
+                            '<label class="label label-success">Valid</label>',
+                            '<button onclick="ClickTableRowToGetAR(this.id)" id="' + MyUniqueID + '" class="btn btn-primary btn-block">Edit</button>',
+                            '<button onclick="DeleteDR(this.id)" id="' + MyUniqueID + '" class="btn btn-danger btn-block">Delete</button>',
+                            '<a href="/ApprovalRate/ApprovalRateDetails?vc_cc_sn=' + MyUniqueID + '" target="_blank" class="btn btn-info btn-block">Details</a>',
+                            '<a href="/WebForm/DiscAproval.aspx?vc=' + vCode + '&cc=' + cCode + '&sno=' + sNO + '" target="_blank" class="btn btn-info btn-block">Report</a>',
+                                ]).draw(false);
+                                var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                                $(row).attr('id', MyUniqueID);
+
+                                SaveMessage(data.message);
+                            } else {
+                                var CName = data.final.Cust_Name;
+                                var VName = data.final.Name;
+
+                                var MyUniqueID = data.final.id;//data.mdata[0].Emp_ID; // this is the uniqueId.
+
+                                var rowIndex = table.row.add([VName, CName, Validfrom, Validto,
+                            '<label class="label label-danger">Not Valid</label>',
+                            '<button onclick="ClickTableRowToGetAR(this.id)" id="' + MyUniqueID + '" class="btn btn-primary btn-block">Edit</button>',
+                            '<button onclick="DeleteDR(this.id)" id="' + MyUniqueID + '" class="btn btn-danger btn-block">Delete</button>',
+                            '<a href="/ApprovalRate/ApprovalRateDetails?vc_cc_sn=' + MyUniqueID + '" target="_blank" class="btn btn-info btn-block">Details</a>',
+                            '<a href="/WebForm/DiscAproval.aspx?vc_cc_sn=' + MyUniqueID + '" target="_blank" class="btn btn-info btn-block">Report</a>',
+                                ]).draw(false);
+                                var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                                $(row).attr('id', MyUniqueID);
+
+                                SaveMessage(data.message);
+                            }
+
+                        } else {
+
+                            var updateID = Vcode + CCode + SNO;
+                            index = table.row('#' + updateID); //1234126
+                            var temp = table.row(index[0]).data();
+                            //temp[0] = Vcode;
+                            //temp[1] = CCode;
+                            temp[2] = Validfrom;
+                            temp[3] = Validto;
+                            if (Status == "Y") {
+                                temp[4] = "<label class='label label-success'>Valid</label>";
+                            } else {
+                                temp[4] = "<label class='label label-danger'>Not Valid</label>";
+                            }
+
+                            table.row(index[0]).data(temp).draw();
+
+                            //index = table.row('#' + updateID); //1234126
+                            //var temp = table.row(index[0]).data();
+                            ////alert(CurrExch_rate);
+                            //temp.Valid_Date_from = Validfrom;
+                            //temp.Valid_Date_to = Validto;
+                            //temp.Status = Status;
+                            //table.row(index[0]).data(temp).draw();
+
+                            SaveMessage(data.message);
+                        }
+
+                    } else {
+                        warrningMessage(data.message, "WARNING");
+
+                    }
+                },
+                error: function (er) {
+                    alert(er);
+                }
+            })
+        } else {
+            warrningMessage("Please Fill the fields", "WARNING");
+        }
+
+    }
+
+    function DeleteDR(id) {
+        var table = $("#myDatatable").DataTable();
+        var Vcode = id.substring(0, 3);
+        var Ccode = id.substring(3,6);
+        var Sno = id.substring(6);
+        swal({
+            title: "Are you sure?",
+            text: "Your will not be able to recover this Data!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel plx!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    url: "/ApprovalRate/DeleteDisAproval",
+                    data: { Vcode: Vcode, Ccode: Ccode, Sno: Sno },
+                    success: function (data) {
+
+                        if (data.success) {
+                            //toastr.error(data.message, "Deleted");
+                            swal("Deleted!", data.message, "success");
+
+                            index = table.row('#' + id);
+                            var temp = table.row(index[0]).data();
+                            //table.row(index[0]).data(temp).draw();
+                            table.row(index[0]).remove().draw();
+                            //table.row($($this).parents('tr')).remove().draw();
+                        } else {
+                            location.reload();
+                            toastr.error(data.message, "Error");
+                        }
+                    }
+                });
+
+            } else {
+                swal("Cancelled", "Your Data is safe :)", "error");
+            }
+        });
+
+    }
+
+    /////////////////////////////////////// Other Function ////////////////////////////////////////
+    function resetAR() {
+        $('#LoadData')[0].reset();
+        var SNO = $("#SNO").val("");
+        var Validfrom = $("#Valid_Date_from").val("");
+        var Validto = $("#Valid_Date_to").val("");
+        var Status = $("#Status").val("Y");
+        $(".chosen-select").trigger('chosen:updated');
+        $("#Customer_Code").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        var CCode = $("#Customer_Code").val('');
+        $("#Vendor_code").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        var Vcode = $("#Vendor_code").val('');
+
+
+        DateToday();
+    }
+    function ChangeDateInPO(id) {
+
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date(id);
+        date.setDate(date.getDate() + 15);
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Valid_Date_to").val(todayDate);
+    }
+
+
+    function resptrictMinus(e) {
+        var inputKeyCode = e.keyCode ? e.keyCode : e.which;
+        if (inputKeyCode != null) {
+            if (inputKeyCode == 45) e.preventDefault();
+        }
+    }
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            if (results == null) {
+                var dt = new Date(value);
+                var completedate = dt.getDate() + "/" + monthNames[dt.getMonth()] + "/" + dt.getFullYear();
+                //"/" + dt.getFullYear().toString().substr(2,2));
+                return completedate;
+            } else {
+                var dt = new Date(parseFloat(results[1]));
+                var completedate = dt.getDate() + "/" + monthNames[dt.getMonth()] + "/" + dt.getFullYear();
+                //"/" + dt.getFullYear().toString().substr(2,2));
+                return completedate;
+            }
+
+        }
+    }
+
+    $(document).ready(function () {
+
+        var table = $("#myDatatable").DataTable({
+            //"paging": false,
+            //searching: false,                   // for disable search box
+            select: {
+                info: false
+            },
+            "order": [3, "desc"],
+            // "orderable": false,
+            "columnDefs": [
+               { "targets": [0,1,5, 6,7,8], "orderable": false }
+            ],
+            //buttons: [
+            //    {
+            //        extend: 'print',
+            //        className: 'btn btn-primary btn-sm'
+            //    },
+            //    {
+            //        extend: 'excel',
+            //        filename: 'Stock',
+            //        sheetName: 'Stock',
+            //        className: 'btn btn-primary btn-sm'
+            //    }
+            //],
+            //dom: 'lBfrtip',
+            language: {
+                search: "", // for hide label of search
+                searchPlaceholder: "Search", // place holder of search box
+            },
+            //responsive: true,
+            //select: 'single',
+            select: true,                       // for Select Row
+            //bDestroy: true,                     // this will disable table when new load data
+            "bLengthChange": false,           //  for Show more Entries
+            //scrollY: '20vh',
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
+            "bScrollCollapse": true,
+            "processing": true,
+            //"bPaginate": false,
+            "sPaginationType": "full_numbers",
+            "langauge": {
+                "QueryTable": "No data found, Please click on <b>Add New </b> Button"
+            },
+        });
+
+        $('input[type="search"]').addClass('form-control'); // <-- add this line
+
+
+
+        $('.chosen-select').chosen({ width: "100%" });
+
+        document.getElementById('loading').style.display = 'none'; //Not Visible
+        DateToday();
+    });
+
+    function DateToday() {
+        $("#Valid_Date_from").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Valid_Date_from").val(todayDate);
+
+
+        date.setDate(date.getDate() + 365);
+        var dat1 = date.getDate();
+        var mon1 = monthNames[date.getMonth()];
+        var year1 = date.getFullYear();
+        var todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+        $("#Valid_Date_to").val(todayDate1);
+
+        $("#Valid_Date_to").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+    }
+
+</script>

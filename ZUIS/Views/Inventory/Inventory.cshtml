@@ -1,0 +1,335 @@
+﻿@{
+    ViewBag.Title = "Inventory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<div id="loading"></div>
+
+<div class="container-fluid mr_t_30">
+    <table id="uTable">
+        <tr>
+            <td>
+                <div class="col-sm-12">
+                    <label for="Branch_Code" class="control-label">Branch</label>
+                </div>
+                <div class="form-group">
+                    <select name="Branch_Code" class="chosen-select" id="Branch_Code" onchange="onchangeBranch(this.value)">
+                        <option disabled selected value="-1">--Select Branch--</option>
+                        <option value="748">748 : ZUIS ISB</option>
+                        <option value="741">741 : ZUIS PWR</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="col-sm-12">
+                    <label for="Vendor_code" class="control-label">Vendor</label>
+                </div>
+                <div class="form-group">
+                    <select id="Vendor_code" name="Vendor_code" class="chosen-select" onchange="onchangeRptVendor(this.value)">
+                        <option disabled selected value="-1">--Select Company--</option>
+                        <option value="">All Company</option>
+                        <option value="101">101 : Martin Dow</option>
+                        <option value="102">102 : Seatle Pvt</option>
+                        <option value="103">103 : Tradelink</option>
+                        <option value="104">104 : Merck</option>
+                    </select>
+                </div>
+            </td>
+
+            <td>
+                <div class="col-sm-12">
+                    <label for="CurrExch_rate" class="">Download</label>
+                </div>
+                <div class="form-group">
+                    <a id="rptDownload" class='btn btn-info btn-sm'>Download Report</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <hr />
+    <div>
+
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead id="tblHeader" style="background:#79e1e8">
+                <tr>
+                    <th colspan="4" style="text-align:center; font-size:2em">Inventory Report</th>
+                </tr>
+                <tr>
+                    <th>Stock ID</th>
+                    <th>Stock Name</th>
+                    <th>Available Items</th>
+                    <th>Manufacturer_Code</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Messages.js"></script>
+<script>
+
+    $("#rptDownload").hide();
+    function onchangeBranch(value) {
+        $("#Vendor_code").val("-1").trigger('chosen:updated');
+        $("#rptDownload").hide();
+        //var VCode = $("#Vendor_code").val();
+        //var SODate = $("#ReceivedDate").val();
+        //var SODate1 = $("#ReceivedDate1").val();
+
+        //if (value == "" || SODate == "" || SODate1 == "" || value == "") {
+
+        //    alert("Please Fill all Fields");
+        //} else {
+        //    if (VCode == "") {
+        //        VCode = "0";
+        //    }
+        //    else
+        //        VCode = VCode;
+        //    // alert(1);
+
+        //    Load748Stock(VCode, SODate, SODate1, value);
+        //    var rpt = document.getElementById("rptDownload");
+        //    rpt.href = "/Stock/Download" + value + "?SODate=" + SODate + "&SODate1=" + SODate1 + "&VCode=" + VCode + "&BCode=" + value;
+        //}
+    }
+    //document.getElementById("Branch_Code").style.display = 'none';
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+    function onchangeRptVendor(value) {
+        $("#rptDownload").show();
+        var VCode = $("#Vendor_code").val();
+        //var a = $("#ReportZUIS").val();
+        var BCode = $("#Branch_Code").val();
+
+        //var a = $('#ReportZUIS option:selected').text();
+        //var b = $('#Vendor_code option:selected').text();
+
+
+        if ( BCode == "") {
+
+            // alert("Please Fill all Fields");
+        } else {
+            if (VCode == "") {
+                VCode = "0";
+            }
+            else
+                VCode = VCode;
+            // alert(1);
+
+            LoadStock(VCode, BCode);
+            var rpt = document.getElementById("rptDownload");
+            rpt.href = "/Stock/DownloadStock?VCode=" + VCode + "&BCode=" + BCode;
+        }
+
+        //$("#myDatatable").empty();
+        //Load748Stock();
+        //var rpt = document.getElementById("rptDownload");
+        //rpt.href = "/Stock/Download" + value + "?SODate=" + SODate + "&SODate1=" + SODate1 + "&VCode=" + VCode;
+    }
+
+    function LoadStock(VCode, BCode) {
+        //var ReceivedDate = $("#ReceivedDate").val();
+        //var ReceivedDate1 = $("#ReceivedDate1").val();
+        //var VCode = $("#Vendor_code").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Inventory/InventoryWithSum",
+            data: { VCode: VCode, BCode: BCode },
+            success: function (data) {
+                
+                var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                var date = new Date();
+                var dat = date.getDate();
+                var mon = monthNames[date.getMonth()];
+                var year = date.getFullYear();
+                var todayDate = dat + "/" + mon + "/" + year;
+
+                //$("#myDatatable tbody").empty();
+                //for (var i = 0; i < data.length; i++) {
+                //    if (data[i].Items_Available != 0) {
+                //        $("#myDatatable tbody").append("<tr class='bg-success'>"
+                //                    + "<td>" + data[i].Stock_no + "</td>"
+                //                    + "<td>" + data[i].Brand_name + "</td>"
+                //                    + "<td><label class='label label-success'>" + data[i].Items_Available + "</label></td>"
+                //                    + "</tr>");
+                //    }
+                //    else {
+                //        $("#myDatatable tbody").append("<tr>"
+                //                    + "<td>" + data[i].Stock_no + "</td>"
+                //                    + "<td>" + data[i].Brand_name + "</td>"
+                //                    + "<td>" + data[i].Items_Available + "</td>"
+                //                    + "</tr>");
+                //    }
+                //}
+
+                var table = $("#myDatatable").DataTable({
+                    data: data,
+                    columns: [
+                        { "data": "Stock_no" },
+                        { "data": "Brand_name" },
+                        {
+                            "data": "Items_Available", render: function (data) {
+                                if (data != 0) {
+                                    return "<label class='label label-success'>" + data + "</label>";
+                                } else
+                                    return "0";
+                            }
+                        },
+                        { "data": "M_Name" },
+                    ],
+                    //rowGroup:{
+                    //    dataSrc: 'Manufacturer_Code'
+                    //},
+
+                    "paging": false,
+                    //searching: false,                   // for disable search box
+                    //select: {
+                    //    info: false
+                    //},
+                    //"columnDefs": [
+                    //   { "targets": [0, 1, 2], "orderable": false }
+                    //],
+                    columnDefs: [{"targets": [0, 1,3], "orderable": false }],
+                    order: [[3, 'asc']],
+                    "fnCreatedRow": function (row, aData, iDataIndex) {
+
+                        if (aData.Items_Available != "0") {
+                            
+                            $(row).find('td:eq(0)').addClass('bg-success');
+                            $(row).find('td:eq(1)').addClass('bg-success');
+                            $(row).find('td:eq(2)').addClass('bg-success');
+                            $(row).find('td:eq(3)').addClass('bg-success');
+                        }
+                    },
+
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Stock", // place holder of search box
+                    },
+                    responsive: true,
+                    select: true,                       // for Select Row
+                    bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    // scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    //"bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    //"sPaginationType": "full_numbers",
+                });
+                $('input[type="search"]').addClass('form-control'); // <-- add this line
+            },
+            error: function (er) {
+
+            }
+        });
+
+        //var data = [{ 'ROLL_NO': 123, 'NAME': 123, 'a': 123, 'b': 123, 'c': 123, 'd': 123, 'e': 123, }];
+
+
+    }
+
+    function ChangeDateInPO(id) {
+        //alert(0);
+        $("#Vendor_code").val("-1").trigger('chosen:updated');
+        $("#Branch_Code").val("-1").trigger('chosen:updated');
+
+        //$('#LoadData')[0].reset();
+        //$("#ReportZUIS").val("");
+
+        //var date = new Date(id);
+        //date.setDate(date.getDate() + 15);
+        //var dat = date.getDate();
+        //var mon = monthNames[date.getMonth()];
+        //var year = date.getFullYear();
+        //todayDate = dat + "/" + mon + "/" + year;
+        //$("#ReceivedDate1").val(todayDate);
+    }
+
+    $(document).ready(function () {
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var minDate = new Date();
+        $("#ReceivedDate").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true,
+            onClose: function (selectedDate) {
+                $('#ReceivedDate1').datepicker("option", "minDate", selectedDate);
+            }
+        });
+        var todayDate = "";
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        todayDate = dat + "/" + mon + "/" + year;
+        $("#ReceivedDate").val(todayDate);
+
+        //var date = new Date(id);
+        date.setDate(date.getDate() + 7);
+        var dat1 = date.getDate();
+        var mon1 = monthNames[date.getMonth()];
+        var year1 = date.getFullYear();
+        todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+
+        $("#ReceivedDate1").val(todayDate1);
+
+        $("#ReceivedDate1").datepicker({
+            shownAnim: 'drop',
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        //$("#loading").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+    });
+
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+
+</script>

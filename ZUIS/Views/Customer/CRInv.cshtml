@@ -1,0 +1,289 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+
+<div id="loading"></div>
+
+<div class="container-fluid mr_t_30">
+    <div>
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="Company_Code">From:</label>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" type="text" class="form-control" id="SO_Date" name="SO_Date" placeholder="From Date">
+            </div>
+            <div class="form-group">
+                <label for="Company_Code">To:</label>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" type="text" class="form-control" id="SO_Date1" name="SO_Date1" placeholder="To Date">
+            </div>
+            <div class="form-group">
+                <label for="Branch_Code">Branch:</label>
+            </div>
+            <div class="form-group">
+                <select name="Branch_Code" class="chosen-select" id="Branch_Code" onchange="onchangeBranch(this.value)">
+                    <option disabled selected value="-1">--Select Branch--</option>
+                    <option value="748">748 : ZUIS ISB</option>
+                    <option value="741">741 : ZUIS PWR</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" onclick="ViewCutRept()">View</button>
+            </div>
+            <div class="form-group">
+                <a id="rptDownload" class='btn btn-info btn-sm'>Download Report</a>
+            </div>
+
+        </div>
+        <div class="mr_t_20">
+            <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+                <thead style="background:#79e1e8">
+                    <tr>
+                        <th>DSTBID</th>
+                        <th>CUSTID</th>
+                        <th>CUSTNAME</th>
+                        <th>ADDRESS</th>
+                        <th>CT</th>
+                        <th>TOWNID</th>
+                        <th>TOWN</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script>
+    function ViewCutRept() {
+        var rpt = document.getElementById("rptDownload");
+
+        var InvoiceDate = $("#SO_Date").val();
+        var InvoiceDate1 = $("#SO_Date1").val();
+        var BCode = $("#Branch_Code").val();
+
+        LoadAllDataInTable(InvoiceDate, InvoiceDate1, BCode);
+        rpt.href = "/Customer/DownloadCUST?InvoiceDate=" + InvoiceDate + "&InvoiceDate1=" + InvoiceDate1 + "&BCode=" + BCode;
+    }
+   
+
+    function ViewReportData() {
+        var url = "http://localhost:1669/WebForm/748INVReport.aspx";
+
+        //var windowName = "Change Logo";
+
+        var windowName = "_blank";
+        var windowHeight = window.innerHeight;
+        var windowWidth = window.innerWidth;
+        document.body.style.height = windowHeight + "px";
+        //window.addEventListener("resize", setWindowHeight, false);
+        newwindow = window.open(url, windowName, 'width=1160,height=' + windowHeight + '');
+
+        if (window.focus) { newwindow.focus() }
+
+        return false;
+    }
+
+    function LoadAllDataInTable(InvoiceDate, InvoiceDate1, BCode) {
+       
+
+        $.ajax({
+            type: "POST",
+            url: "/Customer/getCUST",
+            data: {
+                InvoiceDate: InvoiceDate, InvoiceDate1: InvoiceDate1, BCode: BCode
+            },
+            success: function (data) {
+                $("#myDatatable body").html("");
+                var table = $("#myDatatable").DataTable({
+                    data: data,
+
+                    //rowId: 'staffId',
+                    columns: [
+                        { "data": "DSTB_NO", "searchable": false, "orderable": false },
+                        { "data": "Customer_Code", "searchable": false, "orderable": false },
+                        { "data": "Cust_Name", "searchable": false, "orderable": false },
+                        { "data": "Address", "searchable": false, "orderable": false },
+                        { "data": "City_code", "searchable": false, "orderable": false },
+                        { "data": "City_code", "searchable": false, "orderable": false },
+                        { "data": "City", "searchable": false, "orderable": false },
+                    ],
+                    "order": [[0, "asc"]],
+                    //"fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                    //    //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                    //    //var r = aData.Invoice_no;
+                    //    //$(nRow).attr('id', r);
+                    //    //$(nRow).attr('onclick', 'GetPOById(this.id)');
+                    //},
+                    //"paging": false,
+                    searching: false,                   // for disable search box
+                    select: {
+                        info: false
+                    },
+                    //buttons: [
+                    //    {
+                    //        extend: 'print',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    },
+                    //    {
+                    //        extend: 'excel',
+                    //        filename: 'Stock',
+                    //        sheetName: 'Stock',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    }
+                    //],
+                    //dom: 'lBfrtip',
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Purchase", // place holder of search box
+                    },
+                    responsive: true,
+                    //select: 'single',
+                    select: true,                       // for Select Row
+                    bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    //scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    "bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    "sPaginationType": "full_numbers",
+                    "langauge": {
+                        "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                    },
+
+
+                });
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var minDate = new Date();
+        $("#SO_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true,
+            onClose: function (selectedDate) {
+                $('#SO_Date1').datepicker("option", "minDate", selectedDate);
+            }
+        });
+        var todayDate = "";
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        todayDate = dat + "/" + mon + "/" + year;
+        $("#SO_Date").val(todayDate);
+
+        //var date = new Date(id);
+        date.setDate(date.getDate() + 7);
+        var dat1 = date.getDate();
+        var mon1 = monthNames[date.getMonth()];
+        var year1 = date.getFullYear();
+        todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+
+        $("#SO_Date1").val(todayDate1);
+
+        $("#SO_Date1").datepicker({
+            shownAnim: 'drop',
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#loading").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+        //var table = $("#myDatatable").DataTable({
+        //    buttons:[
+        //        {
+        //            extend: 'print',
+        //            className:'btn btn-primary btn-sm'
+        //        },
+        //        {
+        //            extend: 'excel',
+        //            //filename: 'Supplier',
+        //            sheetName: 'Supplier',
+        //            className: 'btn btn-primary btn-sm'
+        //        }
+        //    ],
+        //    //dom: 'lBfrtip',
+        //    // "paging": false,
+        //    // searching: false,                   // for disable search box
+        //    select: {
+        //        info: false
+        //    },
+        //    "columnDefs": [
+        //       { "targets": [0, 1, 2,3,4,5,6,7,8,9,10,11], "orderable": false }
+        //    ],
+
+        //    language: {
+        //        search: "", // for hide label of search
+        //        searchPlaceholder: "Search Customer", // place holder of search box
+        //    },
+        //    //   responsive: true,
+        //    select: true,                       // for Select Row
+        //    //    //bDestroy: true,                     // this will disable table when new load data
+        //    "bLengthChange": false,           //  for Show more Entries
+        //     scrollY: '50vh',
+        //    "sScrollX": "100%",
+        //    "sScrollXInner": "100%",
+        //    //"bScrollCollapse": true,
+        //    "processing": true,
+        //    //"bPaginate": false,
+        //    //"sPaginationType": "full_numbers",
+        //});
+
+        $('input[type="search"]').addClass('form-control'); // <-- add this line
+    });
+
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+
+</script>

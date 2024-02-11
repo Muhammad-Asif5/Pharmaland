@@ -1,0 +1,628 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<link href="~/Content/datepicker/vendors.bundle.css" rel="stylesheet" />
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<div id="loading"></div>
+
+<div class="container-fluid mr_t_30">
+    <form id="LoadData">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Emp_code" class="">Emp_code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        
+                        <input maxlength="5" tabindex="1" type="text" class="form-control" name="Emp_code" id="Emp_code" placeholder="Emp_code">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Emp_Name" class="">Emp_Name</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="2" type="text" name="Emp_Name" id="Emp_Name" class="form-control" placeholder="Emp_Name">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="DOB" class="">DOB</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="3" type="text" name="DOB" id="DOB" class="form-control" placeholder="DOB">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Address" class="">Address</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="4" type="text" name="Address" id="Address" class=" form-control" placeholder="Address">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="City" class="">City</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="5" type="text" name="City" id="City" class="form-control" placeholder="City">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Region" class="">Region</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="6" type="text" name="Region" id="Region" class="form-control" placeholder="Region">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Country_code" class="">Country_code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Country_code", (List<SelectListItem>)ViewBag.DDLCountry,
+                                                                                                  "--Select Vendor--", new { @class = "chosen-select", @tabindex = "7" })
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Postal_Code" class="">Postal_Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="8" type="text" name="Postal_Code" id="Postal_Code" class="form-control" placeholder="Postal_Code">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Tel_No" class="">Tel_No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="9" type="text" name="Tel_No" id="Tel_No" class="form-control" placeholder="Tel_No">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Dept_Code" class="">Dept_Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="10" type="text" name="Dept_Code" id="Dept_Code" class="form-control" placeholder="Dept_Code">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Email" class="">Email</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="11" type="text" name="Email" id="Email" class="form-control" placeholder="Email">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Mobile_No" class="">Mobile_No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="12" type="text" name="Mobile_No" id="Mobile_No" class="form-control" placeholder="Mobile_No">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <button tabindex="13" type="button" id="SaveBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                        <button tabindex="14" type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                        <button tabindex="15" type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>
+                        <button type="button" onclick="resetData()" class="btn btn-primary">New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th>Emp_code</th>
+                    <th>Emp_Name</th>
+                    <th>DOB</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Region</th>
+                    <th>Country_code</th>
+                    <th>Postal_Code</th>
+                    <th>Tel_No</th>
+                    <th>Dept_Code</th>
+                    <th>Email</th>
+                    <th>Mobile_No</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int counter = 0;// Index start value
+                    foreach (var item in ViewBag.Data)
+                    {
+                        <tr onclick="GetCustomerById(this.id)" id="@item.Emp_ID">
+                            <td>
+                                @item.Emp_ID
+                            </td>
+                            <td>
+                                @item.Emp_Name
+                            </td>
+                            <td>
+                                <label id="asif"></label>
+                                @{
+                                    if (item.DOB != null)
+                                    {
+                                        <span>@item.DOB</span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @item.Address
+                            </td>
+                            <td>
+                                @item.City
+                            </td>
+                            <td>
+                                @item.Region
+                            </td>
+                            <td>
+                                @item.Country_code
+                            </td>
+                            <td>
+                                @item.Postal_Code
+                            </td>
+                            <td>
+                                @item.Tel_No
+                            </td>
+                            <td>
+                                @item.Dept_Code
+                            </td>
+                            <td>
+                                @item.Email
+                            </td>
+                            <td>
+                                @item.Mobile_No
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script src="~/Content/datepicker/vendors.bundle.js"></script>
+
+<script>
+    $(function () {
+        $("#DOB").datepicker({
+            format: 'd/M/yyyy',
+            todayBtn: "linked",
+            daysOfWeekDisabled: "0,6",
+            daysOfWeekHighlighted: "5",
+            calendarWeeks: true,
+            autoclose: true,
+            todayHighlight: true,
+            startDate: "15-12-2016",
+            endDate: "0",
+
+        }).datepicker('setDate', '0');
+    });
+
+    function resetData() {
+        $("#Lang_Code").prop('readonly', false);
+        $('#LoadData')[0].reset();
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+    }
+    function SaveData() {
+        //alert("save");
+        var Emp_code = $("#Emp_code").val();
+        var Emp_Name = $("#Emp_Name").val();
+        var DOB = $("#DOB").val();
+        var Address = $("#Address").val();
+        var City = $("#City").val();
+        var Region = $("#Region").val();
+        var Country_code = $("#Country_code").val();
+        var Postal_Code = $("#Postal_Code").val();
+        var Tel_No = $("#Tel_No").val();
+        var Dept_Code = $("#Dept_Code").val();
+        var Email = $("#Email").val();
+        var Mobile_No = $("#Mobile_No").val();
+
+        var str = $("#LoadData").serialize();
+        if (Emp_code != "" && Emp_Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Employee/SaveEmployee",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $("#myDatatable").DataTable();
+                        //var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        var rowIndex = 0;
+                        rowIndex = table.row.add([Emp_code, Emp_Name, DOB, Address, City, Region, Country_code,
+                        Postal_Code, Tel_No, Dept_Code, Email, Mobile_No]).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr('id', Emp_code);
+                        $(row).attr('onclick', 'GetCustomerById(this.id)');
+                        SaveMessage(data.message);
+              
+                        resetData();
+                    } else {
+                        warrningMessage(data.message, "WARNING");
+             
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Enter Info of Supplier", "INFO");
+        }
+
+
+    }
+
+    function UpdateData() {
+        //alert("save");
+        var Emp_code = $("#Emp_code").val();
+        var Emp_Name = $("#Emp_Name").val();
+        var DOB = $("#DOB").val();
+        var Address = $("#Address").val();
+        var City = $("#City").val();
+        var Region = $("#Region").val();
+        var Country_code = $("#Country_code").val();
+        var Postal_Code = $("#Postal_Code").val();
+        var Tel_No = $("#Tel_No").val();
+        var Dept_Code = $("#Dept_Code").val();
+        var Email = $("#Email").val();
+        var Mobile_No = $("#Mobile_No").val();
+
+        var str = $("#LoadData").serialize();
+        if (Emp_Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Employee/UpdateEmployee",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $('#myDatatable').DataTable();
+
+                        index = table.row('#' + Emp_code); //1234126
+                        var temp = table.row(index[0]).data();
+
+                        temp[1] = Emp_Name;
+                        temp[2] = DOB;
+                        temp[3] = Address;
+                        temp[4] = City;
+                        temp[5] = Region;
+                        temp[6] = Country_code;
+                        temp[7] = Postal_Code;
+                        temp[8] = Tel_No;
+                        temp[9] = Dept_Code;
+                        temp[10] = Email;
+                        temp[11] = Mobile_No;
+
+                        table.row(index[0]).data(temp).draw();
+                        UpdateMessage(data.message);
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Enter Info of Supplier", "INFO");
+        }
+
+
+    }
+
+    function RemoveData() {
+        var code = $("#Emp_code").val();
+        //alert("remove");
+        if (code != "") {
+            var Con = confirm("are you sure ?");
+            if (Con == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Employee/DeleteEmployee",
+                    data: {
+                        code: code
+                    },
+                    success: function (data) {
+                        if (data.success == true) {
+                            $("#Emp_code").prop('readonly', false);
+                            resetData();
+
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+
+                            toastr.error(data.message, "DELETED",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+                        }
+
+                    },
+                    error: function (result) {
+                        //alert("Connection Error Please retry");
+                    }
+                });
+            }
+        } else {
+            //alert("Select Supplier");
+            warrningMessage("Select Supplier", "WARNING");
+            //toastr.warning("Select Supplier", "WARNING",
+            //                options = {
+            //                    "closeButton": true,
+            //                    "debug": false,
+            //                    "progressBar": true,
+            //                    "preventDuplicates": true,
+            //                    "positionClass": "toast-top-center",
+            //                    "onclick": null,
+            //                    "showDuration": "400",
+            //                    "hideDuration": "1000",
+            //                    "timeOut": "7000",
+            //                    "extendedTimeOut": "1000",
+            //                    "showEasing": "swing",
+            //                    "hideEasing": "linear",
+            //                    "showMethod": "fadeIn",
+            //                    "hideMethod": "fadeOut"
+            //                }
+            //            );
+        }
+
+    }
+
+    function GetCustomerById(id) {
+        //alert(id);
+        $("#UpdateBtn").show();
+        $("#RemoveBtn").show();
+        $("#SaveBtn").hide();
+
+        //var id = id.substring(0, 5);
+        //var index = id.substring(5);
+        $.ajax({
+            type: "POST",
+            url: "/Employee/GetEmployeeById",
+            data: { id: id },
+            success: function (data) {
+                $("#Lang_Code").prop('readonly', true);
+                var DOB = ToJavaScriptDate(data[0].DOB);
+
+                var Emp_code = $("#Emp_code").val(data[0].Emp_Code);
+                var Emp_Name = $("#Emp_Name").val(data[0].Emp_Name);
+                var DOB = $("#DOB").val(DOB);
+                var Address = $("#Address").val(data[0].Address);
+                var City = $("#City").val(data[0].City);
+                var Region = $("#Region").val(data[0].Region);
+                var Country_code = $("#Country_code").val(data[0].Country_code);
+                var Postal_Code = $("#Postal_Code").val(data[0].Postal_Code);
+                var Tel_No = $("#Tel_No").val(data[0].Tel_No);
+                var Dept_Code = $("#Dept_Code").val(data[0].Dept_Code);
+                var Email = $("#Email").val(data[0].Email);
+                var Mobile_No = $("#Mobile_No").val(data[0].Mobile_No);
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+        $("#loading").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+        var table = $("#myDatatable").DataTable({
+            buttons: [
+                {
+                    extend: 'print',
+                    className: 'btn btn-primary btn-sm'
+                },
+                {
+                    extend: 'excel',
+                    //filename: 'Supplier',
+                    sheetName: 'Supplier',
+                    className: 'btn btn-primary btn-sm'
+                }
+            ],
+            //dom: 'lBfrtip',
+            // "paging": false,
+            // searching: false,                   // for disable search box
+            select: {
+                info: false
+            },
+            "columnDefs": [
+               { "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "orderable": false }
+            ],
+
+            language: {
+                search: "", // for hide label of search
+                searchPlaceholder: "Search Employee", // place holder of search box
+            },
+            responsive: true,
+            select: true,                       // for Select Row
+            //    //bDestroy: true,                     // this will disable table when new load data
+            "bLengthChange": false,           //  for Show more Entries
+            // scrollY: '20vh',
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
+            //"bScrollCollapse": true,
+            "processing": true,
+            //"bPaginate": false,
+            //"sPaginationType": "full_numbers",
+        });
+
+        $('input[type="search"]').addClass('form-control'); // <-- add this line
+    });
+
+    function ToJavaScriptDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthNames = '';
+
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = '';
+            var completedate = '';
+
+            if (results != null) {
+                //monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+                monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                dt = new Date(parseFloat(results[1]));
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate().toString();
+                if (day.length == "1") {
+                    day = "0" + day;
+                } else {
+                    day = dt.getDate();
+                }
+                return completedate = day + "/" + mont + "/" + year;
+                //return completedate = dt.getFullYear() + "-" + monthNames[dt.getMonth()] + "-" + dt.getDate();
+            }
+            else {
+                monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                dt = new Date(value);
+                var year = dt.getFullYear();
+                var mont = monthNames[dt.getMonth()];
+                var day = dt.getDate();
+                //return completedate = +dt.getDate(); +"-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+                return completedate = day + "-" + mont + "-" + year;
+            }
+        }
+    }
+
+
+    function SaveMessage(message) {
+        toastr.success(message, "SAVED",
+                         options = {
+                             "closeButton": true,
+                             "debug": false,
+                             "progressBar": true,
+                             "preventDuplicates": true,
+                             "positionClass": "toast-top-center",
+                             "onclick": null,
+                             "showDuration": "400",
+                             "hideDuration": "1000",
+                             "timeOut": "7000",
+                             "extendedTimeOut": "1000",
+                             "showEasing": "swing",
+                             "hideEasing": "linear",
+                             "showMethod": "fadeIn",
+                             "hideMethod": "fadeOut"
+                         });
+    }
+    function UpdateMessage(message) {
+        toastr.success(message, "UPDATED",
+                         options = {
+                             "closeButton": true,
+                             "debug": false,
+                             "progressBar": true,
+                             "preventDuplicates": true,
+                             "positionClass": "toast-top-center",
+                             "onclick": null,
+                             "showDuration": "400",
+                             "hideDuration": "1000",
+                             "timeOut": "7000",
+                             "extendedTimeOut": "1000",
+                             "showEasing": "swing",
+                             "hideEasing": "linear",
+                             "showMethod": "fadeIn",
+                             "hideMethod": "fadeOut"
+                         });
+    }
+    function warrningMessage(message,wa) {
+        toastr.warning(message, wa,
+                       options = {
+                           "closeButton": true,
+                           "debug": false,
+                           "progressBar": true,
+                           "preventDuplicates": true,
+                           "positionClass": "toast-top-center",
+                           "onclick": null,
+                           "showDuration": "400",
+                           "hideDuration": "1000",
+                           "timeOut": "7000",
+                           "extendedTimeOut": "1000",
+                           "showEasing": "swing",
+                           "hideEasing": "linear",
+                           "showMethod": "fadeIn",
+                           "hideMethod": "fadeOut"
+                       });
+    }
+    function infoMessage(message, wa) {
+        toastr.info(message,wa,
+         options = {
+             "closeButton": true,
+             "debug": false,
+             "progressBar": true,
+             "preventDuplicates": true,
+             "positionClass": "toast-top-center",
+             "onclick": null,
+             "showDuration": "400",
+             "hideDuration": "1000",
+             "timeOut": "7000",
+             "extendedTimeOut": "1000",
+             "showEasing": "swing",
+             "hideEasing": "linear",
+             "showMethod": "fadeIn",
+             "hideMethod": "fadeOut"
+         }
+     );
+    }
+</script>

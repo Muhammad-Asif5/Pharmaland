@@ -1,0 +1,53 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="loading"></div>
+
+
+<div class="container-fluid" style="margin-top:50px;">
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="row">
+                <div class="col-sm-3">
+                    <a href="~/Purchase/Purchase" class="btn btn-primary">Add New PO</a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="~/POList/POList" class="btn btn-primary">View Purchase Order</a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="~/StockReceipt/StockReceipt" class="btn btn-primary">Stock Receipt</a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="~/StockReceipt/SRReport" class="btn btn-primary">View Stock Receipt</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5" style="border-left:1px solid red; border-width:5px; ">
+            <div class="col-sm-4">
+                <a href="#" class="btn btn-primary">content</a>
+            </div>
+            <div class="col-sm-4">
+                <a href="#" class="btn btn-primary">content</a>
+            </div>
+            <div class="col-sm-4">
+                <a href="#" class="btn btn-primary">content</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#loading").hide();
+        document.getElementById('loading').style.display = 'none'; //Not Visible
+    });
+
+
+
+</script>

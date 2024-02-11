@@ -1,0 +1,1182 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+<style>
+    #uTable { width: 100%; }
+    #uTable td { width: 100px; text-align: center; }
+    .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {background:red;}
+    .ui-datepicker table {background:#236; color:#fff;}
+</style>
+
+<div id="loading"></div>
+
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="SO_No" class="">S.O</label>
+                    </div>
+                    
+                    <div class="form-group col-sm-9">
+                        <input onkeyup="FindById(this.value)" maxlength="10" tabindex="1" type="text" name="SO_No" id="SO_No" class="form-control">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="CustPO_Date" class="">Cust PO Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input autocomplete="off" tabindex="5" type="text" name="CustPO_Date" id="CustPO_Date" class="form-control" placeholder="dd-MM-yyyy">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="SO_Date" class="">S.O Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input autocomplete="off" tabindex="2" type="text" name="SO_Date" id="SO_Date" class="form-control" placeholder="dd-MM-yyyy">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Customer_Code" class="">Cust Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Customer_Code", (List<SelectListItem>)ViewBag.DDLCustomer,
+                                                                                                  "--Select Customer--", new { @class = "chosen-select", @tabindex = "6", @onchange = "GetAddressofCust(this.value)" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Status" class="">SO Status</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="3" id="Status" name="Status" class="form-control">
+                            <option value="O">Open</option>
+                            <option value="C">Close</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Ship_toCustAddr" class="">Ship To</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="7" type="text" name="Ship_toCustAddr" id="Ship_toCustAddr" class="form-control" placeholder="Ship_toCustAddr">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="CustPO_No" class="">Cust PO</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="4" type="text" name="CustPO_No" id="CustPO_No" class="form-control" placeholder="Customer PO">
+                    </div>
+                    @*<div class="form-group col-sm-9">
+                        <input tabindex="4" type="text" name="CustPO_No" id="CustPO_No" class="form-control">
+                    </div>*@
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Delivery_date" class="">Delivery Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+
+                        <input autocomplete="off" tabindex="8" type="text" name="Delivery_date" id="Delivery_date" class="form-control" placeholder="dd-MM-yyyy">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="form-group">
+                        <button tabindex="9" type="button" id="SaveSOBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                        <button type="button" onclick="resetSO()" class="btn btn-primary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form id="LoadData1" class="form-inline">
+        <input hidden="hidden" maxlength="10" type="text" name="SO_No" id="SONo">
+        <table id="uTable">
+            <tr>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Stock_no" class="control-label">Stock No</label>
+                    </div>
+                    <div class="form-group">
+                        <select name="Stock_no" id="Stock_no" class="chosen-select" tabindex="11" onchange="onchangeStock(this.value)"></select>
+                        @*Html.DropDownList("Stock_no", (List<SelectListItem>)ViewBag.DDLItemStock,"--Select Stock--", new { @class = "chosen-select", @tabindex = "11", @onchange = "onchangeStock(this.value)", @style = "width:100px;" })*@
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="SOQty_PerItem" class="">Qty/Pack</label>
+                    </div>
+                    <div class="form-group">
+                        <input onkeypress="resptrictMinus(event)" style="width:100px;" onkeyup="CalculateSOExtend_Price()" tabindex="12" type="number" name="SOQty_PerItem" id="SOQty_PerItem" class="form-control" placeholder="SOQty_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="SOPrice_PerItem" class="">Price/Item</label>
+                    </div>
+                    <div class="form-group">
+                        <input onkeypress="resptrictMinus(event)" style="width:100px;" onkeyup="CalculateSOExtend_Price()" tabindex="13" type="number" name="SOPrice_PerItem" id="SOPrice_PerItem" class="form-control" placeholder="SOPrice_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Currency" class="">Currency</label>
+                    </div>
+                    <div class="form-group">
+                        <select style="width:100px;" onchange="ChangeCurrency(this.value)" tabindex="14" id="Currency" name="Currency" class="form-control">
+                            <option value="PKRS">PKRS</option>
+                            <option value="EURO">EURO</option>
+                            <option value="US $">US $</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="CurrExch_rate" class="">Exch Rate</label>
+                    </div>
+                    <div class="form-group">
+                        <input onkeypress="resptrictMinus(event)" style="width:100px;" onkeyup="CalculateSOExtend_Price()" tabindex="15" type="number" class="form-control" name="CurrExch_rate" id="CurrExch_rate" placeholder="CurrExch_rate" value="1">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="SOMargin_Percentage" class="">Margin %</label>
+                    </div>
+                    <div class="form-group">
+                        <input onkeypress="resptrictMinus(event)" style="width:100px;" value="0" onkeyup="CalculateSOExtend_Price()" tabindex="16" type="number" name="SOMargin_Percentage" id="SOMargin_Percentage" class="form-control" placeholder="Margin %">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="POExtend_Price" class="">SOExtend_Price</label>
+                    </div>
+                    <div class="form-group">
+                        <input style="width:100px;" readonly tabindex="17" type="text" name="SOExtend_Price" id="SOExtend_Price" class="form-control" placeholder="SOExtend_Price">
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="form-group mr_t_20">
+            <button tabindex="19" type="button" id="SaveSODetailsBtn" onclick="SaveSODetailsData()" class="btn btn-success">Save</button>
+            <button type="button" id="UpdateSODetailsBtn" onclick="UpdateSODetailsData()" class="btn btn-success">Update</button>
+            <button type="button" id="DeleteSODetailsBtn" onclick="DeleteSODetailsData()" class="btn btn-danger">Remove</button>
+            <button type="button" onclick="resetSODetails()" class="btn btn-default">Cancel</button>
+
+        </div>
+    </form>
+
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="">SO No</th>
+                    <th style="">Stock No</th>
+                    <th style="">Brand Name</th>
+                    <th style="">Generic Name</th>
+                    <th style="">Qty</th>
+                    <th style="">Price/Item</th>
+                    <th style="">Currency</th>
+                    <th style="">CurrExch_rate</th>
+                    <th style="">Margin %</th>
+                    <th style="">Extend_Price</th>
+                    <th style="">Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-6">
+            <div style="float:left">
+                <div class="form-group">
+                    <input readonly type="text" name="SO_CreatedBy" id="SO_CreatedBy" placeholder="SO_CreatedBy" class="form-control" />
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div style="float:right; padding-left:50%">
+                <div class="col-sm-5">
+                    <label for="Gross_Amount" class="">Gross Amount</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input readonly="readonly" type="text" name="Gross_Amount" id="Gross_Amount" placeholder="Gross_Amount" class="form-control" />
+                </div>
+                
+                <div class="col-sm-5">
+                    <label for="Tax_Percentage" class="">Tax %</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input autocomplete="off" onkeyup="calDown()" type="text" name="Tax_Percentage" id="Tax_Percentage" placeholder="Tax_Percentage" class="form-control" />
+                </div>
+                <div class="col-sm-5">
+                    <label for="Disc_Percentage" class="">Disc %</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input autocomplete="off" onkeyup="calDown()" type="text" name="Disc_Percentage" id="Disc_Percentage" placeholder="Disc_Percentage" class="form-control" />
+                </div>
+                <div class="col-sm-5">
+                    <label for="NET_Amount" class="">NET Amount</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input readonly="readonly" type="text" name="NET_Amount" id="NET_Amount" placeholder="NET_Amount" class="form-control" />
+                </div>
+                
+                <div class="col-sm-5">
+                    <label for="AmountBeforeMarg" class="">Amount Before Marg</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <label id="AmountBeforeMarg">100</label>
+                </div>
+                <div class="col-sm-5">
+                    <label class=""></label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <button id="SaveNetAmountBtn" onclick="SaveNetAmount()" type="button" class="btn btn-default">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="~/Scripts/Messages.js"></script>
+<script>
+
+    var date = new Date();
+    var year = date.getFullYear();
+    //$("#SO_No").val("01-" + year);
+
+    function resptrictMinus(e) {
+        var inputKeyCode = e.keyCode ? e.keyCode : e.which;
+        if (inputKeyCode != null) {
+            if (inputKeyCode == 45) e.preventDefault();
+        }
+    }
+    function onchangeStock(value) {
+        var StockNo = value.substring(0, 8);
+        //var InvoiceNo = value.substring(8);
+        //alert(InvoiceNo);
+        var CCode = $("#Customer_Code").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/SalesOrder/GetQuantityOfStock",
+            data: {
+                id: StockNo,
+                CCode: CCode
+            },
+            success: function (data) {
+                if (data.length > 0) {
+                    qty = 0;
+                    qty = data[0].Units_PerItem;
+                    $("#SOPrice_PerItem").val(data[0].Q_Rate);
+                    //$("#POQty_PerItem").val(data[0].Units_PerItem);
+                    // $("#SOMargin_Percentage").val(data[0].Q_Percentage);
+                    $("#SOMargin_Percentage").val(0);
+                }
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+    }
+
+
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+    //////////////////////////////////// Read Data ////////////////////////////////////
+    function FindById(id) {
+
+        if (id.length == 10) {
+            $("#SONo").val(id);
+            GetPOByIdInBox(id);
+            LoadAllDataInTable(id);
+        } else {
+            resetSO();
+        }
+        //alert(id);
+
+    }
+    function GetPOByIdInBox(id) {
+        //alert(id)
+        $.ajax({
+            type: "POST",
+            url: "/SalesOrder/GetSOById",
+            data: { id: id },
+            success: function (data) {
+                
+                //alert(data.r.SO_Date);
+                if (data != "0") {
+
+                    var SODate = ToJavaScriptDate(data.SO_Date);
+                    var RDate = ToJavaScriptDate(data.CustPO_Date);
+                    var DDate = ToJavaScriptDate(data.Delivery_date);
+
+                    // $("#AmountBeforeMarg").text(data.Gross_Amount);
+                    // $("#Gross_Amount").val(data.gAmount);
+                    // $("#NET_Amount").val(data.NET_Amount);
+                    $("#SO_CreatedBy").val(data.User_id);
+                    $("#SO_Date").val(SODate);
+                    $("#Status").val(data.Status);
+                    $("#CustPO_No").val(data.CustPO_No).trigger('chosen:updated');
+                    $("#CustPO_Date").val(RDate);
+
+                    $("#Customer_Code").val(data.Customer_Code).trigger('chosen:updated');
+                    $("#Customer_Code").val(data.Customer_Code).trigger('chosen:updated').change();
+
+                    $("#Ship_toCustAddr").val(data.Ship_toCustAddr);
+                    $("#Delivery_date").val(DDate);
+                    //$("#CalculateBottomDiscBtn").prop("disabled", false);
+                }
+                else {
+                    //$("#CalculateBottomDiscBtn").prop("disabled", true);
+                    var r = $("#SO_No").val();
+                    $(".chosen-select").trigger('chosen:updated');
+                    $("#Customer_Code").val('');
+                    $("#Customer_Code").trigger('chosen:updated');
+                    $("#CustPO_No").val('');
+                    $("#CustPO_No").trigger('chosen:updated');
+                    $("#AmountBeforeMarg").text("");
+                    $("#Gross_Amount").val("");
+                    $("#NET_Amount").val("");
+
+                    $("#LoadData")[0].reset();
+                    $("#SO_No").val(r);
+
+                    GlobalDate();
+                }
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+    }
+    function LoadAllDataInTable(id) {
+        $.ajax({
+            type: "POST",
+            url: "/SalesOrder/LoadAllDataInTableByID",
+            data: { id: id },
+            success: function (data) {
+
+                if (data.r.length > 0) {
+                    var Tax = $("#Tax_Percentage").val(data.r[0].Tax_Percentage);
+                    var Disc = $("#Disc_Percentage").val(data.r[0].Disc_Percentage);
+                    var NET = $("#NET_Amount").val(data.r[0].NET_Amount);
+
+                    $("#Gross_Amount").val(data.r[0].Gross_Amount);
+                    $("#AmountBeforeMarg").text(data.GrossAmountBefMarg);
+                } else {
+                    $("#Tax_Percentage").val("");
+                    $("#Disc_Percentage").val("");
+                    $("#NET_Amount").val("");
+
+                    $("#Gross_Amount").val("");
+                    $("#AmountBeforeMarg").text("");
+                }
+
+                //alert(data[0].NET_Amount)
+                $("#myDatatable body").html("");
+                var table = $("#myDatatable").DataTable({
+                    data: data.r,
+
+                    //rowId: 'staffId',
+                    columns: [
+                        { "data": "SO_No", "searchable": false, "orderable": false },
+                        { "data": "Stock_no", "searchable": false, "orderable": false },
+                        { "data": "Brand_name", "searchable": false, "orderable": false },
+                        //{
+                        //    "data": "Brand_name", "searchable": false, "orderable": false, "render": function (data) {
+                        //        return ConvertDate(data);
+                        //    }
+                        //},
+                        { "data": "Generic_name", "searchable": false, "orderable": false },
+                        { "data": "SOQty_PerItem", "searchable": false, "orderable": false },
+                        //{
+                        //    "data": "PO_Date", "searchable": false, "orderable": false, "render": function (data) {
+                        //       return ConvertDate(data);
+                        //    }
+                        //},
+                        { "data": "SOPrice_PerItem", "searchable": false, "orderable": false },
+                        //{
+                        //    "data": "PO_Date", "searchable": false, "orderable": false, "render": function (data) {
+                        //       return ConvertDate(data);
+                        //    }
+                        //},
+                        { "data": "Currency", "searchable": false, "orderable": false },
+                         //{
+                         //    "data": "Delivery_date", "searchable": false, "orderable": false, "render": function (data) {
+                         //        return ConvertDate(data);
+                         //    }
+                         //},
+                        { "data": "CurrExch_rate", "searchable": false, "orderable": false },
+                        { "data": "SOMargin_Percentage", "searchable": false, "orderable": false },
+                        { "data": "SOExtend_Price", "searchable": false, "orderable": false },
+                        { "data": "Status", "searchable": false, "orderable": false },
+                    ],
+                    "order": [[0, "asc"]],
+                    "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                        //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                        var r = aData.Stock_no + aData.SO_No;
+                        $(nRow).attr('id', r);
+                        $(nRow).attr('onclick', 'ClickRowToGetSODetailsInBox(this.id)');
+                    },
+                    "paging": false,
+                    searching: false,                   // for disable search box
+                    select: {
+                        info: false
+                    },
+                    //buttons: [
+                    //    {
+                    //        extend: 'print',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    },
+                    //    {
+                    //        extend: 'excel',
+                    //        filename: 'Stock',
+                    //        sheetName: 'Stock',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    }
+                    //],
+                    //dom: 'lBfrtip',
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Sales Order", // place holder of search box
+                    },
+                    responsive: true,
+                    //select: 'single',
+                    select: true,                       // for Select Row
+                    bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    //scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    "bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    "sPaginationType": "full_numbers",
+                    "langauge": {
+                        "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                    },
+                });
+                $('input[type="search"]').addClass('form-control'); // <-- add this line
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+
+    }
+
+    function ClickRowToGetSODetailsInBox(id) {
+        //alert(id);
+        
+        var stock = id.substring(0, 8);
+        var SONO = id.substring(8);
+        //$("#SONo").val(SONO);
+        if (id != null || id != "") {
+            $.ajax({
+                type: "POST",
+                url: "/SalesOrder/GetSODetailsInBox",
+                data: { stock: stock, SONO: SONO },
+                success: function (data) {
+                    
+                    if (data != "No data found") {
+                        //alert(data.r[0].Stock_no);
+                        $("#UpdateSODetailsBtn").show();
+                        $("#DeleteSODetailsBtn").show();
+                        $("#SaveSODetailsBtn").hide();
+                        
+                        $("#SONo").val(data[0].SO_No);
+                        $("#Stock_no").val(data[0].Stock_no).trigger('chosen:updated');
+                        $("#Stock_no").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+                        //$("#Stock_no").empty();
+
+                        //$("#Stock_no").append($("<option></option>").val("").html("--Select Stock--")).trigger('chosen:updated');
+                        //for (var i = 0; i < data.length; i++) {
+                        //    $("#Stock_no").append($("<option></option>").val(data[i].Stock_no).html(data[i].Brand_name)).trigger('chosen:updated');
+                        //}
+
+                        $("#Currency").val(data[0].Currency);
+                        $("#CurrExch_rate").val(data[0].CurrExch_rate);
+                        $("#SOPrice_PerItem").val(data[0].SOPrice_PerItem);
+                        $("#SOQty_PerItem").val(data[0].SOQty_PerItem);
+                        //$("#Currency1").val("EURO").prop("selected", true);
+                        $("#SOMargin_Percentage").val(data[0].SOMargin_Percentage);
+                        $("#SOExtend_Price").val(data[0].SOExtend_Price);
+                    } else {
+                        $("#UpdateSODetailsBtn").hide();
+                        $("#DeleteSODetailsBtn").hide();
+                        $("#SaveSODetailsBtn").show();
+
+                        $("#SONo").val("");
+                        $("#Stock_no").val("").trigger('chosen:updated');
+                        $("#Currency").val("");
+                        //$("#CurrExch_rate").val("");
+                        $("#SOPrice_PerItem").val("");
+                        $("#SOQty_PerItem").val("");
+                        $("#SOMargin_Percentage").val("");
+                        $("#SOExtend_Price").val("");
+                        warrningMessage(data, "WARNING")
+                    }
+
+                },
+                error: function (result) {
+                    alert("Connection Error Please retry");
+                }
+            });
+        }
+
+    }
+
+    var urlParams = new URLSearchParams(window.location.search);
+
+    var url = urlParams.get('PO');
+    //alert(url);
+    ViewByParameter(url);
+    function ViewByParameter(id) {
+        if (id != null) {
+            var SO_No = $("#SO_No").val(id).keyup();
+
+        } else {
+            var id= "0"+@Session["BranchNo"]+"-"+@ViewBag.SONO;
+            $("#SO_No").val(id).keyup();
+
+        }
+    }
+
+    //////////////////////////////////// Save Data ////////////////////////////////////
+
+    function SaveData() {
+        //alert("save");
+        var SO_No = $("#SO_No").val();
+        var SO_Date = $("#SO_Date").val();
+        var Status = $("#Status").val();
+        var CustPO_No = $("#CustPO_No").val();
+        var Customer_Code = $("#Customer_Code").val();
+        var Ship_toCustAddr = $("#Ship_toCustAddr").val();
+        var Delivery_date = $("#Delivery_date").val();
+
+        var str = $("#LoadData").serialize();
+        if (str != "" && SO_No.length == 10) {
+            $.ajax({
+                type: "POST",
+                url: "/SalesOrder/SaveSaleOrder",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        //var CustPO_No = $("#CustPO_No").val();
+                        $("#PONo").val(CustPO_No);
+                        //var table = $("#myDatatable").DataTable();
+
+                        //var rowIndex = table.row.add({
+                        //    "SO_No": SO_No, "SO_Date": SO_Date, "CustPO_No": CustPO_No, "Customer_Code": Customer_Code,
+                        //    "Ship_toCustAddr": Ship_toCustAddr, "Delivery_date": Delivery_date,
+                        //    "Gross_Amount": '', "Tax_Percentage": '', "Disc_Percentage": '',
+                        //    "NET_Amount": '', "Status": Status
+                        //}).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'ClickRowToGetSODetailsInBox(this.id)');
+
+                        ////var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        //var rowIndex = table.row.add([Code, Name, Generic_name, UNITS_PERITEM, PRICE, Manufacturer_Code]).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+
+                        SaveMessage(data.message);
+
+                        //resetPO();
+                    } else {
+                        warrningMessage(data.message);
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Please Enter Valid Length of SO", "INFO");
+        }
+
+
+    }
+
+    function SaveSODetailsData() {
+
+        var SONo = $("#SONo").val();
+        var Stock_no = $("#Stock_no").val();
+        var Currency = $("#Currency").val();
+        var CurrExch_rate = $("#CurrExch_rate").val();
+        var SOPrice_PerItem = $("#SOPrice_PerItem").val();
+        var SOQty_PerItem = $("#SOQty_PerItem").val();
+        var SOMargin_Percentage = $("#SOMargin_Percentage").val();
+        var SOExtend_Price = $("#SOExtend_Price").val();
+        // alert(SONo);
+        var str = $("#LoadData1").serialize();
+        //var param = $('#LoadData1').serializeArray();
+        //param.push({ po: "123"});
+
+        var StockNo = Stock_no.substring(0, 8);
+        var InvoiceNo = Stock_no.substring(8);
+
+        if (Stock_no != "" && SONo != "") {
+
+            $.ajax({
+                type: "POST",
+                url: "/SalesOrder/SaveSOItemDetails",
+                //traditional: true,
+                data: str ,
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#myDatatable body").html("");
+                        var table = $("#myDatatable").DataTable();
+
+                        $("#AmountBeforeMarg").text(data.l[3]);
+                        //$("#Gross_Amount").val(data.l[2]);
+
+                        $("#Gross_Amount").val(data.l[0]);
+                        //$("#Disc_Percentage").val(data.l[1]);
+                        //$("#NET_Amount").val(data.l[2]);
+
+                        //$("#Disc_Percentage").val(data.l[1]);
+                        //$("#NET_Amount").val();
+                        //alert(data.data[0].Stock_no);
+                        //var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        //var rowIndex = table.row.add([data.data[0].CustPO_No, data.data[0].Stock_no, data.data[0].Stock_no,
+                        //    data.data[0].POQty_PerItem, data.data[0].POPrice_PerItem, data.data[0].POMargin_Percentage,
+                        //    data.data[0].POExtend_Price]).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+
+                        var rowIndex = table.row.add({
+                            "SO_No": data.data[0].SO_No, "Stock_no": data.data[0].Stock_no, "Brand_name": data.data[0].Brand_name,
+                            "Generic_name": data.data[0].Generic_name, "SOQty_PerItem": data.data[0].SOQty_PerItem,
+                            "SOPrice_PerItem": data.data[0].SOPrice_PerItem, "Currency": data.data[0].Currency,
+                            "CurrExch_rate": data.data[0].CurrExch_rate, "SOMargin_Percentage": data.data[0].SOMargin_Percentage,
+                            "SOExtend_Price": data.data[0].SOExtend_Price, "Status": 'R'
+                        }).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+                        resetSODetails();
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        //var Stock_no = $("#Stock_no").val("");
+                        //var POPrice_PerItem = $("#POPrice_PerItem").val("");
+                        //var POMargin_Percentage = $("#POMargin_Percentage").val("");
+                        //var POQty_PerItem = $("#POQty_PerItem").val("");
+                        //var POExtend_Price = $("#POExtend_Price").val("");
+                        //var Item_Desc = $("#Item_Desc").val("");
+
+                        //var Stock_no = $("#Stock_no").val("");
+                        //var POQty_PerItem = $("#POQty_PerItem").val("");
+                        //var POPrice_PerItem = $("#POPrice_PerItem").val("");
+                        //var Currency = $("#Currency").val("");
+                        //var CurrExch_rate = $("#CurrExch_rate").val("");
+                        //var POMargin_Percentage = $("#POMargin_Percentage").val("");
+                        //var POExtend_Price = $("#POExtend_Price").val("");
+                    } else {
+                        toastr.warning(data.message, "WARNING",
+                       options = {
+                           "closeButton": true,
+                           "debug": false,
+                           "progressBar": true,
+                           "preventDuplicates": true,
+                           "positionClass": "toast-top-center",
+                           "onclick": null,
+                           "showDuration": "400",
+                           "hideDuration": "1000",
+                           "timeOut": "7000",
+                           "extendedTimeOut": "1000",
+                           "showEasing": "swing",
+                           "hideEasing": "linear",
+                           "showMethod": "fadeIn",
+                           "hideMethod": "fadeOut"
+                       });
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Please Enter PO No & Fill all fields", "INFO",
+                     options = {
+                         "closeButton": true,
+                         "debug": false,
+                         "progressBar": true,
+                         "preventDuplicates": true,
+                         "positionClass": "toast-top-center",
+                         "onclick": null,
+                         "showDuration": "400",
+                         "hideDuration": "1000",
+                         "timeOut": "7000",
+                         "extendedTimeOut": "1000",
+                         "showEasing": "swing",
+                         "hideEasing": "linear",
+                         "showMethod": "fadeIn",
+                         "hideMethod": "fadeOut"
+                     }
+                 );
+        }
+
+
+    }
+    function UpdateSODetailsData() {
+        //alert("save");
+        
+        var SONo = $("#SONo").val();
+        var Stock_no = $("#Stock_no").val();
+        var Currency = $("#Currency").val();
+        var CurrExch_rate = $("#CurrExch_rate").val();
+        var SOPrice_PerItem = $("#SOPrice_PerItem").val();
+        var SOQty_PerItem = $("#SOQty_PerItem").val();
+        var SOMargin_Percentage = $("#SOMargin_Percentage").val();
+        var SOExtend_Price = $("#SOExtend_Price").val();
+        var StockNo = Stock_no.substring(0, 8);
+        var InvoiceNo = Stock_no.substring(8);
+
+        var str = $("#LoadData1").serialize();
+        if (Stock_no != "" && SONo != "" && Currency != "" && CurrExch_rate != "" && SOQty_PerItem != "" && SOPrice_PerItem != "" && SOMargin_Percentage != "" && SOExtend_Price != "") {
+            $.ajax({
+                type: "POST",
+                url: "/SalesOrder/UpdateSODetailsData",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#myDatatable body").html("");
+                        var table = $("#myDatatable").DataTable();
+                        //alert(data.l[0]);
+                        //alert(data.l[1]);
+                        $("#Gross_Amount").val(data.l[0]);
+                        $("#AmountBeforeMarg").text(data.l[1]);
+                        //$("#Disc_Percentage").val(data.l[2]);
+                        //$("#NET_Amount").val(data.l[3]);
+                        
+                        index = table.row('#' + StockNo + SONo); //1234126
+                        var temp = table.row(index[0]).data();
+                        //alert(CurrExch_rate);
+                        temp.SOQty_PerItem = SOQty_PerItem;
+                        temp.SOPrice_PerItem = SOPrice_PerItem;
+                        temp.Currency = Currency;
+                        temp.CurrExch_rate = CurrExch_rate;
+                        temp.SOMargin_Percentage = SOMargin_Percentage;
+                        temp.SOExtend_Price = SOExtend_Price;
+                        table.row(index[0]).data(temp).draw();
+
+                        //$(row).attr('id', Stock_no + PONo);
+                        //$(row).attr('onclick', 'GetPOById(this.id)');
+                        resetSODetails();
+                        UpdateMessage(data.message);
+
+                        //var Stock_no = $("#Stock_no").val("");
+                        //var POPrice_PerItem = $("#POPrice_PerItem").val("");
+                        //var POMargin_Percentage = $("#POMargin_Percentage").val("");
+                        //var POQty_PerItem = $("#POQty_PerItem").val("");
+                        //var POExtend_Price = $("#POExtend_Price").val("");
+                        //var Item_Desc = $("#Item_Desc").val("");
+
+                        //var Stock_no = $("#Stock_no").val("");
+                        //var POQty_PerItem = $("#POQty_PerItem").val("");
+                        //var POPrice_PerItem = $("#POPrice_PerItem").val("");
+                        //var Currency = $("#Currency").val("");
+                        //var CurrExch_rate = $("#CurrExch_rate").val("");
+                        //var POMargin_Percentage = $("#POMargin_Percentage").val("");
+                        //var POExtend_Price = $("#POExtend_Price").val("");
+                    } else {
+                        warrningMessage(data.message, "WARNING");
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Some fields left empty", "INFO");
+
+        }
+
+
+    }
+
+    function SaveNetAmount() {
+        var SONo = $("#SONo").val();
+        var GA = $("#Gross_Amount").val();
+        var Tax = $("#Tax_Percentage").val();
+        var Disc = $("#Disc_Percentage").val();
+        var NET = $("#NET_Amount").val();
+
+        //alert(0);
+        $.ajax({
+            type: "POST",
+            url: "/SalesOrder/SaveNetAmount",
+            data: {
+                Disc: Disc,
+                Tax: Tax,
+                NET: NET,
+                SONo: SONo
+            },
+            success: function (data) {
+                SaveMessage(data.message);
+            },
+            error: function (result) {
+                alert("Connection Error Please retry");
+            }
+        });
+    }
+
+    function DeleteSODetailsData() {
+        
+        var Stock_no = $("#Stock_no").val();
+        var SONo = $("#SONo").val();
+        var code = Stock_no + SONo;
+        var StockNo = Stock_no.substring(0, 8);
+        var InvNo = Stock_no.substring(8);
+        
+        if (SONo != "" && Stock_no != "") {
+            $.ajax({
+                type: "POST",
+                url: "/SalesOrder/DeleteSODetails",
+                data: {
+                    SONo: SONo,
+                    Stock_no: StockNo
+                },
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#Gross_Amount").val(data.l[0]);
+                        $("#AmountBeforeMarg").text(data.l[1]);
+
+                        var table = $('#myDatatable').DataTable();
+                        index = table.row('#' + code);
+                        var temp = table.row(index[0]).data();
+                        table.row(index[0]).remove().draw();
+                        resetSODetails();
+                        DeleteMessage(data.message);
+                    }
+                },
+                error: function (er) {
+                    alert(er);
+                }
+            });
+        } else {
+
+        }
+    }
+    //////////////////////////////////// Calculation Function ////////////////////////////////////
+    function calDown() {
+
+        var Gross_Amount = $("#Gross_Amount").val();
+        var Tax_Percentage = $("#Tax_Percentage").val();
+        var Disc_Percentage = $("#Disc_Percentage").val();
+
+        var NETAmount = 0
+        var DisAmount = 0
+        var TaxPer = 0
+
+        if (Tax_Percentage == 0 && Disc_Percentage == 0) {
+            $("#NET_Amount").val(0);
+        } else {
+
+            DisAmount = Gross_Amount * (Tax_Percentage / 100);
+            TaxPer = Gross_Amount - DisAmount;
+
+            DisAmount = TaxPer * (Disc_Percentage / 100);
+            NETAmount = TaxPer - DisAmount;
+            var NET_Amount = $("#NET_Amount").val(NETAmount);
+        }
+    }
+    //////////////////////////////////// Other Function ////////////////////////////////////
+
+    function CalculateSOExtend_Price() {
+
+        var SOQty_PerItem = $("#SOQty_PerItem").val();
+        var SOPrice_PerItem = $("#SOPrice_PerItem").val();
+        var SOMargin_Percentage = $("#SOMargin_Percentage").val();
+        var CurrExch_rate = $("#CurrExch_rate").val();
+
+        var Discount = 0;
+        var NetAmount = 0;
+
+        //if (POMargin_Percentage == "") {
+        //    NetAmount = POQty_PerItem * POPrice_PerItem * CurrExch_rate;
+        //} else {
+        //    Discount = (POQty_PerItem * POPrice_PerItem * CurrExch_rate) * (POMargin_Percentage / 100);
+        //    NetAmount = (POQty_PerItem * POPrice_PerItem * CurrExch_rate) - Discount;
+        //}
+
+        if (SOMargin_Percentage == "" && CurrExch_rate == "") {
+            NetAmount = SOQty_PerItem * SOPrice_PerItem;
+        }
+        if (SOMargin_Percentage == "" && CurrExch_rate != "") {
+            NetAmount = SOQty_PerItem * SOPrice_PerItem * CurrExch_rate;
+        }
+        if (CurrExch_rate == "" && SOMargin_Percentage != "") {
+            Discount = (SOQty_PerItem * SOPrice_PerItem) * (SOMargin_Percentage / 100);
+            NetAmount = (SOQty_PerItem * SOPrice_PerItem) - Discount;
+        }
+        if (CurrExch_rate != "" && SOMargin_Percentage != "") {
+            Discount = (SOQty_PerItem * SOPrice_PerItem * CurrExch_rate) * (SOMargin_Percentage / 100);
+            NetAmount = (SOQty_PerItem * SOPrice_PerItem * CurrExch_rate) - Discount;
+        }
+        var twoPlaces = NetAmount.toFixed(2);
+        //var twoPlaces = NetAmount;
+        $("#SOExtend_Price").val(twoPlaces);
+
+    }
+    function ChangeCurrency(value) {
+        if (value == "PKRS") {
+            $("#CurrExch_rate").val(1);
+
+        }
+        if (value == "EURO") {
+            $("#CurrExch_rate").val(100);
+        }
+        if (value == "US $") {
+            $("#CurrExch_rate").val(150);
+        }
+        $("#CurrExch_rate").keyup();
+    }
+    function ConvertDate(value) {
+
+        if (value == null || value=="") {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            //
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+
+    function GetAddressofCust(id) {
+        //alert(id);
+        $.ajax({
+            type: "POST",
+            url: "/SalesOrder/GetAddressofCust",
+            data: {
+                id: id
+            },
+            success: function (data) {
+
+                //$("#Ship_toCustAddr").val(data[0].Address);
+                if (data.length > 0) {
+                    $("#Ship_toCustAddr").val(data[0].Address);
+                    $("#Stock_no").empty();
+
+                    $("#Stock_no").append($("<option></option>").val("").html("--Select Stock--")).trigger('chosen:updated');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#Stock_no").append($("<option></option>").val(data[i].Stock_no).html(data[i].Brand_name)).trigger('chosen:updated');
+                    }
+                } else {
+                    warrningMessage("Discount Aproval has expired OR Item not found","NOT AVAILABLE");
+                    $("#Stock_no").empty();
+                    $("#Stock_no").append($("<option></option>").val("").html("--No Stock Found--")).trigger('chosen:updated');
+                }
+            },
+            error: function (result) {
+                alert("Connection Error Please retry");
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+
+        
+        GlobalDate();
+
+        $("#UpdateSODetailsBtn").hide();
+        $("#DeleteSODetailsBtn").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        // document.getElementById('loading').style.display = 'none'; //Not Visible
+        //document.getElementById('circle').style.display = 'none'; //Not Visible
+
+    });
+
+    function GlobalDate(){
+        $("#CustPO_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#CustPO_Date").val(todayDate);
+
+        date.setDate(date.getDate() + 15);
+        var dat1 = date.getDate();
+        var mon1 = monthNames[date.getMonth()];
+        var year1 = date.getFullYear();
+        var todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+        
+        $("#SO_Date").val(todayDate);
+
+        $("#SO_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#Delivery_date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#Delivery_date").val(todayDate);
+    }
+
+    function resetSO() {
+        //alert(0);
+        var SO_No = $("#SO_No").val();
+        $("#LoadData")[0].reset();
+        $("#SO_No").val(SO_No);
+        //$("#SaveSOBtn").show();
+        //$("#UpdateSOBtn").hide();
+        //$("#DeletePODetailsBtn").hide();
+        //$("#SaveSODetailsBtn").show();
+        $(".chosen-select").trigger('chosen:updated');
+        //var Stock_no = $("#Customer_Code").val('');
+        //$("#Stock_no").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        //var SONo = $("#SONo").val("");
+        //var SOPrice_PerItem = $("#SOPrice_PerItem").val("");
+        //var SOQty_PerItem = $("#SOQty_PerItem").val("");
+        ////var CurrExch_rate = $("#CurrExch_rate").val("");
+        //var SOMargin_Percentage = $("#SOMargin_Percentage").val("");
+        //var SOExtend_Price = $("#SOExtend_Price").val("");
+    }
+    function resetSODetails() {
+        $("#LoadData1")[0].reset();
+        var SO_No = $("#SO_No").val();
+        $("#SONo").val(SO_No);
+        var Stock_no = $("#Stock_no").val('');
+        $("#Stock_no").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        $("#SaveSODetailsBtn").show();
+        $("#UpdateSODetailsBtn").hide();
+        $("#DeleteSODetailsBtn").hide();
+    }
+    function ToJavaScriptDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthNames = '';
+
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = '';
+            var completedate = '';
+
+            //monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+            monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            dt = new Date(parseFloat(results[1]));
+            var year = dt.getFullYear();
+            var mont = monthNames[dt.getMonth()];
+            var day = dt.getDate().toString();
+            if (day.length == "1") {
+                day = "0" + day;
+            } else {
+                day = dt.getDate();
+            }
+            //return completedate = year + "-" + mont + "-" + day;
+            return completedate = day + "-" + mont + "-" + year;
+
+            //monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            //dt = new Date(value);
+            //var year = dt.getFullYear();
+            //var mont = monthNames[dt.getMonth()];
+            //var day = dt.getDate();
+            ////return completedate = +dt.getDate(); +"-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //return completedate = day + "-" + mont + "-" + year;
+
+        }
+    }
+
+</script>
+

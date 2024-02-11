@@ -1,0 +1,1163 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<link href="~/David/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet" />
+<style>
+    #uTable {
+        width: 100%;
+    }
+
+        #uTable td {
+            width: 100px;
+            text-align: center;
+        }
+
+    .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+        background: red;
+    }
+
+    .ui-datepicker table {
+        background: #236;
+        color: #fff;
+    }
+</style>
+
+<div id="loading"></div>
+
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Invoice_no" class="">Invoice No</label>
+                        <input hidden type="text" name="Customer_Code" id="Customer_Code" />
+                        <input hidden type="text" name="SO_Date" id="SO_Date">
+                        <input hidden type="text" name="Ship_toCustAddr" id="Ship_toCustAddr">
+                        
+                    </div>
+                    @*<div class="input-group col-sm-9">
+                        <input maxlength="19" tabindex="1" type="text" name="Invoice_no" id="Invoice_no" class="form-control" placeholder="Invoice_no">
+                        <div class="input-group-btn">
+                            <button onclick="FindByInvoice_no()" class="btn btn-default" type="button">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </button>
+                        </div>
+                    </div>*@
+
+                    <div class="form-group col-sm-9">
+                        <input readonly onkeyup="FindByInvoice_no(this.value)"  maxlength="8" tabindex="1" type="text" name="Invoice_no" id="Invoice_no" class="form-control" placeholder="Invoice_no">
+                    </div>
+                </div>               
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Delivery_status" class="">Delivery Status</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="9" id="Delivery_status" name="Delivery_status" class="form-control">
+                            <option>--Select Status--</option>
+                            <option value="D">Delivered</option>
+                            <option value="N">Not Delivered</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Contact_Person" class="">Contact Person</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="10" type="text" name="Contact_Person" id="Contact_Person" class="form-control" placeholder="Contact_Person">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                @*<div class="">
+                    <div class="col-sm-3">
+                        <label for="Invoice_date" class="">Invoice Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input onchange="ChangeDate(this.value)" tabindex="2" type="text" name="Invoice_date" id="Invoice_date" class="form-control" placeholder="01/Jan/2019">
+                    </div>
+                </div>*@
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Invoice_type" class="">Invoice Type</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="3" id="Invoice_type" name="Invoice_type" class="form-control">
+                            <option selected value="">--Select Type--</option>
+                            <option value="M">M : Medicine</option>
+                            <option value="E">E: Equipment</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Delivery_date" class="">Delivery Date</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="7" type="text" name="Delivery_date" id="Delivery_date" class="form-control" placeholder="01/Jan/2019">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Currency" class="">Currency</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <select tabindex="11" id="Currency" name="Currency" class="form-control">
+                            <option selected value="PKRS">PKRS</option>
+                            <option value="EURO">EURO</option>
+                            <option value="PKRS">$ US</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                
+                <div>
+                    <div class="col-sm-3">
+                        <label for="SO_No" class="">SO No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("SO_No", (List<SelectListItem>)ViewBag.DDLSO,
+                                                                                                  "--Select SO--", new { @class = "chosen-select", @tabindex = "4", @onchange = "GetInfofSaleOrder(this.value)" })
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Shipper_code" class="">Shipper Code</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        @Html.DropDownList("Shipper_code", (List<SelectListItem>)ViewBag.DDLShippers,
+                                                                                                           "--Select Shipper--", new { @class = "chosen-select", @tabindex = "8" })
+                    </div>
+                </div>
+                <div class="">
+                    <div class="form-group">
+                        <button tabindex="12" type="button" id="SaveSOBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                        <button type="button" onclick="resetSI()" class="btn btn-primary">Cancel</button>
+                        <button type="button" onclick="PostData()" class="btn btn-info">Post</button>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-3">
+                <table class="table" id="srDatatable" style="background:#79e1e8; border:1px solid black;">
+                    <thead>
+                        <tr>
+                            <th>Sr#</th>
+                            <th>Batch</th>
+                            <th>Qty</th>
+                            <th>Exp</th>  
+                            <th>inv#</th>                         
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+        </div>
+    </form>
+
+    <form id="LoadData1" class="form-inline">
+        <input hidden="hidden" type="text" name="Invoice_no" id="InvoiceNo">
+        <input hidden="hidden" type="text" name="SNO" id="SNO">
+        <table id="uTable">
+            <tr>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Stock_no" class="control-label">Stock No</label>
+                    </div>
+                    <div class="form-group">
+                        <select name="Stock_no" id="Stock_no" class="chosen-select" tabindex="15" onchange="onchangeDDLStock(this.value)"></select>
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="SPrice_PerItem" class="">Qty/Pack</label>
+                    </div>
+                    <div class="form-group">
+                        <input onkeyup="CalculateExtndPrice(this.value)" tabindex="16" type="number" class="form-control" name="SQty" id="SQty" placeholder="SQty">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="SPrice_PerItem" class="">SPrice PerItem</label>
+                    </div>
+                    <div class="form-group">
+                        <input onkeyup="CalculateExtndPrice(this.value)" tabindex="17" type="number" class="form-control" name="SPrice_PerItem" id="SPrice_PerItem" placeholder="SPrice_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="TSPrice_PerItem" class="">TSPrice_PerItem</label>
+                    </div>
+                    <div class="form-group">
+                        <input readonly="readonly" tabindex="18" type="number" name="TSPrice_PerItem" id="TSPrice_PerItem" class="form-control" placeholder="TSPrice_PerItem">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Currency_Rate" class="">Batch_NO</label>
+                    </div>
+                    <div class="form-group">
+                        <input hidden type="text" name="Supp_Invno" id="Supp_Invno" placeholder="Supp_Invno">
+                        <input readonly="readonly" tabindex="19" type="text" name="Batch_NO" id="Batch_NO" class="form-control" placeholder="Batch_NO">
+                    </div>
+                </td>
+                <td>
+                    <div class="col-sm-12">
+                        <label for="Items_Available" class="">Items_Available</label>
+                    </div>
+                    <div class="form-group">
+                        <input readonly="readonly" tabindex="20" type="text" name="Items_Available" id="Items_Available" class="form-control" placeholder="Items_Available">
+                        <input hidden="hidden" type="text" name="Expiry_Date" id="Expiry_Date">
+                        <input hidden="hidden" type="text" name="Supp_Invno1" id="Supp_Invno1">
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="form-group mr_t_20">
+            <button type="button" id="SaveInvDetailsBtn" onclick="SaveInvDetailsData()" class="btn btn-success">Save</button>
+            <button type="button" id="UpdateSODetailsBtn" onclick="UpdateInvDetailsData()" class="btn btn-success">Update</button>
+            <button type="button" id="DeleteSODetailsBtn" onclick="DeleteInvDetailsData()" class="btn btn-danger">Remove</button>
+            <button type="button" onclick="resetInvDetails()" class="btn btn-default">Cancel</button>
+
+        </div>
+    </form>
+        
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    @*<th style="">PO No</th>*@
+                    @*<th style="">Stock No</th>*@
+                    <th style="">Brand Name</th>
+                    <th style="">Generic Name</th>
+                    <th style="">Qty</th>
+                    <th style="">Price/Item</th>
+                    <th style="">Currency</th>
+                    <th style="">CurrExch_rate</th>
+                    <th style="">Margin %</th>
+                    <th style="">Extend_Price</th>
+                    <th style="">Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-6">
+            <div style="float:left">
+                <div class="form-group">
+                    <input readonly type="text" name="SO_CreatedBy" id="SO_CreatedBy" placeholder="SO_CreatedBy" class="form-control" />
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div style="float:right; padding-left:50%">
+                <div class="col-sm-5">
+                    <label for="Gross_Amount" class="">Gross Amount</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input readonly="readonly" type="text" name="Gross_Amount" id="Gross_Amount" placeholder="Gross_Amount" class="form-control" />
+                </div>
+
+                <div class="col-sm-5">
+                    <label for="Tax_Percentage" class="">Tax %</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input autocomplete="off" onkeyup="calDown()" type="text" name="Tax_Percentage" id="Tax_Percentage" placeholder="Tax_Percentage" class="form-control" />
+                </div>
+                <div class="col-sm-5">
+                    <label for="Disc_Percentage" class="">Disc %</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input autocomplete="off" onkeyup="calDown()" type="text" name="Disc_Percentage" id="Disc_Percentage" placeholder="Disc_Percentage" class="form-control" />
+                </div>
+                <div class="col-sm-5">
+                    <label for="NET_Amount" class="">NET Amount</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <input readonly="readonly" type="text" name="NET_Amount" id="NET_Amount" placeholder="NET_Amount" class="form-control" />
+                </div>
+
+                <div class="col-sm-5">
+                    <label for="AmountBeforeMarg" class="">Amount Before Marg</label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <label id="AmountBeforeMarg"></label>
+                </div>
+                @*<div class="col-sm-5">
+                    <label class=""></label>
+                </div>
+                <div class="form-group col-sm-7">
+                    <button id="SaveNetAmountBtn" onclick="SaveNetAmount()" type="button" class="btn btn-default">Save</button>
+                </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="~/Scripts/Messages.js"></script>
+<script>
+
+    function onchangeDDLStock(value) {
+        var SO_No = $("#SO_No").val();
+        //alert(CCode);
+        $.ajax({
+            type: "POST",
+            url: "/SalesInvoice/getSOStockInDDL",
+            data: {
+                id: value,
+                SoNo:SO_No
+            },
+            success: function (data) {
+                //var InvoiceNo = $("#InvoiceNo").val();
+                //var SNO = $("#SNO").val();
+                //var Stock_no = $("#Stock_no").val();
+                var SQty = $("#SQty").val(data[0].SOQty_PerItem);
+                var SPrice_PerItem = $("#SPrice_PerItem").val(data[0].SOPrice_PerItem);
+                var TSPrice_PerItem = $("#TSPrice_PerItem").val(data[0].SOExtend_Price);
+
+            },
+            error: function (result) {
+                alert("Connection Error Please retry");
+            }
+        });
+    }
+    function CalculateExtndPrice(value){
+        var SQty = $("#SQty").val();
+        var SPrice_PerItem = $("#SPrice_PerItem").val();
+
+        if (SQty != '' && SPrice_PerItem != '') {
+            var total= SQty * SPrice_PerItem;
+            var TSPrice_PerItem = $("#TSPrice_PerItem").val(total);
+        }
+    }
+    function PostData() {
+        //alert(0);
+        var InvNo = $("#Invoice_no").val();
+        var SupInv = $("#InvoiceNo").val();
+        if (InvNo == "123" && SupInv == "123") {
+            $.ajax({
+                type: "POST",
+                url: "/SalesInvoice/PostInvNo",
+                data: { InvNo: InvNo, SupInv: SupInv },
+                success: function (data) {
+                    if (data.success == true) {
+
+                    } else {
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            DeleteMessageCus("This Section is Under Process","STOP");
+        }
+    }
+    function ChangeDate(id){
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date(id);
+        date.setDate(date.getDate() + 15);
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Delivery_date").val(todayDate);
+    }
+    //////////////////////////////////// Read Data ////////////////////////////////////
+    var urlParams = new URLSearchParams(window.location.search);
+    var url = urlParams.get('PO');
+    //alert(url);
+    ViewByParameter(url);
+
+    function ViewByParameter(id) {
+
+        if (id != null) {
+            var Invoice_no = $("#Invoice_no").val(id).keyup();
+        }else {
+            var id=@ViewBag.Inv;
+            $("#Invoice_no").val(id).keyup();
+
+        }
+
+    }
+
+    function FindByInvoice_no(id) {
+
+        if (id != "" && id.length == 8) {
+            $("#Invoice_no").val(id);
+            GetSInvByIdInBox(id);
+            LoadAllDataInTable(id);
+        } else {
+            resetSO();
+            $("#Invoice_no").val(id);
+        }
+        //alert(id);
+
+    }
+    function GetSInvByIdInBox(id) {
+        $.ajax({
+            type: "POST",
+            url: "/SalesInvoice/GetInvoiceById",
+            data: { id: id },
+            success: function (data) {
+                var Invoice_no =$("#Invoice_no").val();
+                //alert(data.r.SO_Date);
+                if (Invoice_no != "") {
+                    //alert(data[0].Invoice_type);
+                    var InvoiceDate = ToJavaScriptDate(data[0].Invoice_date);
+                    var SODate = ToJavaScriptDate(data[0].SO_Date);
+                    var DDate = ToJavaScriptDate(data[0].Delivery_date);
+
+                    $("#Invoice_date").val(InvoiceDate);
+                    $("#Invoice_type").val(data[0].Invoice_type);
+                    $("#Delivery_date").val(DDate);
+                    $("#SO_No").val(data[0].SO_No).trigger('chosen:updated');
+                    $("#SO_No").val(data[0].SO_No).trigger('chosen:updated').change();
+                    $("#SO_Date").val(SODate);
+                    $("#Customer_Code").val(data[0].Customer_Code);
+                    $("#Ship_toCustAddr").val(data[0].Ship_toCustAddr);
+                    $("#Delivery_status").val(data[0].Delivery_status);
+                    $("#Contact_Person").val(data[0].Contact_Person);
+                    $("#Ship_Via").val(data[0].Ship_Via);
+                    $("#Shipper_code").val(data[0].Shipper_code).trigger('chosen:updated');;
+                    $("#Currency").val(data[0].Currency);
+
+                    //$("#CalculateBottomDiscBtn").prop("disabled", false);
+                }
+                else {
+                    //$("#CalculateBottomDiscBtn").prop("disabled", true);
+                    var r = $("#SO_No").val();
+                    $(".chosen-select").trigger('chosen:updated');
+                    $("#Customer_Code").val('');
+                    $("#Customer_Code").trigger('chosen:updated');
+                    $("#PO_No").val('');
+                    $("#PO_No").trigger('chosen:updated');
+                    $("#AmountBeforeMarg").text("");
+                    $("#Gross_Amount").val("");
+                    $("#NET_Amount").val("");
+
+                    $("#LoadData")[0].reset();
+                    $("#SO_No").val(r);
+                }
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+    }
+    function LoadAllDataInTable(id) {
+        // alert(id);
+        $("#InvoiceNo").val(id);
+        $.ajax({
+            type: "POST",
+            url: "/SalesInvoice/LoadAllDataInTableByID",
+            data: { id: id },
+            success: function (data) {
+                
+                if (data.r.length > 0) {
+                    var Tax = $("#Tax_Percentage").val(data.r[0].Tax_Percentage);
+                    var Disc = $("#Disc_Percentage").val(data.r[0].Disc_Percentage);
+                    var NET = $("#NET_Amount").val(data.r[0].NET_Amount);
+
+                    $("#Gross_Amount").val(data.gAmount);
+                    $("#AmountBeforeMarg").text(data.GrossAmountBefMarg);
+                } else {
+                    $("#Tax_Percentage").val("");
+                    $("#Disc_Percentage").val("");
+                    $("#NET_Amount").val("");
+
+                    $("#Gross_Amount").val("");
+                    $("#AmountBeforeMarg").text("");
+                }
+
+                //alert(data[0].NET_Amount)
+                $("#myDatatable body").html("");
+                var table = $("#myDatatable").DataTable({
+                    data: data.r,
+
+                    //rowId: 'staffId',
+                    columns: [
+                        //{ "data": "Invoice_no", "searchable": false, "orderable": false },
+                        //{ "data": "Stock_no", "searchable": false, "orderable": false },
+                        { "data": "Brand_name", "searchable": false, "orderable": false },
+                        //{
+                        //    "data": "Brand_name", "searchable": false, "orderable": false, "render": function (data) {
+                        //        return ConvertDate(data);
+                        //    }
+                        //},
+                        { "data": "Generic_name", "searchable": false, "orderable": false },
+                        { "data": "SQty", "searchable": false, "orderable": false },
+                        //{
+                        //    "data": "PO_Date", "searchable": false, "orderable": false, "render": function (data) {
+                        //       return ConvertDate(data);
+                        //    }
+                        //},
+                        { "data": "SPrice_PerItem", "searchable": false, "orderable": false },
+                        //{
+                        //    "data": "PO_Date", "searchable": false, "orderable": false, "render": function (data) {
+                        //       return ConvertDate(data);
+                        //    }
+                        //},
+                        { "data": "Currency", "searchable": false, "orderable": false },
+                         //{
+                         //    "data": "Delivery_date", "searchable": false, "orderable": false, "render": function (data) {
+                         //        return ConvertDate(data);
+                         //    }
+                         //},
+                        { "data": "Currency_Rate", "searchable": false, "orderable": false },
+                        { "data": "Currency_Rate", "searchable": false, "orderable": false },
+                        { "data": "TSPrice_PerItem", "searchable": false, "orderable": false },
+                        { "data": "Sold_Status", "searchable": false, "orderable": false,"render":function(data){
+                                if(data=="N"){
+                                    return "<label class='label label-danger'>Not Sold</label>";
+                                }else
+                                    return "<label class='label label-success'>Sold</label>";
+                            } 
+                        },
+                        
+                    ],
+                    "order": [[0, "asc"]],
+                    "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                        //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                        var r = aData.Stock_no + aData.Invoice_no + aData.SNO;
+                        $(nRow).attr('id', r);
+                        $(nRow).attr('onclick', 'ClickRowToGetInvDetailsInBox(this.id)');
+                    },
+                    "paging": false,
+                    searching: false,                   // for disable search box
+                    select: {
+                        info: false
+                    },
+                    //buttons: [
+                    //    {
+                    //        extend: 'print',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    },
+                    //    {
+                    //        extend: 'excel',
+                    //        filename: 'Stock',
+                    //        sheetName: 'Stock',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    }
+                    //],
+                    //dom: 'lBfrtip',
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Sales Order", // place holder of search box
+                    },
+                    responsive: true,
+                    //select: 'single',
+                    select: true,                       // for Select Row
+                    bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    //scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    "bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    "sPaginationType": "full_numbers",
+                    "langauge": {
+                        "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                    },
+                });
+                $('input[type="search"]').addClass('form-control'); // <-- add this line
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+
+    }
+    function ClickRowToGetInvDetailsInBox(id) {
+        //alert(id);
+        var stock = id.substring(0, 8);
+        var InvNo = id.substring(8,16);
+        var SNO = id.substring(16);
+
+        if (id != null || id != "") {
+            $.ajax({
+                type: "POST",
+                url: "/SalesInvoice/GetInvDetailsInBox",
+                data: { stock: stock,InvNo:InvNo, SNO: SNO },
+                success: function (data) {
+                    
+                    $("#srDatatable tbody").html("");
+                    for (var i = 0; i < data.final.length; i++) {
+                        $("#srDatatable tbody").append("<tr id='" + data.final[i].Supp_Invno + "' onclick='getInvoiceNo(this.id)'>" +
+                                            
+                            "<td>" + data.final[i].Supp_Invno + "</td>" +
+                            "<td>" + data.final[i].Batch_NO + "</td>" +
+                            "<td>" + data.final[i].Items_Available + "</td>" +
+                            "<td>" + ConvertDate(data.final[i].Expiry_Date) + "</td>" +
+                            "<td>" + data.final[i].AltSupp_Invno + "</td>" +
+                       "</tr>");
+
+                    }
+                    if (data != "No data found") {
+                        //alert(data.r[0].Stock_no);
+                        $("#UpdateSODetailsBtn").show();
+                        $("#DeleteSODetailsBtn").show();
+                        $("#SaveInvDetailsBtn").hide();
+                       
+                        var SNO = $("#SNO").val(data.viewData[0].SNO);
+                        $("#InvoiceNo").val(data.viewData[0].Invoice_no);
+
+                        $("#Stock_no").val(data.viewData[0].Stock_no).trigger('chosen:updated');
+                        $("#Stock_no").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+
+                        //$("#Stock_no").val(data.viewData[0].Stock_no).trigger('chosen:updated');
+                        //$("#Stock_no").prop('disabled', true).trigger('chosen:updated').prop('disabled', false);
+
+                        //$("#Currency").val(data[0].Currency_Rate);
+                        $("#SQty").val(data.viewData[0].SQty);
+                        $("#SPrice_PerItem").val(data.viewData[0].SPrice_PerItem);
+                        $("#TSPrice_PerItem").val(data.viewData[0].TSPrice_PerItem);
+                        $("#Sold_Status").val(data.viewData[0].Sold_Status);
+                        $("#Batch_NO").val(data.viewData[0].Batch_NO);
+                        //$("#Items_Available").val(data.viewData[0].SQty);
+                    } else {
+                        $("#UpdateSODetailsBtn").hide();
+                        $("#DeleteSODetailsBtn").hide();
+
+                        $("#SONo").val("");
+                        //$("#Stock_no").val("").trigger('chosen:updated');
+                        $("#Currency").val("");
+                        //$("#CurrExch_rate").val("");
+                        $("#SOPrice_PerItem").val("");
+                        $("#SOQty_PerItem").val("");
+                        $("#SOMargin_Percentage").val("");
+                        $("#SOExtend_Price").val("");
+                        warrningMessage(data, "WARNING")
+                    }
+
+                },
+                error: function (result) {
+                    alert("Connection Error Please retry");
+                }
+            });
+        }
+
+    }
+
+    function GetInfofSaleOrder(value) {
+        //alert(value);
+        $.ajax({
+            type: "POST",
+            url: "/SalesInvoice/getSOInfo",
+            data: { so: value },
+            success: function (data) {
+                $("#Customer_Code").val(data[0].Customer_Code);
+                $("#SO_Date").val(ConvertDate(data[0].SO_Date));
+                $("#Ship_toCustAddr").val(data[0].Ship_toCustAddr);
+                $("#Delivery_date").val(ConvertDate(data[0].Delivery_date));
+
+                if (data.length > 0) {
+
+                    $("#Stock_no").empty();
+
+                    $("#Stock_no").append($("<option></option>").val("").html("--Select Stock--")).trigger('chosen:updated');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#Stock_no").append($("<option></option>").val(data[i].Stock_no).html(data[i].Brand_name)).trigger('chosen:updated');
+                    }
+                } else {
+                    warrningMessage("Discount Aproval has expired OR Item not found","NOT AVAILABLE");
+                    $("#Stock_no").empty();
+                    $("#Stock_no").append($("<option></option>").val("").html("--No Stock Found--")).trigger('chosen:updated');
+                }
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+    }
+
+    function getInvoiceNo(id) {
+        $("#Supp_Invno").val(id);
+        var StockNo = $("#Stock_no").val();
+        $.ajax({
+            type: "POST",
+            url: "/SalesInvoice/GetAllStockReceiptDELInTable",
+            data: { id: id, StockNo: StockNo },
+            success: function (data) {
+                // alert(data[0].Batch_NO);
+                var Batch_NO = $("#Batch_NO").val(data[0].Batch_NO);
+                var Items_Available = $("#Items_Available").val(data[0].Items_Available);
+                var Expiry_Date = $("#Expiry_Date").val(ConvertDate(data[0].Expiry_Date));
+                var Supp_Invno1=$("#Supp_Invno1").val(data[0].AltSupp_Invno);
+            },
+            error: function (er) {
+                alert(er);
+            }
+        })
+
+    }
+    //////////////////////////////////// Save Data ////////////////////////////////////
+
+    function SaveData() {
+        //alert("save");
+        var Invoice_no = $("#Invoice_no").val();
+        var Invoice_date = $("#Invoice_date").val();
+        var Invoice_type = $("#Invoice_type").val();
+        var Delivery_date = $("#Delivery_date").val();
+        var SO_No = $("#SO_No").val();
+        var SO_Date = $("#SO_Date ").val();
+        var Customer_Code = $("#Customer_Code").val();
+        var Ship_toCustAddr = $("#Ship_toCustAddr").val();
+        var Delivery_status = $("#Delivery_status").val();
+        var Contact_Person = $("#Contact_Person").val();
+        var Ship_Via = $("#Ship_Via").val();
+        var Shipper_code = $("#Shipper_code").val();
+
+        var str = $("#LoadData").serialize();
+        if (str != "") {
+            $.ajax({
+                type: "POST",
+                url: "/SalesInvoice/SaveSaleInvoice",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        FindByInvoice_no(Invoice_no);
+                        //var PO_No = $("#PO_No").val();
+                        //$("#PONo").val(PO_No);
+                        //var table = $("#myDatatable").DataTable();
+
+                        //var rowIndex = table.row.add({
+                        //    "SO_No": SO_No, "SO_Date": SO_Date, "PO_No": PO_No, "Customer_Code": Customer_Code,
+                        //    "Ship_toCustAddr": Ship_toCustAddr, "Delivery_date": Delivery_date,
+                        //    "Gross_Amount": '', "Tax_Percentage": '', "Disc_Percentage": '',
+                        //    "NET_Amount": '', "Status": Status
+                        //}).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'ClickRowToGetInvDetailsInBox(this.id)');
+
+                        ////var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        //var rowIndex = table.row.add([Code, Name, Generic_name, UNITS_PERITEM, PRICE, Manufacturer_Code]).draw(false);
+                        //var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Code);
+                        //$(row).attr('onclick', 'GetStockById(this.id)');
+
+                        SaveMessage(data.message);
+
+                        //resetPO();
+                    } else {
+                        warrningMessage(data.message);
+
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            infoMessage("Please Enter Valid Length of SO", "INFO");
+        }
+
+
+    }
+
+    function SaveInvDetailsData() {
+        
+        var InvoiceNo = $("#InvoiceNo").val();
+        var Stock_no = $("#Stock_no").val();
+        var SQty = $("#SQty").val();
+        var SPrice_PerItem = $("#SPrice_PerItem").val();
+        var TSPrice_PerItem = $("#TSPrice_PerItem").val();
+
+        var str = $("#LoadData1").serialize();
+        if (InvoiceNo != "" && Stock_no != "" && SQty != "" && SPrice_PerItem != "" ) {
+            $.ajax({
+                type: "POST",
+                url: "/SalesInvoice/SaveSalesInvoiceDetails",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#myDatatable body").html("");
+                        var table = $("#myDatatable").DataTable();
+                        $("#AmountBeforeMarg").val(data.l[3]);
+                        $("#Gross_Amount").val(data.l[0]);
+                        $("#Disc_Percentage").val(0);
+                        $("#NET_Amount").val(data.l[0]);
+
+                        $("#PO_CreatedBy").val(data.PoInfo[0]);
+                        $("#PO_Dept_code").val(data.PoInfo[1]);
+                        $("#HOD_ApprovedBy").val(data.PoInfo[2]);
+
+
+                        var rowIndex = table.row.add({
+                            "PO_No": data.data[0].PO_No, "Stock_no": data.data[0].Stock_no, "Brand_name": data.data[0].Brand_name,
+                            "Generic_name": data.data[0].Generic_name, "POQty_PerItem": data.data[0].POQty_PerItem,
+                            "POPrice_PerItem": data.data[0].POPrice_PerItem, "Currency": data.data[0].Currency,
+                            "CurrExch_rate": data.data[0].CurrExch_rate, "POMargin_Percentage": data.data[0].POMargin_Percentage,
+                            "POExtend_Price": data.data[0].POExtend_Price, "Status": 'N'
+                        }).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        //$(row).attr('id', Stock_no+PONo);
+                        //$(row).attr('onclick', 'ClickTableRowToGetPOId(this.id)');
+                        resetPODetails();
+                        UpdateMessage(data.message);
+
+                    } else {
+
+                        warrningMessage(data.message, "WARNING");
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            //alert(0);
+            infoMessage("Fill above all fields and then Save", "INFO");
+        }
+
+
+    }
+    function UpdateInvDetailsData() {
+        //alert("save");
+        var Supp_Invno = $("#Supp_Invno").val();
+        var Batch_NO = $("#Batch_NO").val();
+        var Items_Available = $("#Items_Available").val();
+
+        var InvoiceNo = $("#InvoiceNo").val();
+        var SNO = $("#SNO").val();
+        var Stock_no = $("#Stock_no").val();
+        var SQty = $("#SQty").val();
+        var SPrice_PerItem = $("#SPrice_PerItem").val();
+        var TSPrice_PerItem = $("#TSPrice_PerItem").val();
+
+        var Availabe = parseInt(Items_Available);
+        var SoldQty = parseInt(SQty);
+
+        var str = $("#LoadData1").serialize();
+        if (Stock_no != "" && InvoiceNo != "" && SNO != "" && SQty != "" && SPrice_PerItem != "") {
+            if (Availabe >= SoldQty) {
+                $.ajax({
+                    type: "POST",
+                    url: "/SalesInvoice/UpdateSalInvDetailsData",
+                    data: str + "&SupInv=" + Supp_Invno + "&batch=" + Batch_NO,
+                    success: function (data) {
+                        if (data.success == true) {
+                            $("#myDatatable body").html("");
+                            var table = $("#myDatatable").DataTable();
+
+
+                            index = table.row('#' + Stock_no + InvoiceNo + SNO); //1234126
+                            var temp = table.row(index[0]).data();
+                            //alert(CurrExch_rate);
+                            temp.SQty = SQty;
+                            temp.SPrice_PerItem = SPrice_PerItem;
+                            temp.TSPrice_PerItem = TSPrice_PerItem;
+                            temp.Sold_Status = "Y";
+                            table.row(index[0]).data(temp).draw();
+
+                            //$(row).attr('id', Stock_no + PONo);
+                            //$(row).attr('onclick', 'GetPOById(this.id)');
+
+                            UpdateMessage(data.message);
+                            //ClickRowToGetInvDetailsInBox(Stock_no + InvoiceNo + SNO);
+                            resetInvDetails();
+                        } else {
+                            warrningMessage(data.message, "WARNING");
+                        }
+
+                    },
+                    error: function (result) {
+                        //alert("Connection Error Please retry");
+                    }
+                });
+            } else {
+                DeleteMessageCus("Sold Qty cannot be grater then available item", "WARNING");
+            }
+
+
+        } else {
+            infoMessage("Some fields left empty", "INFO");
+
+        }
+
+
+    }
+
+    function DeleteInvDetailsData() {
+        var Stock_no = $("#Stock_no").val();
+        var InvoiceNo  = $("#InvoiceNo").val();
+        var SNO= $("#SNO").val();
+        //var Supp_Invno = $("#Supp_Invno").val();
+        //var Batch_NO = $("#Batch_NO").val();
+        //var Items_Available = $("#Items_Available").val();
+
+        //var InvoiceNo = $("#InvoiceNo").val();
+        //var SNO = $("#SNO").val();
+        //var Stock_no = $("#Stock_no").val();
+        var SQty = $("#SQty").val();
+        //var SPrice_PerItem = $("#SPrice_PerItem").val();
+        //var TSPrice_PerItem = $("#TSPrice_PerItem").val();
+
+        //var Availabe = parseInt(Items_Available);
+        //var SoldQty = parseInt(SQty);
+
+        var code = Stock_no + InvoiceNo+SNO;
+        if (InvoiceNo != "" && Stock_no != "") {
+            swal({
+                title: "Are you sure?",
+                text: "Your will not be able to recover this Data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel plx!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+        function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    type: "POST",
+                    url: "/SalesInvoice/DeleteInvDetails",
+                    data: {
+                        InvoiceNo: InvoiceNo,
+                        Stock_no: Stock_no,
+                        SQty:SQty
+                    },
+                    success: function (data) {
+                        if (data.success == true) {
+                            //$("#Gross_Amount").val(data.l[0]);
+                            //$("#AmountBeforeMarg").text(data.l[1]);
+
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+                            resetInvDetails();
+                            swal("Deleted!", data.message, "success");
+                            //DeleteMessage(data.message);
+                        }
+                    },
+                    error: function (er) {
+                        alert(er);
+                    }
+                });
+            } else {
+                swal("Cancelled", "Your Data is safe :)", "error");
+            }
+        });
+
+
+        } else {
+
+        }
+    }
+    //////////////////////////////////// Calculation Function ////////////////////////////////////
+    function calDown() {
+
+        var Gross_Amount = $("#Gross_Amount").val();
+        var Tax_Percentage = $("#Tax_Percentage").val();
+        var Disc_Percentage = $("#Disc_Percentage").val();
+
+        var NETAmount = 0
+        var DisAmount = 0
+        var TaxPer = 0
+
+        if (Tax_Percentage == 0 && Disc_Percentage == 0) {
+            $("#NET_Amount").val(0);
+        } else {
+
+            DisAmount = Gross_Amount * (Tax_Percentage / 100);
+            TaxPer = Gross_Amount - DisAmount;
+
+            DisAmount = TaxPer * (Disc_Percentage / 100);
+            NETAmount = TaxPer - DisAmount;
+            var NET_Amount = $("#NET_Amount").val(NETAmount);
+        }
+    }
+    //////////////////////////////////// Other Function ////////////////////////////////////
+
+    function ConvertDate(value) {
+
+        if (value == null || value=="") {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            //
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+
+    $(document).ready(function () {
+        //var date = new Date();
+        //var year=date.getFullYear();
+        //$("#SO_No").val("01-" + year);
+
+        $("#Invoice_date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#SO_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#Delivery_date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/M/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        var todayDate = dat + "/" + mon + "/" + year;
+        $("#Invoice_date").val(todayDate);
+
+        $("#UpdateSODetailsBtn").hide();
+        $("#DeleteSODetailsBtn").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        document.getElementById('loading').style.display = 'none'; //Not Visible
+        //document.getElementById('circle').style.display = 'none'; //Not Visible
+
+    });
+
+    function resetSO() {
+        //alert(0);
+        var SO_No = $("#SO_No").val();
+        $("#LoadData")[0].reset();
+        $("#SO_No").val(SO_No);
+        //$("#SaveSOBtn").show();
+        //$("#UpdateSOBtn").hide();
+        //$("#DeletePODetailsBtn").hide();
+        $(".chosen-select").trigger('chosen:updated');
+        //var Stock_no = $("#Customer_Code").val('');
+        //$("#Stock_no").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        //var SONo = $("#SONo").val("");
+        //var SOPrice_PerItem = $("#SOPrice_PerItem").val("");
+        //var SOQty_PerItem = $("#SOQty_PerItem").val("");
+        ////var CurrExch_rate = $("#CurrExch_rate").val("");
+        //var SOMargin_Percentage = $("#SOMargin_Percentage").val("");
+        //var SOExtend_Price = $("#SOExtend_Price").val("");
+    }
+    function resetInvDetails() {
+        $("#LoadData1")[0].reset();
+        var SO_No = $("#SO_No").val();
+        $("#SONo").val(SO_No);
+        var Stock_no = $("#Stock_no").val('');
+        $("#Stock_no").prop('disabled', false).trigger('chosen:updated').prop('disabled', false);
+        $("#UpdateSODetailsBtn").hide();
+        $("#DeleteSODetailsBtn").hide();
+        $("#SaveInvDetailsBtn").show();
+    }
+    function ToJavaScriptDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var monthNames = '';
+
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = '';
+            var completedate = '';
+
+            //monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+            monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            dt = new Date(parseFloat(results[1]));
+            var year = dt.getFullYear();
+            var mont = monthNames[dt.getMonth()];
+            var day = dt.getDate().toString();
+            if (day.length == "1") {
+                day = "0" + day;
+            } else {
+                day = dt.getDate();
+            }
+            //return completedate = year + "-" + mont + "-" + day;
+            return completedate = day + "-" + mont + "-" + year;
+
+            //monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            //dt = new Date(value);
+            //var year = dt.getFullYear();
+            //var mont = monthNames[dt.getMonth()];
+            //var day = dt.getDate();
+            ////return completedate = +dt.getDate(); +"-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //return completedate = day + "-" + mont + "-" + year;
+
+        }
+    }
+
+
+    function DeleteMessageCus(message, d) {
+        toastr.error(message, d,
+            options = {
+                "closeButton": true,
+                "debug": false,
+                "progressBar": true,
+                "preventDuplicates": true,
+                "positionClass": "toast-top-center",
+                "onclick": null,
+                "showDuration": "400",
+                "hideDuration": "1000",
+                "timeOut": "7000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        );
+    }
+
+
+</script>
+

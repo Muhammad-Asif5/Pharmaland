@@ -1,0 +1,184 @@
+﻿
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+<style>
+    /*table tbody tr td{border:2px solid black important;}*/
+</style>
+@{
+    ViewBag.Title = "Merck";
+}
+
+<h2>Merck Report</h2>
+
+<a class="btn btn-primary" onclick="tableToExcel('datatable', 'Attendance Register')" href="#"><i class="fa fa-print"></i> Print</a>
+<table id="datatable" class="table-striped table-bordered">
+    <caption id="Mycaption"></caption>
+    <thead id="tblHeader"></thead>
+    <tbody></tbody>
+</table>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Messages.js"></script>
+<script src="~/Scripts/ExportToExcel.js"></script>
+<script>
+    LoadAllData();
+    function LoadAllData() {
+
+        $("table thead").html("");
+        $("table tbody").html("");
+        document.getElementById("datatable").deleteCaption();
+        //var a = $('#cmbCourseID option:selected').text();
+        //$("table").append("<caption style='color:black;'>" + a + "</caption>");
+
+        $("table").append("<caption style='font-size:12pt; text-align:center; color:black; border:2px solid black'>" +
+            "<label style='font-size:12pt; color:black;'>" +
+            "Weekly/Monthly Stock and Sales Status Report" +
+            "</label>" +
+            "<br/>" +
+            "<label style='font-size:12pt; color:black;'>" +
+            "Zuis Pharmaland" +
+            "</label>" +
+            "<br/>" +
+             "<label style='font-size:12pt; color:black;'>" +
+            "House#CB-974/8,Street#3,East ,Shabbir Lane" +
+            "</label>" +
+
+            "</caption>");
+
+        var data = ['1', '2', '3'];
+        if (data.length > 0) {
+            $("table thead").append("<tr>" +
+                 "<th style='text-align:center' colspan='3'>Item Name</th>" +
+                 "<th>Pack</th>" +
+                 "<th>T.P</th>" +
+                 "<th>Opening Stock</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>Receipt</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>Returns</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>T.IN</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>T.OUT</th>" +
+                 "<th style='background-color:#165651;color:#f4f4f4;text-align:center;'>Total</th>" +
+                "</tr>" +
+                 "");
+            for (var j = 0; j < 10; j++) {
+                $("table tbody").append("<tr  onclick='ViewAlert(this.id)' id='asif" + j + "'>" +
+                             "<td>" + (j + 1) + "</td>" +
+                             "<td>3900001</td>" +
+                             "<td>aaaaaaaaaaaaaaaaaaaaa</td>" +
+                             "<td>100</td>" +
+                             "<td>123.45</td>" +
+                             "<td>0</td>" +
+                             "<td></td>" +
+                             "<td></td>" +
+                             "<td></td>" +
+                             "<td></td>" +
+                             "<td>0</td>" +
+                             "</tr>");
+
+                //R_No.push(data.Student[i].ROLL_NO);
+            } // End loop data.Student.length
+            $('<tr><td colspan="6" style="text-align:center"><label>Month --></label></td></tr>').insertBefore('table > thead > tr:first');
+
+            $('table > thead > tr > td:last').after('<td style="background-color:#165651;color:#f4f4f4;text-align:center;" colspan="5"><label>    P  U  R  C  H  A  S  E  S</label></td>');
+            ///////////////////////////////////////   Purchase End  /////////////////////////////////////////
+            $("table thead > tr >th:last").after("" +
+                  "<th style='background-color:#76847c;color:white; text-align:center;'>Sale</th>" +
+                  "<th style='background-color:#76847c;color:white; text-align:center;'>Returns</th>" +
+                  "<th style='background-color:#76847c;color:white; text-align:center;'>Net Sales</th>" +
+                  "<th style='background-color:#76847c;color:white; text-align:center;'>Value T.P</th>" +
+                  "<th style='background-color:#76847c;color:white; text-align:center;'>Adj</th>" +
+                  "<th style='background-color:#76847c;color:white; text-align:center;'>Balance</th>" +
+                 "");
+
+            for (var k = 0; k < 14; k++) {
+                $("#asif" + k).append("<td>123</td><td>123</td><td>123</td><td>123</td><td>123</td><td>123</td>");
+            }
+
+            $('table > thead > tr > td:last').after('<td style="background-color:#76847c;color:white; text-align:center;" colspan="6"><label>SALE</label></td>');
+
+            ///////////////////////////////////////   Sale End  /////////////////////////////////////////
+
+            $("table thead > tr >th:last").after("" +
+                "<th style='background-color:#165651;color:white; text-align:center;'>Value T.P</th>" +
+                "<th style='background-color:#165651;color:white; text-align:center;'>Today Sale</th>" +
+                "<th style='background-color:#165651;color:white; text-align:center;'>Today Return</th>" +
+               "");
+
+            for (var l = 0; l < 14; l++) {
+                $("#asif" + l).append("<td>123</td><td>123</td><td>123</td>");
+            }
+
+            $('table > thead > tr > td:last').after('<td style="background-color:#165651;color:white; text-align:center;" colspan="3"><label>OTHER</label></td>');
+
+            ///////////////////////////////////////   Other End   /////////////////////////////////////////
+
+            $("table tbody").append(
+                 "<tr>" +
+                 "<td></td>" +
+                 "<td style='text-align:center;' colspan='2'><label>Sub Total For Group:</label></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td>55,189</td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "<td>55189</td>" +
+                 "<td></td>" +
+                 "<td></td>" +
+                 "</tr>");
+            
+            $("table thead").append(
+                 "<tr>" +
+                 "<th></th>" +
+                 "<th>Stock No</th>" +
+                 "<th>Names</th>" +
+                 "<th colspan='17'>CH A</th>" +
+                 "</tr>");
+            ///////////////////////////////////////////////////////////////////////////////
+
+            $("table tbody").append(
+                 "<tr>" +
+                 "<td></td>" +
+                 "<td>Stock No</td>" +
+                 "<td>Names</td>" +
+                 "<td colspan='17'>CH A</td>" +
+                 "</tr>");
+
+            for (var m = 0; m < 5; m++) {
+                $("table tbody").append("<tr  onclick='ViewAlert(this.id)' id='asif1" + m + "'>" +
+                                         "<td>" + (m + 1) + "</td>" +
+                                         "<td>3900001</td>" +
+                                         "<td>aaaaaaaaaaaaaaaaaaaaa</td>" +
+                                         "<td>100</td>" +
+                                         "<td>123.45</td>" +
+                                         "<td>0</td>" +
+                                         "<td></td>" +
+                                         "<td></td>" +
+                                         "<td></td>" +
+                                         "<td></td>" +
+                                         "<td>0</td>" +
+                                         "</tr>");
+            }
+            for (var n = 0; n < 5; n++) {
+                $("#asif1" + n).append("<td>123</td><td>123</td><td>123</td><td>123</td><td>123</td><td>123</td>");
+            }
+            for (var l = 0; l < 5; l++) {
+                $("#asif1" + l).append("<td>123</td><td>123</td><td>123</td>");
+            }
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>From:</label></td>');
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>01-04-2019</label></td>');
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>To:</label></td>');
+            $('table > thead > tr:first').before('<td style="text-align:center;" colspan="5"><label>01-04-2019</label></td>');
+        }
+    }
+</script>

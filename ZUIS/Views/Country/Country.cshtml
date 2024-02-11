@@ -1,0 +1,419 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+<div id="loading"></div>
+
+<div class="container-fluid mr_t_30">
+    <div class="row">
+        <div class="col-sm-6">
+            <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+                <thead style="background:#79e1e8">
+                    <tr>
+                        <th style="width:20%">Code</th>
+                        <th style="width:30%">Country_Name</th>
+                        <th style="width:15%">Country_Abbr</th>
+                        <th style="width:25%">Nationality</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int counter = 0;// Index start value
+                        foreach (var item in ViewBag.Data)
+                        {
+                            <tr onclick="GetManufactureById(this.id)" id="@item.Country_code">
+                                <td>
+                                    @item.Country_code
+                                </td>
+                                <td>
+                                    @item.Country_Name
+                                </td>
+                                <td>
+                                    @item.Country_Abbr
+                                </td>
+                                <td>
+                                    @item.Nationality
+                                </td>
+                                
+                            </tr>
+                            counter++;
+                        }
+                    }
+
+
+                </tbody>
+
+            </table>
+        </div>
+        <div class="col-sm-6">
+            <form id="LoadData">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="Country_code" class="">Country_code</label>
+                            <input maxlength="3" tabindex="1" type="text" class="form-control" name="Country_code" id="Country_code" placeholder="Country_code">
+                        </div>
+                        <div class="form-group">
+                            <label for="Country_Name" class="">Country_Name</label>
+                            <input maxlength="32" tabindex="2" type="text" name="Country_Name" id="Country_Name" class="form-control" placeholder="Country_Name">
+                        </div>
+                                               
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="Country_Abbr" class="">Country_Abbr</label>
+                            <input maxlength="10" tabindex="4" type="text" name="Country_Abbr" id="Country_Abbr" class="form-control" placeholder="Country_Abbr">
+                        </div>
+                        <div class="form-group">
+                            <label for="Nationality" class="">Nationality</label>
+                            <input maxlength="50" tabindex="5" type="text" name="Nationality" id="Nationality" class="form-control" placeholder="Nationality">
+                        </div>
+                        <div class="form-group">
+                            <button tabindex="12" type="button" id="SaveBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                            <button tabindex="13" type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                            <button tabindex="14" type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>
+                            <button type="button" onclick="resetData()" class="btn btn-primary">New</button>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </form>
+        </div>
+    </div>
+   
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script>
+    var GlobalFlag = 0;
+    var flag = [];
+
+    function resetData() {
+        $("#Country_code").prop('readonly', false);
+        $('#LoadData')[0].reset();
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+    }
+    function SaveData() {
+        //alert("save");
+        var Country_code = $("#Country_code").val();
+        var Country_Name = $("#Country_Name").val();
+        var Country_Abbr = $("#Country_Abbr").val();
+        var Nationality = $("#Nationality").val();
+
+        var str = $("form").serialize();
+        if (Country_code != "" && Country_Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Country/SaveCountry",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $("#myDatatable").DataTable();
+                        //var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        var rowIndex = table.row.add([Country_code, Country_Name, Country_Abbr, Nationality]).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr('id', Country_code);
+                        $(row).attr('onclick','GetManufactureById(this.id)');
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                    } else {
+                        toastr.warning(data.message, "WARNING",
+                       options = {
+                           "closeButton": true,
+                           "debug": false,
+                           "progressBar": true,
+                           "preventDuplicates": true,
+                           "positionClass": "toast-top-center",
+                           "onclick": null,
+                           "showDuration": "400",
+                           "hideDuration": "1000",
+                           "timeOut": "7000",
+                           "extendedTimeOut": "1000",
+                           "showEasing": "swing",
+                           "hideEasing": "linear",
+                           "showMethod": "fadeIn",
+                           "hideMethod": "fadeOut"
+                       });
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Supplier", "INFO",
+                     options = {
+                         "closeButton": true,
+                         "debug": false,
+                         "progressBar": true,
+                         "preventDuplicates": true,
+                         "positionClass": "toast-top-center",
+                         "onclick": null,
+                         "showDuration": "400",
+                         "hideDuration": "1000",
+                         "timeOut": "7000",
+                         "extendedTimeOut": "1000",
+                         "showEasing": "swing",
+                         "hideEasing": "linear",
+                         "showMethod": "fadeIn",
+                         "hideMethod": "fadeOut"
+                     }
+                 );
+        }
+
+
+    }
+
+    function UpdateData() {
+        //alert("save");
+        var Country_code = $("#Country_code").val();
+        var Country_Name = $("#Country_Name").val();
+        var Country_Abbr = $("#Country_Abbr").val();
+        var Nationality = $("#Nationality").val();
+
+        var str = $("form").serialize();
+        if (Country_Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Country/UpdateCountry",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $('#myDatatable').DataTable();
+                        //var fullID = GlobalFlag;
+                        index = table.row('#' + Country_code); //1234126
+                        var temp = table.row(index[0]).data();
+                        temp[0] = Country_code;
+                        temp[1] = Country_Name;
+                        temp[2] = Country_Abbr;
+                        temp[3] = Nationality;
+
+                        table.row(index[0]).data(temp).draw();
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Supplier", "INFO",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+        }
+
+
+    }
+
+    function RemoveData() {
+        var code = $("#Country_code").val();
+        //alert("remove");
+        if (code != "") {
+            var Con = confirm("are you sure ?");
+            if (Con == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Country/DeleteCountry",
+                    data: {
+                        code: code
+                    },
+                    success: function (data) {
+                        if (data.success == true) {
+                            $("#Country_code").prop('readonly', false);
+                            resetData();
+
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+
+                            toastr.error(data.message, "DELETED",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+                        }
+
+                    },
+                    error: function (result) {
+                        //alert("Connection Error Please retry");
+                    }
+                });
+            }
+        } else {
+            //alert("Select Supplier");
+            toastr.warning("Select Supplier", "WARNING",
+                            options = {
+                                "closeButton": true,
+                                "debug": false,
+                                "progressBar": true,
+                                "preventDuplicates": true,
+                                "positionClass": "toast-top-center",
+                                "onclick": null,
+                                "showDuration": "400",
+                                "hideDuration": "1000",
+                                "timeOut": "7000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+                        );
+        }
+
+    }
+
+    function GetManufactureById(id) {
+        //alert(id);
+        //flag.push(id);
+        //GlobalFlag = flag[0];
+
+        $("#UpdateBtn").show();
+        $("#RemoveBtn").show();
+        $("#SaveBtn").hide();
+
+        //var id = id.substring(0, 5);
+        //var index = id.substring(5);
+        $.ajax({
+            type: "POST",
+            url: "/Country/GetCountryById",
+            data: { id: id },
+            success: function (data) {
+                $("#Country_code").prop('readonly', true);
+
+                var Country_code = $("#Country_code").val(data[0].Country_code);
+                var Country_Name = $("#Country_Name").val(data[0].Country_Name);
+                var Country_Abbr = $("#Country_Abbr").val(data[0].Country_Abbr);
+                var Nationality = $("#Nationality").val(data[0].Nationality);
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+        $("#loading").hide();
+
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+        var table = $("#myDatatable").DataTable({
+            buttons:[
+                {
+                    extend: 'print',
+                    className:'btn btn-primary btn-sm'
+                },
+                {
+                    extend: 'excel',
+                    //filename: 'Supplier',
+                    sheetName: 'Supplier',
+                    className: 'btn btn-primary btn-sm'
+                }
+            ],
+            //dom: 'lBfrtip',
+            // "paging": false,
+            // searching: false,                   // for disable search box
+            select: {
+                info: false
+            },
+            "columnDefs": [
+               { "targets": [0, 1, 2, 3], "orderable": false }
+            ],
+
+            language: {
+                search: "", // for hide label of search
+                searchPlaceholder: "Search Country", // place holder of search box
+            },
+               responsive: true,
+            select: true,                       // for Select Row
+            //    //bDestroy: true,                     // this will disable table when new load data
+            "bLengthChange": false,           //  for Show more Entries
+            // scrollY: '20vh',
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
+            //"bScrollCollapse": true,
+            "processing": true,
+            //"bPaginate": false,
+            //"sPaginationType": "full_numbers",
+        });
+
+        $('input[type="search"]').addClass('form-control'); // <-- add this line
+    });
+
+
+
+</script>

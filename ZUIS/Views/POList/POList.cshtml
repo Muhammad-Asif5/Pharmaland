@@ -1,0 +1,403 @@
+﻿@model ZUIS.Models.VM
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+<style>
+    .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background:red;
+}
+    .ui-datepicker table {background:#236; color:#fff;}
+</style>
+
+<div id="loading"></div>
+
+<div class="container-fluid">
+    <form class="form-inline mr_t_30" action="/action_page.php">
+        <div class="form-group">
+            <label for="email">From:</label>
+            <input type="text" class="form-control" id="PO_Date" name="PO_Date" placeholder="From Date">
+        </div>
+        <div class="form-group">
+            <label for="pwd">To:</label>
+            <input type="text" class="form-control" id="PO_Date1" name="PO_Date1" placeholder="To Date">
+        </div>
+        <button onclick="findaData()" type="button" class="btn btn-default">View</button>
+    </form>
+    <hr />
+    <a href="/Purchase/Purchase" class="btn btn-default btn-sm">Add New PO</a>
+    <button class="btn btn-primary btn-sm" onclick="ViewAllTransaction()">View All Transaction</button>
+   
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="">PO No</th>
+                    <th style="">Branch</th>
+                    <th style="">Vendor Name</th>
+                    <th style="">PO Date</th>
+                    <th style="">Cust Name</th>
+                    <th style="">Del Date</th>
+                    <th style="">Approved by HOD</th>
+                    <th style="">Gross Amount</th>
+                    <th style="">Net Amount</th>
+                    <th style="">Status</th>
+                    <th style="">Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+@*<script src="https://code.jquery.com/jquery-2.2.4.js"></script>*@
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Messages.js"></script>
+<script>
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+    function ViewAllTransaction() {
+        var url = "http://localhost:1669/WebForm/AllTransaction.aspx";
+
+        //var windowName = "Change Logo";
+
+        var windowName = "_blank";
+        var windowHeight = window.innerHeight;
+        var windowWidth = window.innerWidth;
+        document.body.style.height = windowHeight + "px";
+        //window.addEventListener("resize", setWindowHeight, false);
+        newwindow = window.open(url, windowName, 'width=930,height=' + windowHeight + '');
+
+        if (window.focus) { newwindow.focus() }
+
+        return false;
+    }
+    LoadAllPO();
+
+    function LoadAllPO() {
+        $.ajax({
+            type: "POST",
+            url: "/POList/GetAllPOInTable",
+            data: {},
+            success: function (data) {
+                debugger
+                //alert(data[0].NET_Amount)
+                $("#myDatatable body").html("");
+                var table = $("#myDatatable").DataTable({
+                    data: data,
+
+                    //rowId: 'staffId',
+                    columns: [
+                        { "data": "PO_No", "orderable": false },
+                        
+                        { "data": "Branch_Abbr", "orderable": false },
+                        { "data": "Name", "orderable": false },
+                        
+                         {
+                             "data": "PO_Date", "render": function (data) {
+                                 return ConvertDate(data);
+                             }
+                         },
+                        { "data": "Cust_Name" },
+                        {
+                            "data": "Delivery_date", "searchable": false, "render": function (data) {
+                                return ConvertDate(data);
+                            }
+                        },
+                       {
+                           "data": "HOD_ApprovedBy", "searchable": false, "orderable": false, "render": function (data) {
+                               if (data != null) {
+                                   return "Y";
+                               } else {
+                                   return data;
+                               }
+
+                           }
+                       },
+                        { "data": "Gross_Amount", "searchable": false, "orderable": false },
+                        { "data": "NET_Amount", "searchable": false, "orderable": false },
+                        {
+                            "data": "Received_Status", "searchable": false, "orderable": false, "render": function (data) {
+
+                                if (data == "Y") {
+                                    //$("#Details" + full.Supp_Invno).prop('disabled', true);
+                                    return "<label class='label label-success'>Received</label>";
+                                } else {
+                                    //$("#Details" + full.Supp_Invno).prop('disabled', true);
+                                    return "<label class='label label-danger'>Not Received</label>";
+                                }
+                            }
+                        },
+                        {
+                            "data": "PO_No", "searchable": false, "orderable": false, "render": function (data, type, full, meta) {
+                                if (full.Received_Status == 'Y') {
+                                    return "<a disabled href='#' class='btn btn-primary btn-sm'>View Details</a> | <a href='#' id='" + data + "' onclick='ViewReportData(this.id)' class='btn btn-info btn-sm'>View Report</a>";
+                                } else {
+                                    return "<a href='/Purchase/Purchase?PO=" + data + "' target='_blank' class='btn btn-primary btn-sm'>View Details</a> | <a href='#' id='" + data + "' onclick='ViewReportData(this.id)' class='btn btn-info btn-sm'>View Report</a>";
+                                }
+                                //return "<a href='/StockReceipt/StockReceipt/" + data + "' target='_blank' class='btn btn-primary btn-sm'>View Details</a>";
+                            }
+                        }
+                    ],
+                    //"order": [[2, "dec"]],
+                    columnDefs: [{ type: 'date', 'targets': [2] }],
+                    order:[[2,'sesc']],
+                    "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                        //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                        var r = aData.PO_No;
+                        $(nRow).attr('id', r);
+                        //$(nRow).attr('onclick', 'GetStockById(this.id)');
+                    },
+                    //"paging": false,
+                    //searching: false,                   // for disable search box
+                    select: {
+                        info: false
+                    },
+                    //buttons: [
+                    //    {
+                    //        extend: 'print',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    },
+                    //    {
+                    //        extend: 'excel',
+                    //        filename: 'Stock',
+                    //        sheetName: 'Stock',
+                    //        className: 'btn btn-primary btn-sm'
+                    //    }
+                    //],
+                    //dom: 'lBfrtip',
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Purchase", // place holder of search box
+                    },
+                    responsive: true,
+                    //select: 'single',
+                    //select: true,                       // for Select Row
+                    bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    //scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    "bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    "sPaginationType": "full_numbers",
+                    "langauge": {
+                        "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                    },
+
+
+                });
+                $('input[type="search"]').addClass('form-control'); // <-- add this line
+
+            },
+            error: function (er) {
+                alert(er);
+            }
+        });
+    }
+
+    function findaData() {
+        var PO_Date = $("#PO_Date").val();
+        var PO_Date1 = $("#PO_Date1").val();
+        
+        if (PO_Date != "" || PO_Date1!="") {
+            $.ajax({
+                type: "POST",
+                url: "/POList/GetAllPOInTableByDate",
+                data: {
+                    PO_Date: PO_Date,
+                    PO_Date1: PO_Date1
+                },
+                success: function (data) {
+                    //alert(data[0].NET_Amount)
+                    $("#myDatatable body").html("");
+                    var table = $("#myDatatable").DataTable({
+                        data: data,
+
+                        //rowId: 'staffId',
+                        columns: [
+                            { "data": "PO_No", "searchable": false, "orderable": false },
+                            { "data": "Name", "searchable": false, "orderable": false },
+                             {
+                                 "data": "PO_Date", "searchable": false, "render": function (data) {
+                                     return ConvertDate(data);
+                                 }
+                             },
+                            { "data": "Cust_Name", "searchable": false, "orderable": false },
+                            {
+                                "data": "Delivery_date", "searchable": false, "render": function (data) {
+                                    return ConvertDate(data);
+                                }
+                            },
+                           {
+                               "data": "HOD_ApprovedBy", "searchable": false, "orderable": false, "render": function (data) {
+                                   if (data != null) {
+                                       return "Y";
+                                   } else {
+                                       return data;
+                                   }
+
+                               }
+                           },
+                           {
+                               "data": "DIR_ApprovedBy", "searchable": false, "orderable": false, "render": function (data) {
+                                   if (data != null) {
+                                       return "Y";
+                                   } else {
+                                       return data;
+                                   }
+
+                               }
+                           },
+                            { "data": "Gross_Amount", "searchable": false, "orderable": false },
+                            { "data": "NET_Amount", "searchable": false, "orderable": false },
+                            { "data": "Delivery_status", "searchable": false, "orderable": false },
+                           {
+                               "data": "PO_No", "searchable": false, "render": function (data) {
+                                   return "<a href='/Purchase/Purchase?PO=" + data + "' target='_blank' class='btn btn-primary btn-sm'>View Details</a> | <a href='#' id='" + data + "' onclick='ViewReportData(this.id)' class='btn btn-info btn-sm'>View Report</a>";
+                               }
+                           },
+                        ],
+                        "order": [[0, "asc"]],
+                        "fnCreatedRow": function (nRow, aData, iDataIndex) {
+
+                            //var r = aData.COURSE_ID+aData.COURSE_TITLE;
+                            var r = aData.PO_No;
+                            $(nRow).attr('id', r);
+                            //$(nRow).attr('onclick', 'GetStockById(this.id)');
+                        },
+                        //"paging": false,
+                        searching: false,                   // for disable search box
+                        select: {
+                            info: false
+                        },
+                        //buttons: [
+                        //    {
+                        //        extend: 'print',
+                        //        className: 'btn btn-primary btn-sm'
+                        //    },
+                        //    {
+                        //        extend: 'excel',
+                        //        filename: 'Stock',
+                        //        sheetName: 'Stock',
+                        //        className: 'btn btn-primary btn-sm'
+                        //    }
+                        //],
+                        //dom: 'lBfrtip',
+                        language: {
+                            search: "", // for hide label of search
+                            searchPlaceholder: "Search Purchase", // place holder of search box
+                        },
+                        responsive: true,
+                        //select: 'single',
+                        //select: true,                       // for Select Row
+                        bDestroy: true,                     // this will disable table when new load data
+                        "bLengthChange": false,           //  for Show more Entries
+                        //scrollY: '20vh',
+                        "sScrollX": "100%",
+                        "sScrollXInner": "100%",
+                        "bScrollCollapse": true,
+                        "processing": true,
+                        //"bPaginate": false,
+                        "sPaginationType": "full_numbers",
+                        "langauge": {
+                            "myDatatable": "No data found, Please click on <b>Add New </b> Button"
+                        },
+
+
+                    });
+                    $('input[type="search"]').addClass('form-control'); // <-- add this line
+
+                },
+                error: function (er) {
+                    alert(er);
+                }
+            });
+        } else {
+            warrningMessage("Select Valid Date range","WARNING");
+        }
+    }
+
+    function ViewReportData(id) {
+        
+        if (id != null) {
+
+            var url = "http://localhost:1669/WebForm/POReport.aspx?c_id="+id;
+
+            //var windowName = "Change Logo";
+
+            var windowName = "_blank";
+            var windowHeight = window.innerHeight;
+            var windowWidth = window.innerWidth;
+            document.body.style.height = windowHeight + "px";
+            //window.addEventListener("resize", setWindowHeight, false);
+            newwindow = window.open(url, windowName, 'width=1160,height=' + windowHeight + '');
+
+            if (window.focus) { newwindow.focus() }
+
+            return false;
+        } else {
+            toast("Please select a PO No first");
+        }
+    }
+
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+
+    $(document).ready(function () {
+        var minDate = new Date();
+        $("#PO_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true,
+            onClose: function (selectedDate) {
+                $('#PO_Date1').datepicker("option", "minDate", selectedDate);
+            }
+        });
+
+
+        $("#PO_Date1").datepicker({
+            shownAnim: 'drop',
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+        $('.chosen-select').chosen({ width: "100%" });
+       // document.getElementById('loading').style.display = 'none'; //Not Visible
+    });
+
+</script>

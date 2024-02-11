@@ -1,0 +1,325 @@
+﻿
+<link href="~/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+<style>
+            .table>caption+thead>tr:first-child>td, .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th {
+    font-size: 8pt;
+}
+        .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > thead > tr > td, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > th, .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
+    font-size: 8pt;
+}
+</style>
+
+<div id="loading"></div>
+
+<div class="container-fluid mr_t_30">
+    <table id="uTable">
+        <tr>
+            
+            <td>
+                <div class="col-sm-12">
+                    <label for="email">From:</label>
+                    
+                </div>
+                <div class="form-group">
+                    <input autocomplete="off" onchange="ChangeDate(this.value)"  type="text" class="form-control" id="SO_Date" name="SO_Date" placeholder="From Date">
+                </div>
+            </td>
+            <td>
+                <div class="col-sm-12">
+                    <label for="pwd">To:</label>
+                    
+                </div>
+                <div class="form-group">
+                    <input autocomplete="off" type="text" class="form-control" id="SO_Date1" name="SO_Date1" placeholder="To Date">
+                </div>
+            </td>
+            <td>
+                <div class="col-sm-12">
+                    <label for="POPrice_PerItem" class="">Select</label>
+                </div>
+                <div class="form-group">
+                    <select name="Branch_Code" class="chosen-select" id="Branch_Code" onchange="onchangeBranch(this.value)">
+                        <option disabled selected value="-1">--Select Branch--</option>
+                        <option value="748">748 : ZUIS ISB</option>
+                        <option value="741">741 : ZUIS PWR</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                    <input hidden type="text" name="PO_No" id="PONo" />
+                    <label for="Vendor_code" class="control-label">Manufacturer</label>
+                    @Html.DropDownList("Vendor_code", (List<SelectListItem>)ViewBag.DDLVendor,
+                                                                                                  "--Select Vendor--", new { @class = "chosen-select", @onchange = "onchangeVendor(this.value)" })
+                </div>
+            </td>
+            <td>
+                <div class="col-sm-12">
+                    <label for="CurrExch_rate" class="">Download</label>
+                </div>
+                <div class="form-group">
+                    <a id="rptDownload" class='btn btn-info btn-sm'>Download Report</a>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead id="tblHeader" style="background:#79e1e8">
+            <tr>
+                <th>DSTBID</th>
+                <th>DOCUMENTNO</th>
+                <th>DOCDATE</th>
+                <th>CUSTID</th>
+                <th>CT</th>
+                <th>TOWNID</th>
+                <th>PRDID</th>
+                <th>PRD</th>
+                <th>BATCHNO</th>
+                <th>PRICE</th>
+                <th>QUANTITY</th>
+                <th>BONUS</th>
+                <th>DISCOUNTAMNT</th>
+                <th>NETAMT</th>
+                <th>REASON</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+    </div>
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Scripts/Messages.js"></script>
+<script>
+    var $loading = $('#loading').hide();
+
+    $(document)
+      .ajaxStart(function () {
+          $loading.show();
+      })
+      .ajaxStop(function () {
+          $loading.hide();
+      });
+
+    function onchangeBranch(value) {
+        $("#Vendor_code").val("-1").trigger('chosen:updated');
+    }
+
+    function onchangeVendor(value) {
+        var SODate = $("#SO_Date").val();
+        var SODate1 = $("#SO_Date1").val();
+        var VCode = $("#Vendor_code").val();
+        var BCode = $("#Branch_Code").val();
+
+        //var a = $('#ReportZUIS option:selected').text();
+
+        var rpt = document.getElementById("rptDownload");
+        //var s = $("#content");
+        rpt.href = "/Report/Download" + BCode + "INV" + "?SODate=" + SODate + "&SODate1=" + SODate1 + "&VCode=" + VCode + "&BCode=" + BCode;
+
+        Load748INV(SODate, SODate1, VCode, BCode);
+
+        //s.setAttribute("href", "somelink url");
+        //if (a == "--Select Reports--") {
+        //    $("#myDatatable").empty();
+        //}
+        //if (value == "745INV") {
+        //    //$("#myDatatable").show();
+        //    //$("#745CUST").hide();
+            
+        //}
+
+    }
+
+    function Load748INV(SODate, SODate1, VCode, BCode) {
+
+        //$("#myDatatable thead").empty();
+        //$("#myDatatable thead").append("<tr>" +
+        //                 "<th>DSTBID</th>" +
+        //                 "<th>DOCUMENTNO</th>" +
+        //                 "<th>DOCDATE</th>" +
+        //                 "<th>CUSTID</th>" +
+        //                 "<th>CT</th>" +
+        //                 "<th>TOWNID</th>" +
+        //                 "<th>PRDID</th>" +
+        //                 "<th>PRD</th>" +
+        //                 "<th>BATCHNO</th>" +
+        //                 "<th>PRICE</th>" +
+        //                 "<th>QUANTITY</th>" +
+        //                 "<th>BONUS</th>" +
+        //                 "<th>DISCOUNTAMNT</th>" +
+        //                 "<th>NETAMT</th>" +
+        //                 "<th>REASON</th>" +
+        //            "</tr>");
+
+        //alert(1);
+        //$("#myDatatable").empty();
+        
+        $.ajax({
+            type: "POST",
+            url: "/Report/get"+BCode+"INV",
+            data: { SODate: SODate, SODate1: SODate1, VCode: VCode, BCode: BCode },
+            success: function (data) {
+                var table = $("#myDatatable").DataTable({
+                    data: data,
+                    columns: [
+                        { "data": "DSTB_NO" },
+                        { "data": "Invoice_no" },
+                        {
+                            "data": "Invoice_date", render: function (data) {
+                                return ConvertDate(data);
+                            }
+                        },
+                        { "data": "Customer_Code" },
+                        { "data": "City_code" },
+                        { "data": "City_code" },
+                        { "data": "Stock_no" },
+                        { "data": "Brand_name" },
+                        { "data": "Batch_NO" },
+                        { "data": "SPrice_PerItem" },
+                        { "data": "SQty" },
+                        {
+                            "data": "NET_Amount", render: function () {
+                                return "0";
+                            }
+                        },
+                        {
+                            "data": "NET_Amount", render: function () {
+                                return "0";
+                            }
+                        },
+                        { "data": "TSPrice_PerItem" },
+                        {
+                            "data": "Stock_no", render: function () {
+                                return "S";
+                            }
+                        },
+                    ],
+
+                     "paging": false,
+                     //searching: false,                   // for disable search box
+                    //select: {
+                    //    info: false
+                    //},
+                    "columnDefs": [
+                       { "targets": [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14], "orderable": false }
+                    ],
+
+                    language: {
+                        search: "", // for hide label of search
+                        searchPlaceholder: "Search Customer", // place holder of search box
+                    },
+                    responsive: true,
+                    select: true,                       // for Select Row
+                    bDestroy: true,                     // this will disable table when new load data
+                    "bLengthChange": false,           //  for Show more Entries
+                    // scrollY: '20vh',
+                    "sScrollX": "100%",
+                    "sScrollXInner": "100%",
+                    //"bScrollCollapse": true,
+                    "processing": true,
+                    //"bPaginate": false,
+                    //"sPaginationType": "full_numbers",
+                });
+
+                $('input[type="search"]').addClass('form-control'); // <-- add this line
+            },
+            error: function (er) {
+
+            }
+        });
+
+        //var data = [{ 'ROLL_NO': 123, 'NAME': 123, 'a': 123, 'b': 123, 'c': 123, 'd': 123, 'e': 123, }];
+
+
+    }
+
+    function ChangeDate(id) {
+        //$('#LoadData')[0].reset();
+        $("#Vendor_code").val("-1").trigger('chosen:updated');
+        $("#Branch_Code").val("-1").trigger('chosen:updated');
+        //var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        //var date = new Date(id);
+        //date.setDate(date.getDate() + 15);
+        //var dat = date.getDate();
+        //var mon = monthNames[date.getMonth()];
+        //var year = date.getFullYear();
+        //var todayDate = dat + "/" + mon + "/" + year;
+        //$("#SO_Date1").val(todayDate);
+    }
+    $(document).ready(function () {
+        var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var minDate = new Date();
+        $("#SO_Date").datepicker({
+            shownAnim: 'drop',
+            calendarWeeks: true,
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true,
+            onClose: function (selectedDate) {
+                $('#SO_Date1').datepicker("option", "minDate", selectedDate);
+            }
+        });
+        var todayDate = "";
+        var date = new Date();
+        var dat = date.getDate();
+        var mon = monthNames[date.getMonth()];
+        var year = date.getFullYear();
+        todayDate = dat + "/" + mon + "/" + year;
+        $("#SO_Date").val(todayDate);
+
+        //var date = new Date(id);
+        date.setDate(date.getDate() + 7);
+        var dat1 = date.getDate();
+        var mon1 = monthNames[date.getMonth()];
+        var year1 = date.getFullYear();
+        todayDate1 = dat1 + "/" + mon1 + "/" + year1;
+
+        $("#SO_Date1").val(todayDate1);
+
+        $("#SO_Date1").datepicker({
+            shownAnim: 'drop',
+            numberOfMonth: 1,
+            //minDate: minDate,
+            dateFormat: 'dd/MM/yy',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        //$("#loading").hide();
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+    });
+
+    function ConvertDate(value) {
+
+        if (value == null) {
+            return "";
+        }
+        else {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            var completedate = dt.getDate() + "-" + monthNames[dt.getMonth()] + "-" + dt.getFullYear();
+            //"/" + dt.getFullYear().toString().substr(2,2));
+            return completedate;
+        }
+    }
+</script>

@@ -1,0 +1,479 @@
+﻿@model ZUIS.Models.VM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string UserType = Session["UserType"] as string;
+}
+
+
+<div id="circle">
+    <div class="loader">
+        <div class="loader">
+            <div class="loader">
+                <div class="loader">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <form id="LoadData" class="mr_t_30">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Manufacturer_Code" class="">Manufacture No</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input maxlength="3" tabindex="1" type="text" class="form-control" name="Manufacturer_Code" id="Manufacturer_Code" placeholder="Manufacturer_Code">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="M_Name" class="">Name</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="2" type="text" name="M_Name" id="M_Name" class="form-control" placeholder="M_Name">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="M_ShortName" class="">M_ShortName</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="3" type="text" name="M_ShortName" id="M_ShortName" class=" form-control" placeholder="M_ShortName">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Address" class="">Address</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="4" type="text" name="Address" id="Address" class="form-control" placeholder="Address">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="City" class="">City</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="5" type="text" name="City" id="City" class="form-control" placeholder="City">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-3">
+                        <label for="Tel_no" class="">Tel_no</label>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <input tabindex="6" type="text" name="Tel_no" id="Tel_no" class="form-control" placeholder="Tel_no">
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="col-sm-3">
+
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <button tabindex="12" type="button" id="SaveBtn" onclick="SaveData()" class="btn btn-success">Save</button>
+                        <button tabindex="13" type="button" id="UpdateBtn" onclick="UpdateData()" class="btn btn-success">Update</button>
+                        <button tabindex="14" type="button" id="RemoveBtn" onclick="RemoveData()" class="btn btn-danger">Remove</button>
+                        <button type="button" onclick="resetData()" class="btn btn-primary">New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr />
+    <div>
+        <table id="myDatatable" class="table table-responsive table-hover table-bordered">
+            <thead style="background:#79e1e8">
+                <tr>
+                    <th style="width:10%">ID</th>
+                    <th style="width:20%">Name</th>
+                    <th style="width:15%">Short Name</th>
+                    <th style="width:25%">Address</th>
+                    <th style="width:20%">City</th>
+                    <th style="width:10%">Phone No</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int counter = 0;// Index start value
+                    foreach (var item in ViewBag.Data)
+                    {
+                        <tr onclick="GetManufactureById(this.id)" id="@item.Manufacturer_Code">
+
+                            <td>
+                                @item.Manufacturer_Code
+                            </td>
+                            <td>
+                                @item.M_Name
+                            </td>
+                            <td>
+                                @item.M_ShortName
+                            </td>
+                            <td>
+                                @item.Address
+                            </td>
+                            <td>
+                                @item.City
+                            </td>
+                            <td>
+                                @item.Tel_no
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+
+
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+<script src="~/Content/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="~/Content/bootstrap/js/bootstrap.min.js"></script>
+
+<script>
+    var GlobalFlag = 0;
+    var flag = [];
+
+    function resetData() {
+        $("#Manufacturer_Code").prop('readonly', false);
+        $('#LoadData')[0].reset();
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+        
+    }
+    function SaveData() {
+        //alert("save");
+        var Code = $("#Manufacturer_Code").val();
+        var Name = $("#M_Name").val();
+        var M_ShortName = $("#M_ShortName").val();
+        var Address = $("#Address").val();
+        var City = $("#City").val();
+        var Tel_no = $("#Tel_no").val();
+
+        var str = $("form").serialize();
+        if (Code != "" && Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Manufacture/SaveManufacture",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $("#myDatatable").DataTable();
+                        //var rowIndex = table.row.add(['1', '2', '3', '4', '5']).draw(false);
+                        var rowIndex = table.row.add([Code, Name, M_ShortName, Address, City, Tel_no]).draw(false);
+                        var row = $('#myDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr('id', Code);
+                        $(row).attr('onclick','GetManufactureById(this.id)');
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                    } else {
+                        toastr.warning(data.message, "WARNING",
+                       options = {
+                           "closeButton": true,
+                           "debug": false,
+                           "progressBar": true,
+                           "preventDuplicates": true,
+                           "positionClass": "toast-top-center",
+                           "onclick": null,
+                           "showDuration": "400",
+                           "hideDuration": "1000",
+                           "timeOut": "7000",
+                           "extendedTimeOut": "1000",
+                           "showEasing": "swing",
+                           "hideEasing": "linear",
+                           "showMethod": "fadeIn",
+                           "hideMethod": "fadeOut"
+                       });
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Supplier", "INFO",
+                     options = {
+                         "closeButton": true,
+                         "debug": false,
+                         "progressBar": true,
+                         "preventDuplicates": true,
+                         "positionClass": "toast-top-center",
+                         "onclick": null,
+                         "showDuration": "400",
+                         "hideDuration": "1000",
+                         "timeOut": "7000",
+                         "extendedTimeOut": "1000",
+                         "showEasing": "swing",
+                         "hideEasing": "linear",
+                         "showMethod": "fadeIn",
+                         "hideMethod": "fadeOut"
+                     }
+                 );
+        }
+
+
+    }
+
+    function UpdateData() {
+        //alert("save");
+        var code = $("#Manufacturer_Code").val();
+        var M_Name = $("#M_Name").val();
+        var M_ShortName = $("#M_ShortName").val();
+        var Address = $("#Address").val();
+        var City = $("#City").val();
+        var Tel_no = $("#Tel_no").val();
+
+        var str = $("form").serialize();
+        if (M_Name != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Manufacture/UpdateManufacture",
+                data: str,
+                success: function (data) {
+                    if (data.success == true) {
+                        var table = $('#myDatatable').DataTable();
+                        //var fullID = GlobalFlag;
+                        index = table.row('#' + code); //1234126
+                        var temp = table.row(index[0]).data();
+                        temp[0] = code;
+                        temp[1] = M_Name;
+                        temp[2] = M_ShortName;
+                        temp[3] = Address;
+                        temp[4] = City;
+                        temp[5] = Tel_no;
+
+                        table.row(index[0]).data(temp).draw();
+
+                        toastr.success(data.message, "UPDATED",
+                        options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "progressBar": true,
+                            "preventDuplicates": true,
+                            "positionClass": "toast-top-center",
+                            "onclick": null,
+                            "showDuration": "400",
+                            "hideDuration": "1000",
+                            "timeOut": "7000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        resetData();
+                    }
+
+                },
+                error: function (result) {
+                    //alert("Connection Error Please retry");
+                }
+            });
+        } else {
+            toastr.info("Enter Info of Supplier", "INFO",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+        }
+
+
+    }
+
+    function RemoveData() {
+        var code = $("#Manufacturer_Code").val();
+        //alert("remove");
+        if (code != "") {
+            var Con = confirm("are you sure ?");
+            if (Con == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Manufacture/DeleteManufacture",
+                    data: {
+                        code: code
+                    },
+                    success: function (data) {
+                        if (data.success == true) {
+                            $("#Manufacturer_Code").prop('readonly', false);
+                            resetData();
+
+                            var table = $('#myDatatable').DataTable();
+                            index = table.row('#' + code);
+                            var temp = table.row(index[0]).data();
+                            table.row(index[0]).remove().draw();
+
+                            toastr.error(data.message, "DELETED",
+                           options = {
+                               "closeButton": true,
+                               "debug": false,
+                               "progressBar": true,
+                               "preventDuplicates": true,
+                               "positionClass": "toast-top-center",
+                               "onclick": null,
+                               "showDuration": "400",
+                               "hideDuration": "1000",
+                               "timeOut": "7000",
+                               "extendedTimeOut": "1000",
+                               "showEasing": "swing",
+                               "hideEasing": "linear",
+                               "showMethod": "fadeIn",
+                               "hideMethod": "fadeOut"
+                           }
+                       );
+                        }
+
+                    },
+                    error: function (result) {
+                        //alert("Connection Error Please retry");
+                    }
+                });
+            }
+        } else {
+            //alert("Select Supplier");
+            toastr.warning("Select Supplier", "WARNING",
+                            options = {
+                                "closeButton": true,
+                                "debug": false,
+                                "progressBar": true,
+                                "preventDuplicates": true,
+                                "positionClass": "toast-top-center",
+                                "onclick": null,
+                                "showDuration": "400",
+                                "hideDuration": "1000",
+                                "timeOut": "7000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+                        );
+        }
+
+    }
+
+    function GetManufactureById(id) {
+        //alert(id);
+        //flag.push(id);
+        //GlobalFlag = flag[0];
+
+        $("#UpdateBtn").show();
+        $("#RemoveBtn").show();
+        $("#SaveBtn").hide();
+
+        //var id = id.substring(0, 5);
+        //var index = id.substring(5);
+        $.ajax({
+            type: "POST",
+            url: "/Manufacture/GetManufactureById",
+            data: { id: id },
+            success: function (data) {
+                $("#Manufacturer_Code").prop('readonly', true);
+
+                var Manufacturer_Code = $("#Manufacturer_Code").val(data[0].Manufacturer_Code);
+                var M_Name = $("#M_Name").val(data[0].M_Name);
+                var M_ShortName = $("#M_ShortName").val(data[0].M_ShortName);
+                var Address = $("#Address").val(data[0].Address);
+                var City = $("#City").val(data[0].City);
+                var Tel_no = $("#Tel_no").val(data[0].Tel_no);
+            }
+        });
+
+    }
+
+    $(document).ready(function () {
+        document.getElementById('circle').style.display = 'none'; //Not Visible
+        $("#UpdateBtn").hide();
+        $("#RemoveBtn").hide();
+        $("#SaveBtn").show();
+
+        var table = $("#myDatatable").DataTable({
+            buttons:[
+                {
+                    extend: 'print',
+                    className:'btn btn-primary btn-sm'
+                },
+                {
+                    extend: 'excel',
+                    //filename: 'Supplier',
+                    sheetName: 'Supplier',
+                    className: 'btn btn-primary btn-sm'
+                }
+            ],
+            //dom: 'lBfrtip',
+            // "paging": false,
+            // searching: false,                   // for disable search box
+            select: {
+                info: false
+            },
+            "columnDefs": [
+               { "targets": [0, 1, 2, 3, 4, 5], "orderable": false }
+            ],
+
+            language: {
+                search: "", // for hide label of search
+                searchPlaceholder: "Search Manufacture", // place holder of search box
+            },
+            //   responsive: true,
+            select: true,                       // for Select Row
+            //    //bDestroy: true,                     // this will disable table when new load data
+            "bLengthChange": false,           //  for Show more Entries
+            // scrollY: '20vh',
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
+            //"bScrollCollapse": true,
+            "processing": true,
+            //"bPaginate": false,
+            //"sPaginationType": "full_numbers",
+        });
+
+        $('input[type="search"]').addClass('form-control'); // <-- add this line
+    });
+
+   
+
+</script>
